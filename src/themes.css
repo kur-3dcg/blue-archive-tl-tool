@@ -1,0 +1,281 @@
+/* ===== Dark Theme (default) ===== */
+[data-theme="dark"] {
+  --bg-primary: #0a0a16;
+  --bg-secondary: #1a1a2e;
+  --bg-tertiary: #161628;
+  --bg-input: #0f0f1a;
+  --bg-control: #1e1e30;
+  --bg-control-hover: #2a2a44;
+  --bg-active: #3a5a8a;
+  --bg-active-border: #5a8aca;
+  --bg-modal: #1e1e30;
+  --bg-search: #16162a;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+  --bg-modal-overlay: rgba(0, 0, 0, 0.5);
+
+  --text-primary: #ddd;
+  --text-secondary: #aaa;
+  --text-muted: #888;
+  --text-dim: #555;
+  --text-active: #eef;
+  --text-label: #8888aa;
+  --text-header: #aab;
+
+  --border-primary: #222;
+  --border-secondary: #333;
+  --border-tertiary: #444;
+  --border-input: #555;
+
+  --layer-odd: #101020;
+  --layer-even: #16162a;
+  --layer-border: #1a1a2e;
+  --layer-label-bg: rgba(13, 13, 26, 0.85);
+
+  --timeline-bg: #0d0d1a;
+  --ruler-bg: #0d0d1a;
+  --ruler-line: rgba(255, 255, 255, 0.25);
+  --ruler-line-sub: rgba(255, 255, 255, 0.08);
+  --ruler-text: rgba(255, 255, 255, 0.6);
+
+  --item-border: #556;
+  --item-bg: #111;
+  --item-time-bg: rgba(0, 0, 0, 0.7);
+  --item-time-text: #ccc;
+
+  --cursor-color: rgba(255, 200, 50, 0.5);
+  --cursor-label-bg: rgba(255, 200, 50, 0.9);
+  --cursor-label-text: #000;
+
+  --bubble-bg: #ffeebb;
+  --bubble-hover: #ffe088;
+  --bubble-text: #222;
+  --comment-dot: #fc4;
+  --comment-border: #fc4;
+
+  --btn-export-bg: #2a4a8a;
+  --btn-export-hover: #3a5a9a;
+  --btn-export-text: #dde;
+  --btn-import-bg: #2a2a44;
+  --btn-import-hover: #3a3a55;
+  --btn-import-text: #ccc;
+
+  --mode-use-bg: #1e3a1e;
+  --mode-use-hover: #264a26;
+  --mode-use-text: #8d8;
+  --mode-use-border: #4a4;
+  --mode-edit-bg: #3a2a1e;
+  --mode-edit-hover: #4a3a26;
+  --mode-edit-text: #da6;
+  --mode-edit-border: #a84;
+
+  --slot-striker-border: #c44;
+  --slot-special-border: #44c;
+  --slot-empty-text: #555;
+  --slot-clear-bg: #c44;
+  --slot-clear-hover: #e55;
+
+  --scrollbar-track: #0d0d1a;
+  --scrollbar-thumb: #333;
+  --scrollbar-thumb-hover: #444;
+
+  --dragover-bg: rgba(100, 160, 255, 0.12);
+  --dragover-shadow: rgba(100, 160, 255, 0.3);
+
+  --drag-time-text: rgba(255, 255, 255, 0.85);
+  --drag-time-bg: rgba(0, 0, 0, 0.6);
+
+  --error-text: #e55;
+
+  --arrow-color: #ff9800;
+  --arrow-preview-color: rgba(255, 152, 0, 0.5);
+
+  --separator-color: #16213e;
+}
+
+/* ===== Light Theme ===== */
+[data-theme="light"] {
+  --bg-primary: #f5f5f8;
+  --bg-secondary: #e8e8f0;
+  --bg-tertiary: #eeeef4;
+  --bg-input: #fff;
+  --bg-control: #e0e0ea;
+  --bg-control-hover: #d0d0dd;
+  --bg-active: #4a7acc;
+  --bg-active-border: #3a6abc;
+  --bg-modal: #fff;
+  --bg-search: #f0f0f6;
+  --bg-overlay: rgba(0, 0, 0, 0.3);
+  --bg-modal-overlay: rgba(0, 0, 0, 0.3);
+
+  --text-primary: #222;
+  --text-secondary: #555;
+  --text-muted: #777;
+  --text-dim: #aaa;
+  --text-active: #fff;
+  --text-label: #6666aa;
+  --text-header: #444;
+
+  --border-primary: #ccc;
+  --border-secondary: #bbb;
+  --border-tertiary: #aaa;
+  --border-input: #999;
+
+  --layer-odd: #f0f0f8;
+  --layer-even: #e4e4f0;
+  --layer-border: #d0d0e0;
+  --layer-label-bg: rgba(240, 240, 248, 0.9);
+
+  --timeline-bg: #f8f8fc;
+  --ruler-bg: #f0f0f6;
+  --ruler-line: rgba(0, 0, 0, 0.25);
+  --ruler-line-sub: rgba(0, 0, 0, 0.08);
+  --ruler-text: rgba(0, 0, 0, 0.6);
+
+  --item-border: #999;
+  --item-bg: #fff;
+  --item-time-bg: rgba(0, 0, 0, 0.06);
+  --item-time-text: #333;
+
+  --cursor-color: rgba(200, 120, 0, 0.4);
+  --cursor-label-bg: rgba(255, 180, 30, 0.9);
+  --cursor-label-text: #000;
+
+  --bubble-bg: #fff3cc;
+  --bubble-hover: #ffe999;
+  --bubble-text: #333;
+  --comment-dot: #e8a000;
+  --comment-border: #e8a000;
+
+  --btn-export-bg: #4a7acc;
+  --btn-export-hover: #3a6abc;
+  --btn-export-text: #fff;
+  --btn-import-bg: #ddd;
+  --btn-import-hover: #ccc;
+  --btn-import-text: #444;
+
+  --mode-use-bg: #d0f0d0;
+  --mode-use-hover: #b8e8b8;
+  --mode-use-text: #2a6a2a;
+  --mode-use-border: #6a6;
+  --mode-edit-bg: #f0e0d0;
+  --mode-edit-hover: #e8d0b8;
+  --mode-edit-text: #8a5a2a;
+  --mode-edit-border: #a84;
+
+  --slot-striker-border: #d66;
+  --slot-special-border: #66d;
+  --slot-empty-text: #bbb;
+  --slot-clear-bg: #d66;
+  --slot-clear-hover: #e77;
+
+  --scrollbar-track: #eee;
+  --scrollbar-thumb: #bbb;
+  --scrollbar-thumb-hover: #999;
+
+  --dragover-bg: rgba(70, 130, 230, 0.12);
+  --dragover-shadow: rgba(70, 130, 230, 0.3);
+
+  --drag-time-text: rgba(0, 0, 0, 0.8);
+  --drag-time-bg: rgba(255, 255, 255, 0.8);
+
+  --error-text: #c33;
+
+  --arrow-color: #e68a00;
+  --arrow-preview-color: rgba(230, 138, 0, 0.5);
+
+  --separator-color: #ccd;
+}
+
+/* ===== Blue Theme ===== */
+[data-theme="blue"] {
+  --bg-primary: #0c1929;
+  --bg-secondary: #132640;
+  --bg-tertiary: #112035;
+  --bg-input: #0a1525;
+  --bg-control: #1a3050;
+  --bg-control-hover: #244068;
+  --bg-active: #2a6ad0;
+  --bg-active-border: #4a8af0;
+  --bg-modal: #1a3050;
+  --bg-search: #112035;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+  --bg-modal-overlay: rgba(0, 0, 0, 0.5);
+
+  --text-primary: #d0dae8;
+  --text-secondary: #8aa0c0;
+  --text-muted: #6888aa;
+  --text-dim: #3a5570;
+  --text-active: #e8f0ff;
+  --text-label: #6688bb;
+  --text-header: #90b0d8;
+
+  --border-primary: #1e3a5a;
+  --border-secondary: #2a4a6a;
+  --border-tertiary: #3a5a7a;
+  --border-input: #4a6a8a;
+
+  --layer-odd: #0e1c30;
+  --layer-even: #142840;
+  --layer-border: #1a3050;
+  --layer-label-bg: rgba(12, 25, 41, 0.9);
+
+  --timeline-bg: #0a1525;
+  --ruler-bg: #0c1929;
+  --ruler-line: rgba(100, 180, 255, 0.25);
+  --ruler-line-sub: rgba(100, 180, 255, 0.08);
+  --ruler-text: rgba(140, 190, 255, 0.6);
+
+  --item-border: #4a6a90;
+  --item-bg: #0e1c30;
+  --item-time-bg: rgba(0, 0, 0, 0.5);
+  --item-time-text: #a0c0e0;
+
+  --cursor-color: rgba(100, 200, 255, 0.5);
+  --cursor-label-bg: rgba(100, 200, 255, 0.9);
+  --cursor-label-text: #000;
+
+  --bubble-bg: #d0e8ff;
+  --bubble-hover: #b0d0f0;
+  --bubble-text: #1a3050;
+  --comment-dot: #5ab0ff;
+  --comment-border: #5ab0ff;
+
+  --btn-export-bg: #2a6ad0;
+  --btn-export-hover: #3a7ae0;
+  --btn-export-text: #e0f0ff;
+  --btn-import-bg: #1a3050;
+  --btn-import-hover: #244068;
+  --btn-import-text: #a0c0e0;
+
+  --mode-use-bg: #1a3a2a;
+  --mode-use-hover: #244a38;
+  --mode-use-text: #70c080;
+  --mode-use-border: #3a8a4a;
+  --mode-edit-bg: #3a2a1e;
+  --mode-edit-hover: #4a3828;
+  --mode-edit-text: #d0a060;
+  --mode-edit-border: #a08040;
+
+  --slot-striker-border: #d06060;
+  --slot-special-border: #5070d0;
+  --slot-empty-text: #3a5570;
+  --slot-clear-bg: #d06060;
+  --slot-clear-hover: #e07070;
+
+  --scrollbar-track: #0c1929;
+  --scrollbar-thumb: #2a4a6a;
+  --scrollbar-thumb-hover: #3a5a7a;
+
+  --dragover-bg: rgba(80, 160, 255, 0.15);
+  --dragover-shadow: rgba(80, 160, 255, 0.3);
+
+  --drag-time-text: rgba(200, 230, 255, 0.9);
+  --drag-time-bg: rgba(0, 10, 30, 0.7);
+
+  --error-text: #f06060;
+
+  --arrow-color: #ff9800;
+  --arrow-preview-color: rgba(255, 152, 0, 0.5);
+
+  --separator-color: #1e3a5a;
+}

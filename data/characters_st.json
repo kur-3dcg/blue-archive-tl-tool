@@ -1,0 +1,714 @@
+[
+  {
+    "name": "アイリ（バンド）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/airi_band.png"
+  },
+  {
+    "name": "アオバ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/aoba.png"
+  },
+  {
+    "name": "アカネ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/akane.png"
+  },
+  {
+    "name": "アカリ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/akari.png"
+  },
+  {
+    "name": "アコ（ドレス）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ako_dress.png"
+  },
+  {
+    "name": "アズサ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/azusa.png"
+  },
+  {
+    "name": "アズサ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/azusa_swimsuit.png"
+  },
+  {
+    "name": "アスナ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/asuna.png"
+  },
+  {
+    "name": "アスナ（バニーガール）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/asuna_bunnie.png"
+  },
+  {
+    "name": "アスナ（制服）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/asuna_uniform.png"
+  },
+  {
+    "name": "アツコ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/atuko.png"
+  },
+  {
+    "name": "アリス",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/alice.png"
+  },
+  {
+    "name": "アリス（メイド）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/alice_maid.png"
+  },
+  {
+    "name": "アリス（臨戦）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/alice_rinsen.png"
+  },
+  {
+    "name": "アル",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/aru.png"
+  },
+  {
+    "name": "アル（ドレス）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/aru_dress.png"
+  },
+  {
+    "name": "アル（正月）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/aru_newyear.png"
+  },
+  {
+    "name": "イオリ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/iori.png"
+  },
+  {
+    "name": "イオリ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/iori_swimsuit.png"
+  },
+  {
+    "name": "イズナ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/izuna.png"
+  },
+  {
+    "name": "イズナ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/izuna_swimsuit.png"
+  },
+  {
+    "name": "イズミ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/izumi.png"
+  },
+  {
+    "name": "イズミ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/izumi_swimsuit.png"
+  },
+  {
+    "name": "イチカ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ichika.png"
+  },
+  {
+    "name": "イブキ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ibuki.png"
+  },
+  {
+    "name": "ウイ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ui.png"
+  },
+  {
+    "name": "ウイ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ui_swimsuit.png"
+  },
+  {
+    "name": "ウタハ（応援団）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/utaha_cheerleader.png"
+  },
+  {
+    "name": "ウミカ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/umika.png"
+  },
+  {
+    "name": "エイミ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/eimi.png"
+  },
+  {
+    "name": "エイミ（臨戦）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/eimi_rinsen.png"
+  },
+  {
+    "name": "エリ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/eri.png"
+  },
+  {
+    "name": "オトギ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/otogi.png"
+  },
+  {
+    "name": "カズサ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kazusa.png"
+  },
+  {
+    "name": "カズサ（バンド）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kazusa_band.png"
+  },
+  {
+    "name": "カスミ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kasumi.png"
+  },
+  {
+    "name": "カノエ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kanoe.png"
+  },
+  {
+    "name": "カホ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kaho.png"
+  },
+  {
+    "name": "カヨコ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kayoko.png"
+  },
+  {
+    "name": "カヨコ（ドレス）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kayoko_dress.png"
+  },
+  {
+    "name": "カヨコ（正月）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kayoko_newyear.png"
+  },
+  {
+    "name": "カリン（バニーガール）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/karin_bunnie.png"
+  },
+  {
+    "name": "カンナ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kanna_swimsuit.png"
+  },
+  {
+    "name": "キキョウ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kikyou.png"
+  },
+  {
+    "name": "キララ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kirara.png"
+  },
+  {
+    "name": "キリノ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kirino.png"
+  },
+  {
+    "name": "クルミ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kurumi.png"
+  },
+  {
+    "name": "ケイ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kei.png"
+  },
+  {
+    "name": "ココナ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kokona.png"
+  },
+  {
+    "name": "コタマ（キャンプ）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kotama_camp.png"
+  },
+  {
+    "name": "コトリ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kotori.png"
+  },
+  {
+    "name": "コトリ（応援団）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kotori_cheerleader.png"
+  },
+  {
+    "name": "コノカ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/konoka.png"
+  },  
+  {
+    "name": "コハル",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/koharu.png"
+  },
+  {
+    "name": "コハル（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/koharu_swimsuit.png"
+  },
+  {
+    "name": "コユキ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/koyuki.png"
+  },
+  {
+    "name": "サオリ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/saori.png"
+  },
+  {
+    "name": "サオリ（ドレス）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/saori_dress.png"
+  },
+  {
+    "name": "サオリ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/saori_swimsuit.png"
+  },
+  {
+    "name": "サキ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/saki_swimsuit.png"
+  },
+  {
+    "name": "サクラコ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sakurako.png"
+  },
+  {
+    "name": "サクラコ（アイドル）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sakurako_idol.png"
+  },
+  {
+    "name": "シグレ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sigure.png"
+  },
+  {
+    "name": "ジュリ（アルバイト）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/jyuri_part.png"
+  },
+  {
+    "name": "シュン",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/syun.png"
+  },
+  {
+    "name": "シュン（幼女）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/syun_infant.png"
+  },
+  {
+    "name": "ジュンコ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/jyunko.png"
+  },
+  {
+    "name": "ジュンコ（正月）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/jyunko_newyear.png"
+  },
+  {
+    "name": "シロコ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/siroko.png"
+  },
+  {
+    "name": "シロコ（ライディング）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/siroko_bicycle.png"
+  },
+  {
+    "name": "シロコ＊テラー",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/siroko_terror.png"
+  },
+  {
+    "name": "スズミ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/suzumi.png"
+  },
+  {
+    "name": "スズミ（マジカル）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/suzumi_magic.png"
+  },
+  {
+    "name": "スミレ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sumire.png"
+  },
+  {
+    "name": "セイア",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/seia.png"
+  },
+  {
+    "name": "セイア（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/seia_swimsuit.png"
+  },
+  {
+    "name": "セナ（私服）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sena_private.png"
+  },
+  {
+    "name": "セリカ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/serika.png"
+  },
+  {
+    "name": "セリナ（クリスマス）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/serina_christmas.png"
+  },
+  {
+    "name": "タカネ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/takane.png"
+  },
+  {
+    "name": "チアキ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tiaki.png"
+  },
+  {
+    "name": "チェリノ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/cherino.png"
+  },
+  {
+    "name": "チセ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tise.png"
+  },
+  {
+    "name": "チセ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tise_swimsuit.png"
+  },
+  {
+    "name": "チナツ（温泉）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tinatsu_spa.png"
+  },
+  {
+    "name": "ツクヨ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tukuyo.png"
+  },
+  {
+    "name": "ツクヨ（ドレス）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tukuyo_dress.png"
+  },
+  {
+    "name": "ツバキ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tubaki.png"
+  },
+  {
+    "name": "ツルギ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/turugi.png"
+  },
+  {
+    "name": "ツルギ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/turugi_swimsuit.png"
+  },
+  {
+    "name": "トキ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/toki.png"
+  },
+  {
+    "name": "トキ（バニーガール）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/toki_bunnie.png"
+  },
+  {
+    "name": "トキ（臨戦）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/toki_rinsen.png"
+  },
+  {
+    "name": "トモエ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tomoe.png"
+  },
+  {
+    "name": "ナグサ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/nagusa.png"
+  },
+  {
+    "name": "ナツ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/natsu.png"
+  },
+  {
+    "name": "ナツ（バンド）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/natsu_band.png"
+  },
+  {
+    "name": "ニコ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/niko.png"
+  },
+  {
+    "name": "ネル",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/neru.png"
+  },
+  {
+    "name": "ネル（バニーガール）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/neru_bunnie.png"
+  },
+  {
+    "name": "ネル（制服）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/neru_uniform.png"
+  },
+  {
+    "name": "ノア",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/noa.png"
+  },
+  {
+    "name": "ノア（パジャマ）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/noa_pajama.png"
+  },
+  {
+    "name": "ノゾミ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/nozomi.png"
+  },
+  {
+    "name": "ノノミ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/nonomi.png"
+  },
+  {
+    "name": "ノノミ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/nonomi_swimsuit.png"
+  },
+  {
+    "name": "ハスミ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hasumi.png"
+  },
+  {
+    "name": "ハスミ（体操服）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hasumi_gym.png"
+  },
+  {
+    "name": "ハスミ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hasumi_swimsuit.png"
+  },
+  {
+    "name": "ハナコ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hanako_swimsuit.png"
+  },
+  {
+    "name": "ハルカ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/haruka.png"
+  },
+  {
+    "name": "ハルナ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/haruna.png"
+  },
+  {
+    "name": "ハルナ（正月）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/haruna_newyear.png"
+  },
+  {
+    "name": "ハレ（キャンプ）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hare_camp.png"
+  },
+  {
+    "name": "ヒカリ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hikari.png"
+  },
+  {
+    "name": "ヒナ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hina.png"
+  },
+  {
+    "name": "ヒナ（ドレス）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hina_dress.png"
+  },
+  {
+    "name": "ヒナ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hina_swimsuit.png"
+  },
+  {
+    "name": "ヒナタ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hinata.png"
+  },
+  {
+    "name": "ヒビキ（応援団）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hibiki_cheerleader.png"
+  },
+  {
+    "name": "ヒフミ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hifumi.png"
+  },
+  {
+    "name": "ヒヨリ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hiyori_swimsuit.png"
+  },
+  {
+    "name": "フィーナ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/fi-na.png"
+  },
+  {
+    "name": "フブキ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/fubuki.png"
+  },
+  {
+    "name": "フユ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/fuyu.png"
+  },
+  {
+    "name": "ホシノ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hoshino.png"
+  },
+  {
+    "name": "ホシノ（攻撃）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hoshino_rinsen_a.png"
+  },
+  {
+    "name": "ホシノ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hoshino_swimsuit.png"
+  },
+  {
+    "name": "ホシノ（防御）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hoshino_rinsen_d.png"
+  },
+  {
+    "name": "ホシノ（臨戦）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hoshino_rinsen.png"
+  },
+  {
+    "name": "マキ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/maki.png"
+  },
+  {
+    "name": "マリー（アイドル）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mari-_idol.png"
+  },
+  {
+    "name": "マリー（体操服）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mari-_gym.png"
+  },
+  {
+    "name": "マリナ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/marina.png"
+  },
+  {
+    "name": "マリナ（チーパオ）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/marina_cheepaw.png"
+  },
+  {
+    "name": "ミカ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mika.png"
+  },
+  {
+    "name": "ミカ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mika_swimsuit.png"
+  },
+  {
+    "name": "ミサキ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/misaki.png"
+  },
+  {
+    "name": "ミチル",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/michiru.png"
+  },
+  {
+    "name": "ミドリ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/midori.png"
+  },
+  {
+    "name": "ミドリ（メイド）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/midori_maid.png"
+  },
+  {
+    "name": "ミナ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mina.png"
+  },
+  {
+    "name": "ミネ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mine.png"
+  },
+  {
+    "name": "ミネ（アイドル）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mine_idol.png"
+  },
+  {
+    "name": "ミモリ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mimori.png"
+  },
+  {
+    "name": "ミヤコ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/miyako.png"
+  },
+  {
+    "name": "ミヤコ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/miyako_swimsuit.png"
+  },
+  {
+    "name": "ミユ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/miyu.png"
+  },
+  {
+    "name": "ミヨ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/miyo.png"
+  },
+  {
+    "name": "ムツキ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mutsuki.png"
+  },
+  {
+    "name": "ムツキ（正月）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mutsuki_newyear.png"
+  },
+  {
+    "name": "メグ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/megu.png"
+  },
+  {
+    "name": "メル",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/meru.png"
+  },
+  {
+    "name": "モエ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/moe_swimsuit.png"
+  },
+  {
+    "name": "モミジ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/momiji.png"
+  },
+  {
+    "name": "モモイ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/momoi.png"
+  },
+  {
+    "name": "モモイ（メイド）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/momoi_maid.png"
+  },
+  {
+    "name": "ユウカ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yuuka.png"
+  },
+  {
+    "name": "ユウカ（パジャマ）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yuuka_pajama.png"
+  },
+  {
+    "name": "ユウカ（体操服）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yuuka_gym.png"
+  },
+  {
+    "name": "ユカリ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yukari.png"
+  },
+    {
+    "name": "ユカリ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yukari_swimsuit.png"
+  },
+  {
+    "name": "ユズ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yuzu.png"
+  },
+  {
+    "name": "ラブ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rabu.png"
+  },
+  {
+    "name": "リオ（臨戦）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rio_rinsen.png"
+  },
+  {
+    "name": "ヨシミ（バンド）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yoshimi_band.png"
+  },
+  {
+    "name": "ルミ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rumi.png"
+  },
+  {
+    "name": "レイ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rei.png"
+  },
+  {
+    "name": "レイサ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/reisa.png"
+  },
+  {
+    "name": "レイジョ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/reijyo.png"
+  },
+  {
+    "name": "レナ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rena.png"
+  },
+  {
+    "name": "レンゲ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/renge.png"
+  },
+   {
+    "name": "レンゲ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/renge_swimsuit.png"
+  },
+  {
+    "name": "ワカモ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/wakamo.png"
+  },
+  {
+    "name": "ワカモ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/wakamo_swimsuit.png"
+  },
+  {
+    "name": "御坂美琴",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/misaka.png"
+  },
+  {
+    "name": "食蜂操祈",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/syokuhou.png"
+  },
+  {
+    "name": "未選択",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/noimage.png"
+  }
+]

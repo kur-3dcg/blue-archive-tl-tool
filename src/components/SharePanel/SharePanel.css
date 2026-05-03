@@ -1,0 +1,78 @@
+.share-panel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.share-panel-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.share-panel-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.share-panel-textarea {
+  width: 180px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-family: monospace;
+  padding: 4px 6px;
+  height: 24px;
+}
+
+.share-panel-textarea::placeholder {
+  color: var(--text-dim);
+}
+
+.share-btn {
+  padding: 4px 10px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.share-btn.export {
+  background: var(--btn-export-bg);
+  color: var(--btn-export-text);
+}
+
+.share-btn.export:hover {
+  background: var(--btn-export-hover);
+}
+
+.share-btn.export-code {
+  background: var(--bg-control);
+  color: var(--text-secondary);
+}
+
+.share-btn.export-code:hover {
+  background: var(--bg-control-hover);
+}
+
+.share-btn.import {
+  background: var(--btn-import-bg);
+  color: var(--btn-import-text);
+}
+
+.share-btn.import:hover {
+  background: var(--btn-import-hover);
+}
+
+.share-panel-error {
+  color: var(--error-text);
+  font-size: 11px;
+}

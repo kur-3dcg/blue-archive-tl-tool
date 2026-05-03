@@ -1,0 +1,314 @@
+.character-panel {
+  display: flex;
+  gap: 24px;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--separator-color);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.mode-toggle-btn {
+  align-self: center;
+  padding: 8px 18px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  background: var(--mode-use-bg);
+  color: var(--mode-use-text);
+  border-color: var(--mode-use-border);
+}
+
+.mode-toggle-btn:hover {
+  background: var(--mode-use-hover);
+}
+
+.mode-toggle-btn.editing {
+  background: var(--mode-edit-bg);
+  color: var(--mode-edit-text);
+  border-color: var(--mode-edit-border);
+}
+
+.mode-toggle-btn.editing:hover {
+  background: var(--mode-edit-hover);
+}
+
+.arrow-mode-btn {
+  align-self: center;
+  padding: 8px 18px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  background: var(--bg-control);
+  color: var(--text-secondary);
+}
+
+.arrow-mode-btn:hover {
+  background: var(--bg-control-hover);
+}
+
+.arrow-mode-btn.active {
+  background: var(--bg-active);
+  border-color: var(--bg-active-border);
+  color: var(--text-active);
+}
+
+.slot-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.slot-group-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-label);
+  text-transform: uppercase;
+}
+
+.slot-group-slots {
+  display: flex;
+  gap: 12px;
+}
+
+.slot-selector {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: grab;
+  user-select: none;
+}
+
+.slot-selector:active {
+  cursor: grabbing;
+}
+
+.slot-selector.edit-mode {
+  cursor: default;
+}
+
+.slot-selector.edit-mode:active {
+  cursor: default;
+}
+
+.slot-face {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid var(--border-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-input);
+  cursor: inherit;
+  transition: border-color 0.15s;
+}
+
+.edit-mode .slot-face {
+  cursor: pointer;
+}
+
+.slot-face:hover {
+  border-color: var(--text-muted);
+}
+
+.slot-striker .slot-face {
+  border-color: var(--slot-striker-border);
+}
+
+.slot-special .slot-face {
+  border-color: var(--slot-special-border);
+}
+
+.slot-face img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.slot-empty {
+  font-size: 28px;
+  color: var(--slot-empty-text);
+}
+
+.slot-name {
+  font-size: 12px;
+  color: var(--text-secondary);
+  max-width: 68px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slot-clear {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: var(--slot-clear-bg);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.slot-clear:hover {
+  background: var(--slot-clear-hover);
+}
+
+/* Search overlay */
+.character-search-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.character-search {
+  background: var(--bg-modal);
+  border: 1px solid var(--border-secondary);
+  border-radius: 12px;
+  width: 380px;
+  max-height: 520px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.character-search-input {
+  padding: 12px 16px;
+  border: none;
+  border-bottom: 1px solid var(--border-secondary);
+  background: var(--bg-search);
+  color: var(--text-primary);
+  font-size: 16px;
+  outline: none;
+}
+
+.character-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.character-search-list {
+  overflow-y: auto;
+  flex: 1;
+  max-height: 420px;
+}
+
+.character-search-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  color: var(--text-primary);
+  font-size: 15px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.character-search-item:hover {
+  background: var(--bg-control-hover);
+}
+
+.character-search-item img {
+  border-radius: 4px;
+}
+
+.character-search-empty {
+  padding: 20px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Cost settings */
+.slot-cost-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.slot-cost-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.slot-cost-input {
+  width: 48px;
+  padding: 2px 4px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 3px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 12px;
+  text-align: center;
+}
+
+.slot-unique-weapon {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.slot-unique-weapon input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+/* Extra settings (heavy armor / red winter) */
+.panel-extra-settings {
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.extra-setting {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.extra-setting select {
+  background: var(--bg-control);
+  color: var(--text-primary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 12px;
+}
