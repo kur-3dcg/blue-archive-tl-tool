@@ -42,13 +42,26 @@ const initialState: TimelineState = {
 
 function reducer(state: TimelineState, action: TimelineAction): TimelineState {
   switch (action.type) {
-    case 'SET_CHARACTER':
-      return {
-        ...state,
-        slots: state.slots.map((s, i) =>
-          i === action.slotIndex ? { ...s, character: action.character } : s
-        ),
-      };
+    case 'SET_CHARACTER': {
+      const newSlots = state.slots.map((s, i) =>
+        i === action.slotIndex ? { ...s, character: action.character } : s
+      );
+      // キャラ削除時、そのスロットのアイテムと関連する矢印も削除
+      if (action.character === null) {
+        const removedItemIds = new Set(
+          state.items.filter((it) => it.slotIndex === action.slotIndex).map((it) => it.id)
+        );
+        return {
+          ...state,
+          slots: newSlots,
+          items: state.items.filter((it) => it.slotIndex !== action.slotIndex),
+          arrows: state.arrows.filter(
+            (a) => !removedItemIds.has(a.fromItemId) && !removedItemIds.has(a.toItemId)
+          ),
+        };
+      }
+      return { ...state, slots: newSlots };
+    }
 
     case 'ADD_ITEM':
       return { ...state, items: [...state.items, action.item] };
