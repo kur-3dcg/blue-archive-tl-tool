@@ -14,6 +14,21 @@
   background: var(--bg-tertiary);
   border-bottom: 1px solid var(--border-primary);
   flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.operation-ref {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.operation-ref b {
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
 .timeline-control {
@@ -212,6 +227,12 @@
 
 .timeline-item.arrow-mode:active {
   cursor: crosshair;
+}
+
+.timeline-item.arrow-from {
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .timeline-item img {

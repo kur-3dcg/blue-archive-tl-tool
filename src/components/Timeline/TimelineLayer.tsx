@@ -23,7 +23,8 @@ interface Props {
   zoomLevelRef?: React.RefObject<number>;
   snapModeRef?: React.RefObject<SnapMode>;
   arrowMode?: boolean;
-  onArrowDragStart?: (itemId: string) => void;
+  onArrowClick?: (itemId: string) => void;
+  arrowClickFrom?: string | null;
   itemCostMap?: Map<string, { cost: number; isOverrun: boolean }>;
   onCostAdjust?: (itemId: string, delta: number) => void;
   onSetTarget?: (itemId: string, targetSlotIndex: number | undefined) => void;
@@ -54,7 +55,8 @@ export function TimelineLayer({
   zoomLevelRef,
   snapModeRef,
   arrowMode,
-  onArrowDragStart,
+  onArrowClick,
+  arrowClickFrom,
   itemCostMap,
   onCostAdjust,
   onSetTarget,
@@ -169,7 +171,8 @@ export function TimelineLayer({
             zoomLevelRef={zoomLevelRef}
             snapModeRef={snapModeRef}
             arrowMode={arrowMode}
-            onArrowDragStart={onArrowDragStart}
+            onArrowClick={onArrowClick}
+            arrowClickFrom={arrowClickFrom}
             costValue={itemCostMap?.get(item.id)?.cost}
             costOverrun={itemCostMap?.get(item.id)?.isOverrun}
             onCostAdjust={onCostAdjust}

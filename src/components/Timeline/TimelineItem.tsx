@@ -26,7 +26,8 @@ interface Props {
   zoomLevelRef?: React.RefObject<number>;
   snapModeRef?: React.RefObject<SnapMode>;
   arrowMode?: boolean;
-  onArrowDragStart?: (itemId: string) => void;
+  onArrowClick?: (itemId: string) => void;
+  arrowClickFrom?: string | null;
   costValue?: number;
   costOverrun?: boolean;
   onCostAdjust?: (itemId: string, delta: number) => void;
@@ -54,7 +55,8 @@ export function TimelineItem({
   zoomLevelRef,
   snapModeRef,
   arrowMode,
-  onArrowDragStart,
+  onArrowClick,
+  arrowClickFrom,
   costValue,
   costOverrun,
   onCostAdjust,
@@ -93,7 +95,7 @@ export function TimelineItem({
     e.stopPropagation();
 
     if (arrowMode) {
-      onArrowDragStart?.(item.id);
+      onArrowClick?.(item.id);
       return;
     }
 
@@ -168,6 +170,12 @@ export function TimelineItem({
       setShowTargetMenu((v) => !v);
       return;
     }
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      e.stopPropagation();
+      onArrowClick?.(item.id);
+      return;
+    }
     if (didDragRef.current || arrowMode || e.shiftKey) return;
 
     clickCountRef.current += 1;
@@ -185,7 +193,7 @@ export function TimelineItem({
       clickCountRef.current = 0;
       onDoubleClick(item.id);
     }
-  }, [arrowMode, item.id, onToggleTimeDisplay, onDoubleClick]);
+  }, [arrowMode, item.id, onToggleTimeDisplay, onDoubleClick, onArrowClick]);
 
   const showCost = !item.useTimeDisplay && costValue !== undefined;
   const timeLabel = isInstant ? '即' : (
@@ -202,7 +210,7 @@ export function TimelineItem({
 
   return (
     <div
-      className={`timeline-item${item.comment ? ' has-comment' : ''}${isInstant ? ' is-instant' : ''}${arrowMode ? ' arrow-mode' : ''}`}
+      className={`timeline-item${item.comment ? ' has-comment' : ''}${isInstant ? ' is-instant' : ''}${arrowMode ? ' arrow-mode' : ''}${arrowClickFrom === item.id ? ' arrow-from' : ''}`}
       style={{ left: x }}
       data-item-id={item.id}
       onMouseDown={handleMouseDown}

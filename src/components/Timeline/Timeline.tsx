@@ -32,8 +32,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
   const [targetTimeInput, setTargetTimeInput] = useState('');
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [commentInput, setCommentInput] = useState('');
-  const [arrowDragFrom, setArrowDragFrom] = useState<string | null>(null);
-  const [arrowDragMouse, setArrowDragMouse] = useState<{ x: number; y: number } | null>(null);
+  const [arrowClickFrom, setArrowClickFrom] = useState<string | null>(null);
   const [containerWidth, setContainerWidth] = useState(800);
 
   const { snapMode, layers, items, arrows, slots, totalTimeMs, slotCostConfigs, targetTimeMs } = state;
@@ -245,10 +244,24 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
     setDragInfo(null);
   }, []);
 
-  // Arrow mode handlers
-  const handleArrowDragStart = useCallback((itemId: string) => {
-    setArrowDragFrom(itemId);
-  }, []);
+  // Arrow click handler (used by both arrow mode and Ctrl+Click)
+  const handleArrowClick = useCallback((itemId: string) => {
+    if (arrowClickFrom === null) {
+      setArrowClickFrom(itemId);
+    } else {
+      if (arrowClickFrom !== itemId) {
+        dispatch({
+          type: 'ADD_ARROW',
+          arrow: {
+            id: `arrow-${nextArrowId++}`,
+            fromItemId: arrowClickFrom,
+            toItemId: itemId,
+          },
+        });
+      }
+      setArrowClickFrom(null);
+    }
+  }, [arrowClickFrom, dispatch]);
 
   const handleRemoveArrow = useCallback(
     (arrowId: string) => {
@@ -256,62 +269,6 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
     },
     [dispatch]
   );
-
-  // Window-level mouse events for arrow dragging
-  useEffect(() => {
-    if (!arrowDragFrom) return;
-
-    const container = containerRef.current;
-    if (!container) return;
-
-    const onMouseMove = (e: MouseEvent) => {
-      const layersEl = container.querySelector('.timeline-layers');
-      if (!layersEl) return;
-      const rect = layersEl.getBoundingClientRect();
-      const scrollLeft = container.scrollLeft;
-      const x = e.clientX - rect.left + scrollLeft;
-      const y = e.clientY - rect.top;
-      setArrowDragMouse({ x, y });
-    };
-
-    const onMouseUp = (e: MouseEvent) => {
-      const target = document.elementFromPoint(e.clientX, e.clientY);
-      const itemEl = target?.closest('[data-item-id]');
-      const toItemId = itemEl?.getAttribute('data-item-id');
-
-      if (toItemId && toItemId !== arrowDragFrom) {
-        dispatch({
-          type: 'ADD_ARROW',
-          arrow: {
-            id: `arrow-${nextArrowId++}`,
-            fromItemId: arrowDragFrom,
-            toItemId,
-          },
-        });
-      }
-
-      setArrowDragFrom(null);
-      setArrowDragMouse(null);
-    };
-
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
-    };
-  }, [arrowDragFrom, dispatch]);
-
-  // Compute arrow preview line
-  const arrowPreviewLine = (() => {
-    if (!arrowDragFrom || !arrowDragMouse) return null;
-    const fromItem = items.find((i) => i.id === arrowDragFrom);
-    if (!fromItem) return null;
-    const fromXOffset = itemXOffsetMap.get(arrowDragFrom) ?? 0;
-    const fromX = totalWidth - TIMELINE_PAD_RIGHT - (fromItem.timeMs / 1000) * zoomLevel + fromXOffset;
-    const fromY = fromItem.layerIndex * LAYER_HEIGHT + LAYER_HEIGHT / 2;
-    return { fromX, fromY, toX: arrowDragMouse.x, toY: arrowDragMouse.y };
-  })();
 
   const layerAreaTop = RULER_HEIGHT + COST_RULER_HEIGHT;
   const layerAreaBottom = RULER_HEIGHT + COST_RULER_HEIGHT + layers * LAYER_HEIGHT;
@@ -327,6 +284,14 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
   return (
     <div className="timeline-wrapper">
       <div className="timeline-controls">
+        <div className="operation-ref">
+          <span><b>クリック:</b> 選択</span>
+          <span><b>ダブルクリック:</b> コメント</span>
+          <span><b>右クリック:</b> 削除</span>
+          <span><b>ドラッグ:</b> 移動</span>
+          <span><b>Shift+クリック:</b> EX対象</span>
+          <span><b>Ctrl+クリック:</b> 矢印接続</span>
+        </div>
         <span className="timeline-control">
           時間:
           {TIME_PRESETS.map((p) => (
@@ -486,7 +451,8 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
                 zoomLevelRef={zoomRef}
                 snapModeRef={snapRef}
                 arrowMode={arrowMode}
-                onArrowDragStart={handleArrowDragStart}
+                onArrowClick={handleArrowClick}
+                arrowClickFrom={arrowClickFrom}
                 itemCostMap={itemCostMap}
                 onCostAdjust={handleCostAdjust}
                 onSetTarget={handleSetTarget}
@@ -500,7 +466,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
               totalWidth={totalWidth}
               totalHeight={layers * LAYER_HEIGHT}
               itemXOffsetMap={itemXOffsetMap}
-              previewLine={arrowPreviewLine}
+              previewLine={null}
               onRemoveArrow={handleRemoveArrow}
             />
           </div>
