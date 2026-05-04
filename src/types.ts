@@ -14,6 +14,7 @@ export interface CharacterSlot {
 export interface SlotCostConfig {
   skillCost: number;       // スキルコスト（デフォルト3）
   hasUniqueWeapon4: boolean; // 固有4（SPのみ、コスト上限+0.5）
+  hasUniqueWeapon2: boolean; // 固有2↑（バフ効果持続力×1.19）
 }
 
 export interface TimelineItem {
@@ -64,6 +65,7 @@ export type TimelineAction =
   | { type: 'SET_TOTAL_TIME'; totalTimeMs: number }
   | { type: 'SET_SLOT_COST'; slotIndex: number; skillCost: number }
   | { type: 'SET_UNIQUE_WEAPON4'; slotIndex: number; value: boolean }
+  | { type: 'SET_UNIQUE_WEAPON2'; slotIndex: number; value: boolean }
   | { type: 'SET_COST_ADJUSTMENT'; itemId: string; adjustment: number }
   | { type: 'SET_TARGET'; itemId: string; targetSlotIndex: number | undefined }
   | { type: 'TOGGLE_TIME_DISPLAY'; itemId: string }

@@ -28,7 +28,7 @@ interface CompactData {
   r?: { f: number; o: number }[];                         // arrows: from, to
   l: number;                                               // layers
   T?: number;                                              // totalTimeMs
-  C?: { k: number; u: boolean }[];                        // slotCostConfigs: skillCost, uniqueWeapon4
+  C?: { k: number; u: boolean; w?: boolean }[];             // slotCostConfigs: skillCost, uniqueWeapon4, uniqueWeapon2
   G?: number;                                              // targetTimeMs
   H?: number;                                              // heavyArmorCount
   W?: number;                                              // redWinterCount
@@ -41,7 +41,7 @@ export interface ShareData {
   arrows?: { fromIndex: number; toIndex: number }[];
   layers: number;
   totalTimeMs?: number;
-  slotCostConfigs?: { skillCost: number; hasUniqueWeapon4: boolean }[];
+  slotCostConfigs?: { skillCost: number; hasUniqueWeapon4: boolean; hasUniqueWeapon2: boolean }[];
   targetTimeMs?: number;
   heavyArmorCount?: number;
   redWinterCount?: number;
@@ -157,7 +157,7 @@ export async function encode(
       : {}),
     l: layers,
     T: totalTimeMs,
-    ...(slotCostConfigs ? { C: slotCostConfigs.map((c) => ({ k: c.skillCost, u: c.hasUniqueWeapon4 })) } : {}),
+    ...(slotCostConfigs ? { C: slotCostConfigs.map((c) => ({ k: c.skillCost, u: c.hasUniqueWeapon4, ...(!c.hasUniqueWeapon2 ? { w: false } : {}) })) } : {}),
     ...(targetTimeMs !== undefined ? { G: targetTimeMs } : {}),
     ...(heavyArmorCount ? { H: heavyArmorCount } : {}),
     ...(redWinterCount ? { W: redWinterCount } : {}),
@@ -188,7 +188,10 @@ export async function decode(code: string): Promise<ShareData | null> {
     // Legacy uncompressed format
     const json = decodeURIComponent(escape(atob(trimmed)));
     const legacy = JSON.parse(json) as ShareDataLegacy;
-    return legacy;
+    return {
+      ...legacy,
+      slotCostConfigs: legacy.slotCostConfigs?.map((c) => ({ ...c, hasUniqueWeapon2: true })),
+    };
   } catch {
     return null;
   }
@@ -214,7 +217,7 @@ function compactToShareData(c: CompactData): ShareData {
     ...(c.r ? { arrows: c.r.map((a) => ({ fromIndex: a.f, toIndex: a.o })) } : {}),
     layers: c.l,
     totalTimeMs: c.T,
-    slotCostConfigs: c.C?.map((cc) => ({ skillCost: cc.k, hasUniqueWeapon4: cc.u })),
+    slotCostConfigs: c.C?.map((cc) => ({ skillCost: cc.k, hasUniqueWeapon4: cc.u, hasUniqueWeapon2: cc.w !== false })),
     targetTimeMs: c.G,
     heavyArmorCount: c.H,
     redWinterCount: c.W,

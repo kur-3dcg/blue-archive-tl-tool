@@ -133,12 +133,23 @@ interface ExBuffInfo {
   firstTrigger?: number; // 初回発動に必要なEX回数（デフォルト=countTrigger）
 }
 
-function getExBuffParams(charName: string): ExBuffInfo | null {
+// バフ効果持続力倍率（固有2↑）
+const BUFF_DURATION_MULTIPLIER = 1.19;
+
+// 固有2でバフ時間が延長されるキャラ
+const UNIQUE2_BUFF_CHARS = [SEIA, SUZUMI_MAGICAL];
+
+function getExBuffParams(charName: string, hasUniqueWeapon2: boolean): ExBuffInfo | null {
+  const applyDuration = (ms: number) =>
+    UNIQUE2_BUFF_CHARS.includes(charName) && hasUniqueWeapon2
+      ? Math.round(ms * BUFF_DURATION_MULTIPLIER)
+      : ms;
+
   if (charName === HOSHINO_SWIMSUIT) return { recoveryDelta: 684, durationMs: 50000 };
   if (charName === HIFUMI) return { recoveryDelta: 1861, durationMs: 5000 };
-  if (charName === SEIA) return { recoveryDelta: 718, durationMs: 15000 };
+  if (charName === SEIA) return { recoveryDelta: 718, durationMs: applyDuration(15000) };
   if (charName === KURUMI) return { recoveryDelta: 854, durationMs: 10000 };
-  if (charName === SUZUMI_MAGICAL) return { recoveryDelta: 690, durationMs: 35000 };
+  if (charName === SUZUMI_MAGICAL) return { recoveryDelta: 690, durationMs: applyDuration(35000) };
   // ノア���パジャマ）: 初回2回目、以降3回ごと（2→5→8→...）
   if (charName === NOA_PAJAMA) return { recoveryDelta: 803, durationMs: 30000, countTrigger: 3, firstTrigger: 2 };
   // ユカリ（水着）: 2回ごと（2,4,6,...）
@@ -221,7 +232,7 @@ export function calculateItemCosts(
       costAdjustment: item.costAdjustment ?? 0,
     });
 
-    const buffParams = getExBuffParams(slot.character.name);
+    const buffParams = getExBuffParams(slot.character.name, config?.hasUniqueWeapon2 ?? true);
     if (buffParams) {
       const shouldTrigger = checkBuffTrigger(buffParams, item, slotItemsSorted);
       if (shouldTrigger) {
@@ -255,17 +266,17 @@ export function calculateItemCosts(
   let shunApplied = false;
 
   for (const event of events) {
+    // シュンNS: 回復開始地点（recoveryStartMs）を通過したらコスト+3.8（回復前に適用）
+    if (hasShun && !shunApplied && currentTimeMs >= recoveryStartMs && event.timeMs <= recoveryStartMs) {
+      currentCost = Math.min(costCap, currentCost + 3.8);
+      shunApplied = true;
+    }
     // このイベントまでの経過時間でコスト回復（遅延考慮）
     const effectiveMs = getEffectiveRecoveryMs(currentTimeMs, event.timeMs, recoveryStartMs);
     if (effectiveMs > 0) {
       const recoveryPerSec = (baseSum + activeBuffDelta) * multiplier / 10000;
       const recovered = recoveryPerSec * (effectiveMs / 1000);
       currentCost = Math.min(costCap, currentCost + recovered);
-    }
-    // シュンNS: 回復開始地点（recoveryStartMs）を通過したらコスト+3.8
-    if (hasShun && !shunApplied && currentTimeMs >= recoveryStartMs && event.timeMs <= recoveryStartMs) {
-      currentCost = Math.min(costCap, currentCost + 3.8);
-      shunApplied = true;
     }
 
     currentTimeMs = event.timeMs;
@@ -344,7 +355,7 @@ export function calculateCostTimeline(
       costAdjustment: item.costAdjustment ?? 0,
     });
 
-    const buffParams = getExBuffParams(slot.character.name);
+    const buffParams = getExBuffParams(slot.character.name, config?.hasUniqueWeapon2 ?? true);
     if (buffParams) {
       const shouldTrigger = checkBuffTrigger(buffParams, item, slotItemsSorted);
       if (shouldTrigger) {
@@ -388,14 +399,24 @@ export function calculateCostTimeline(
   }
 
   for (const event of events) {
+    // シュンNS: 回復開始地点（recoveryStartMs）を通過したらコスト+3.8（回復前に適用）
+    let shunJustApplied = false;
+    if (hasShun && !shunApplied && currentTimeMs >= recoveryStartMs && event.timeMs <= recoveryStartMs) {
+      keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
+      currentCost = Math.min(costCap, currentCost + 3.8);
+      keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
+      shunApplied = true;
+      shunJustApplied = true;
+    }
+
     const effectiveMs = getEffectiveRecoveryMs(currentTimeMs, event.timeMs, recoveryStartMs);
     if (effectiveMs > 0) {
       const recoveryPerSec = (baseSum + activeBuffDelta) * multiplier / 10000;
       const recovered = recoveryPerSec * (effectiveMs / 1000);
       const newCost = Math.min(costCap, currentCost + recovered);
 
-      // 回復開始地点のキーポイント（遅延→回復の境界）
-      if (currentTimeMs > recoveryStartMs && event.timeMs < recoveryStartMs) {
+      // 回復開始地点のキーポイント（遅延→回復の境界、シュンで追加済みならスキップ）
+      if (!shunJustApplied && currentTimeMs > recoveryStartMs && event.timeMs < recoveryStartMs) {
         keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
       }
 
@@ -412,16 +433,9 @@ export function calculateCostTimeline(
       currentCost = newCost;
     } else {
       // 回復なし区間でも境界ポイントは記録
-      if (currentTimeMs > recoveryStartMs && event.timeMs <= recoveryStartMs) {
+      if (!shunJustApplied && currentTimeMs > recoveryStartMs && event.timeMs <= recoveryStartMs) {
         keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
       }
-    }
-    // シュンNS: 回復開始地点（recoveryStartMs）を通過したらコスト+3.8
-    if (hasShun && !shunApplied && currentTimeMs >= recoveryStartMs && event.timeMs <= recoveryStartMs) {
-      keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
-      currentCost = Math.min(costCap, currentCost + 3.8);
-      keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
-      shunApplied = true;
     }
     currentTimeMs = event.timeMs;
 

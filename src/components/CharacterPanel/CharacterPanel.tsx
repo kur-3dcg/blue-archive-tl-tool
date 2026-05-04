@@ -13,6 +13,7 @@ interface Props {
   slotCostConfigs: SlotCostConfig[];
   onSetSlotCost: (slotIndex: number, skillCost: number) => void;
   onSetUniqueWeapon4: (slotIndex: number, value: boolean) => void;
+  onSetUniqueWeapon2: (slotIndex: number, value: boolean) => void;
   heavyArmorCount: number;
   redWinterCount: number;
   onSetHeavyArmorCount: (count: number) => void;
@@ -29,6 +30,7 @@ export function CharacterPanel({
   slotCostConfigs,
   onSetSlotCost,
   onSetUniqueWeapon4,
+  onSetUniqueWeapon2,
   heavyArmorCount,
   redWinterCount,
   onSetHeavyArmorCount,
@@ -53,6 +55,7 @@ export function CharacterPanel({
               costConfig={slotCostConfigs[i]}
               onSetCost={(cost) => onSetSlotCost(i, cost)}
               onSetUniqueWeapon4={(v) => onSetUniqueWeapon4(i, v)}
+              onSetUniqueWeapon2={(v) => onSetUniqueWeapon2(i, v)}
             />
           ))}
         </div>
@@ -72,6 +75,7 @@ export function CharacterPanel({
               costConfig={slotCostConfigs[i + 4]}
               onSetCost={(cost) => onSetSlotCost(i + 4, cost)}
               onSetUniqueWeapon4={(v) => onSetUniqueWeapon4(i + 4, v)}
+              onSetUniqueWeapon2={(v) => onSetUniqueWeapon2(i + 4, v)}
             />
           ))}
         </div>

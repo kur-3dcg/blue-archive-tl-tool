@@ -12,6 +12,7 @@ interface Props {
   costConfig: SlotCostConfig;
   onSetCost: (cost: number) => void;
   onSetUniqueWeapon4: (value: boolean) => void;
+  onSetUniqueWeapon2: (value: boolean) => void;
 }
 
 export function SlotSelector({
@@ -24,6 +25,7 @@ export function SlotSelector({
   costConfig,
   onSetCost,
   onSetUniqueWeapon4,
+  onSetUniqueWeapon2,
 }: Props) {
   const [showSearch, setShowSearch] = useState(false);
 
@@ -107,6 +109,15 @@ export function SlotSelector({
                 固有4
               </label>
             )}
+            <label className="slot-unique-weapon" title="固有武器2↑（バフ効果持続力×1.19）">
+              <input
+                type="checkbox"
+                checked={costConfig.hasUniqueWeapon2}
+                onChange={(e) => onSetUniqueWeapon2(e.target.checked)}
+                onClick={(e) => e.stopPropagation()}
+              />
+              固有2
+            </label>
           </div>
         )}
       </div>

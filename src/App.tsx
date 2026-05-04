@@ -129,6 +129,9 @@ export default function App() {
         onSetUniqueWeapon4={(slotIndex, value) =>
           dispatch({ type: 'SET_UNIQUE_WEAPON4', slotIndex, value })
         }
+        onSetUniqueWeapon2={(slotIndex, value) =>
+          dispatch({ type: 'SET_UNIQUE_WEAPON2', slotIndex, value })
+        }
         heavyArmorCount={state.heavyArmorCount}
         redWinterCount={state.redWinterCount}
         onSetHeavyArmorCount={(count) =>

@@ -22,7 +22,7 @@ function createInitialSlots(): CharacterSlot[] {
 function createInitialCostConfigs(): SlotCostConfig[] {
   const configs: SlotCostConfig[] = [];
   for (let i = 0; i < STRIKER_COUNT + SPECIAL_COUNT; i++) {
-    configs.push({ skillCost: 3, hasUniqueWeapon4: false });
+    configs.push({ skillCost: 3, hasUniqueWeapon4: false, hasUniqueWeapon2: true });
   }
   return configs;
 }
@@ -172,6 +172,14 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         ),
       };
 
+    case 'SET_UNIQUE_WEAPON2':
+      return {
+        ...state,
+        slotCostConfigs: state.slotCostConfigs.map((c, i) =>
+          i === action.slotIndex ? { ...c, hasUniqueWeapon2: action.value } : c
+        ),
+      };
+
     case 'SET_COST_ADJUSTMENT':
       return {
         ...state,
@@ -219,7 +227,10 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         arrows: action.state.arrows ?? [],
         layers: action.state.layers,
         totalTimeMs: action.state.totalTimeMs ?? state.totalTimeMs,
-        slotCostConfigs: action.state.slotCostConfigs ?? createInitialCostConfigs(),
+        slotCostConfigs: (action.state.slotCostConfigs ?? createInitialCostConfigs()).map((c) => ({
+          ...c,
+          hasUniqueWeapon2: c.hasUniqueWeapon2 ?? true,
+        })),
         targetTimeMs: action.state.targetTimeMs,
         heavyArmorCount: action.state.heavyArmorCount ?? 0,
         redWinterCount: action.state.redWinterCount ?? 0,
