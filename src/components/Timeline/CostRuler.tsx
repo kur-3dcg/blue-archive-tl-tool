@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
 import type { CharacterSlot, TimelineItem, SlotCostConfig } from '../../types';
 import { TIMELINE_PAD_LEFT, TIMELINE_PAD_RIGHT } from '../../constants';
-import { calculateCostTimeline, calculateCostCap } from '../../utils/costCalc';
+import { calculateCostTimeline, calculateCostCap, computeArmorCounts } from '../../utils/costCalc';
 
 const COST_RULER_HEIGHT = 140;
 
@@ -12,8 +12,6 @@ interface Props {
   totalTimeMs: number;
   zoomLevel: number;
   totalWidth: number;
-  heavyArmorCount: number;
-  redWinterCount: number;
 }
 
 export function CostRuler({
@@ -23,18 +21,16 @@ export function CostRuler({
   totalTimeMs,
   zoomLevel,
   totalWidth,
-  heavyArmorCount,
-  redWinterCount,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const totalTimeS = totalTimeMs / 1000;
 
   const costCap = useMemo(() => calculateCostCap(slotCostConfigs), [slotCostConfigs]);
 
-  const keypoints = useMemo(
-    () => calculateCostTimeline(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount),
-    [slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount]
-  );
+  const keypoints = useMemo(() => {
+    const { heavyArmorCount, redWinterCount } = computeArmorCounts(slots);
+    return calculateCostTimeline(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount);
+  }, [slots, items, slotCostConfigs, totalTimeMs]);
 
   // Re-render on theme change
   const [theme, setTheme] = useState(document.documentElement.getAttribute('data-theme'));

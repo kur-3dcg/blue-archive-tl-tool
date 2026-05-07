@@ -137,7 +137,7 @@ export function TimelineItem({
 
       // Snap to nearby items on the destination layer only
       const destLayerItems = allItems.filter((it) => it.layerIndex === newLayer);
-      newTimeMs = snapToNearestItem(newTimeMs, destLayerItems, item.id, curZoom);
+      newTimeMs = snapToNearestItem(newTimeMs, destLayerItems, item.id, curZoom, totalWidth);
 
       onMove(item.id, newTimeMs, newLayer);
     };

@@ -495,6 +495,79 @@
   background: var(--btn-import-hover);
 }
 
+/* Standalone comment layer */
+.standalone-comment-layer {
+  position: relative;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border-secondary);
+  background: rgba(76, 175, 80, 0.04);
+  transition: background 0.1s;
+}
+
+.standalone-comment-layer.drag-over {
+  background: rgba(76, 175, 80, 0.12);
+  outline: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+.standalone-bubble {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(76, 175, 80, 0.18);
+  border: 1.5px solid #4caf50;
+  border-radius: 6px;
+  cursor: grab;
+  user-select: none;
+  z-index: 7;
+  transition: background 0.1s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.standalone-bubble:hover {
+  background: rgba(76, 175, 80, 0.32);
+}
+
+.standalone-bubble.dragging {
+  cursor: grabbing;
+  opacity: 0.85;
+  background: rgba(76, 175, 80, 0.4);
+}
+
+.standalone-bubble-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4caf50;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 4px;
+  pointer-events: none;
+}
+
+.standalone-bubble-arrow {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #4caf50;
+  pointer-events: none;
+}
+
+.standalone-drag-line {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: #4caf50;
+  pointer-events: none;
+  z-index: 10;
+}
+
 /* Cost ruler */
 .cost-ruler {
   display: block;

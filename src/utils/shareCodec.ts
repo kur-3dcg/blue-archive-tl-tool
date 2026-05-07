@@ -1,4 +1,4 @@
-import type { CharacterSlot, TimelineItem, TimelineArrow, SlotCostConfig } from '../types';
+import type { CharacterSlot, TimelineItem, TimelineArrow, SlotCostConfig, StandaloneComment } from '../types';
 import stCharacters from '../../data/characters_st.json';
 import spCharacters from '../../data/characters_sp.json';
 
@@ -32,6 +32,7 @@ interface CompactData {
   G?: number;                                              // targetTimeMs
   H?: number;                                              // heavyArmorCount
   W?: number;                                              // redWinterCount
+  N?: { t: number; x: string }[];                         // standaloneComments: timeMs, text
 }
 
 // Decoded result (unified)
@@ -45,6 +46,7 @@ export interface ShareData {
   targetTimeMs?: number;
   heavyArmorCount?: number;
   redWinterCount?: number;
+  standaloneComments?: { timeMs: number; text: string }[];
 }
 
 // --- Compression helpers using DecompressionStream/CompressionStream ---
@@ -123,8 +125,7 @@ export async function encode(
   arrows: TimelineArrow[] = [],
   slotCostConfigs?: SlotCostConfig[],
   targetTimeMs?: number,
-  heavyArmorCount?: number,
-  redWinterCount?: number
+  standaloneComments?: StandaloneComment[],
 ): Promise<string> {
   const itemIdToIndex = new Map(items.map((item, idx) => [item.id, idx]));
 
@@ -159,8 +160,9 @@ export async function encode(
     T: totalTimeMs,
     ...(slotCostConfigs ? { C: slotCostConfigs.map((c) => ({ k: c.skillCost, u: c.hasUniqueWeapon4, ...(!c.hasUniqueWeapon2 ? { w: false } : {}) })) } : {}),
     ...(targetTimeMs !== undefined ? { G: targetTimeMs } : {}),
-    ...(heavyArmorCount ? { H: heavyArmorCount } : {}),
-    ...(redWinterCount ? { W: redWinterCount } : {}),
+    ...(standaloneComments && standaloneComments.length > 0
+      ? { N: standaloneComments.map((sc) => ({ t: sc.timeMs, x: sc.text })) }
+      : {}),
   };
 
   const jsonStr = JSON.stringify(compact);
@@ -221,5 +223,6 @@ function compactToShareData(c: CompactData): ShareData {
     targetTimeMs: c.G,
     heavyArmorCount: c.H,
     redWinterCount: c.W,
+    standaloneComments: c.N?.map((n) => ({ timeMs: n.t, text: n.x })),
   };
 }

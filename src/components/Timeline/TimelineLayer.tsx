@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import type { TimelineItem as TItem, CharacterSlot, SnapMode } from '../../types';
-import { ITEM_WIDTH, LAYER_HEIGHT, TIMELINE_PAD_LEFT, TIMELINE_PAD_RIGHT } from '../../constants';
+import { ITEM_WIDTH, LAYER_HEIGHT, TIMELINE_PAD_RIGHT } from '../../constants';
 import { snapTime, snapToNearestItem } from '../../utils/snap';
 import { TimelineItem } from './TimelineItem';
+import { BuffBarLayer } from './BuffBarLayer';
 
 interface Props {
   layerIndex: number;
@@ -29,6 +30,7 @@ interface Props {
   onCostAdjust?: (itemId: string, delta: number) => void;
   onSetTarget?: (itemId: string, targetSlotIndex: number | undefined) => void;
   onToggleTimeDisplay?: (itemId: string) => void;
+  onDropStandaloneComment?: (timeMs: number) => void;
 }
 
 interface ItemLayout {
@@ -61,6 +63,7 @@ export function TimelineLayer({
   onCostAdjust,
   onSetTarget,
   onToggleTimeDisplay,
+  onDropStandaloneComment,
 }: Props) {
   const [dragOver, setDragOver] = useState(false);
 
@@ -89,7 +92,7 @@ export function TimelineLayer({
 
         // Check if this item's base position overlaps with prev's effective position
         const distance = Math.abs(baseX - prevEffectiveX);
-        if (distance < ITEM_WIDTH) {
+        if (distance <= ITEM_WIDTH) {
           isInstant = true;
           // Place to the right of prev item (toward 0:00 direction = positive x)
           xOffset = prevEffectiveX + ITEM_WIDTH - baseX;
@@ -103,15 +106,19 @@ export function TimelineLayer({
     return map;
   }, [items, zoomLevel, totalWidth]);
 
+  const isAcceptedDrag = (e: React.DragEvent) =>
+    e.dataTransfer.types.includes('application/x-slot-index') ||
+    e.dataTransfer.types.includes('application/x-standalone-comment');
+
   const handleDragOver = (e: React.DragEvent) => {
-    if (e.dataTransfer.types.includes('application/x-slot-index')) {
+    if (isAcceptedDrag(e)) {
       e.preventDefault();
       e.dataTransfer.dropEffect = 'copy';
     }
   };
 
   const handleDragEnter = (e: React.DragEvent) => {
-    if (e.dataTransfer.types.includes('application/x-slot-index')) {
+    if (isAcceptedDrag(e)) {
       setDragOver(true);
     }
   };
@@ -126,15 +133,22 @@ export function TimelineLayer({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragOver(false);
-    const slotIndex = Number(e.dataTransfer.getData('application/x-slot-index'));
-    if (isNaN(slotIndex)) return;
 
     const rect = e.currentTarget.getBoundingClientRect();
     const xInContainer = e.clientX - rect.left;
     let timeMs = ((totalWidth - TIMELINE_PAD_RIGHT - xInContainer) / zoomLevel) * 1000;
     timeMs = snapTime(Math.max(0, Math.min(totalTimeMs, timeMs)), snapMode);
+
+    // Standalone comment drop
+    if (e.dataTransfer.types.includes('application/x-standalone-comment')) {
+      onDropStandaloneComment?.(timeMs);
+      return;
+    }
+
+    const slotIndex = Number(e.dataTransfer.getData('application/x-slot-index'));
+    if (isNaN(slotIndex)) return;
     // Also snap to nearby items on this layer
-    timeMs = snapToNearestItem(timeMs, items, '', zoomLevel);
+    timeMs = snapToNearestItem(timeMs, items, '', zoomLevel, totalWidth);
     onDrop(slotIndex, timeMs, layerIndex);
   };
 
@@ -148,6 +162,13 @@ export function TimelineLayer({
       onDrop={handleDrop}
     >
       <div className="timeline-layer-label">L{layerIndex + 1}</div>
+      <BuffBarLayer
+        items={items}
+        slots={slots}
+        layoutMap={layoutMap}
+        zoomLevel={zoomLevel}
+        totalWidth={totalWidth}
+      />
       {items.map((item) => {
         const layout = layoutMap.get(item.id) ?? { isInstant: false, xOffset: 0 };
         return (

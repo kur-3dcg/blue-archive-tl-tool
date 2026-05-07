@@ -19,22 +19,6 @@
   align-items: center;
 }
 
-.share-panel-textarea {
-  width: 180px;
-  background: var(--bg-input);
-  border: 1px solid var(--border-secondary);
-  border-radius: 4px;
-  color: var(--text-secondary);
-  font-size: 11px;
-  font-family: monospace;
-  padding: 4px 6px;
-  height: 24px;
-}
-
-.share-panel-textarea::placeholder {
-  color: var(--text-dim);
-}
-
 .share-btn {
   padding: 4px 10px;
   border: 1px solid var(--border-tertiary);
@@ -54,25 +38,51 @@
   background: var(--btn-export-hover);
 }
 
-.share-btn.export-code {
+.share-btn.export-tl {
   background: var(--bg-control);
   color: var(--text-secondary);
 }
 
-.share-btn.export-code:hover {
+.share-btn.export-tl:hover {
   background: var(--bg-control-hover);
 }
 
-.share-btn.import {
-  background: var(--btn-import-bg);
-  color: var(--btn-import-text);
+.share-btn.export-image {
+  background: var(--bg-control);
+  color: var(--text-secondary);
 }
 
-.share-btn.import:hover {
-  background: var(--btn-import-hover);
+.share-btn.export-image:hover {
+  background: var(--bg-control-hover);
 }
 
 .share-panel-error {
   color: var(--error-text);
   font-size: 11px;
+}
+
+/* トースト通知 */
+@keyframes toast-appear {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.88); }
+  12%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  75%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+}
+
+.toast-popup {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(30, 30, 30, 0.82);
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  pointer-events: none;
+  z-index: 2000;
+  animation: toast-appear 2s ease forwards;
+  white-space: nowrap;
 }

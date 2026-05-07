@@ -59,6 +59,70 @@
   color: var(--text-active);
 }
 
+.reset-all-btn {
+  align-self: center;
+  padding: 8px 18px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  background: var(--bg-control);
+  color: var(--text-muted);
+}
+
+.reset-all-btn:hover {
+  background: #c0392b;
+  border-color: #e74c3c;
+  color: #fff;
+}
+
+/* Comment drag button */
+.comment-drag-btn {
+  align-self: flex-start;
+  margin-left: 16px;
+  margin-top: 20px; /* slot-group-label の高さ分下げて顔画像の上端に揃える */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: grab;
+  user-select: none;
+  padding: 4px;
+  border-radius: 8px;
+  border: 2px solid rgba(76, 175, 80, 0.5);
+  background: rgba(76, 175, 80, 0.1);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.comment-drag-btn:hover:not(.disabled) {
+  background: rgba(76, 175, 80, 0.22);
+  border-color: #4caf50;
+}
+
+.comment-drag-btn:active:not(.disabled) {
+  cursor: grabbing;
+}
+
+.comment-drag-btn.disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.comment-drag-icon {
+  width: 48px;
+  height: 48px;
+  color: #4caf50;
+}
+
+.comment-drag-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #4caf50;
+  letter-spacing: 0.5px;
+}
+
 .slot-group {
   display: flex;
   flex-direction: column;
@@ -242,6 +306,34 @@
   padding: 20px;
   color: var(--text-muted);
   text-align: center;
+}
+
+.character-search-name {
+  flex: 1;
+  text-align: left;
+}
+
+.character-search-fav {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+  opacity: 0.4;
+  transition: opacity 0.1s, color 0.1s;
+}
+
+.character-search-fav:hover {
+  opacity: 1;
+  color: #f0c040;
+}
+
+.character-search-fav.active {
+  color: #f0c040;
+  opacity: 1;
 }
 
 /* Cost settings */

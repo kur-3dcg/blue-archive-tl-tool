@@ -1,14 +1,15 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import type { TimelineState, TimelineAction, SnapMode } from '../../types';
-import { RULER_HEIGHT, LAYER_HEIGHT, ITEM_WIDTH, MAX_LAYERS, TIME_PRESETS, TIMELINE_PAD_LEFT, TIMELINE_PAD_RIGHT, VIEWPORT_DURATION_S, MAX_TOTAL_TIME_MS } from '../../constants';
+import { RULER_HEIGHT, LAYER_HEIGHT, ITEM_WIDTH, MAX_LAYERS, TIME_PRESETS, TIMELINE_PAD_LEFT, TIMELINE_PAD_RIGHT, VIEWPORT_DURATION_S, MAX_TOTAL_TIME_MS, STANDALONE_COMMENT_HEIGHT } from '../../constants';
 import { TimelineRuler } from './TimelineRuler';
 import { TimelineLayer } from './TimelineLayer';
 import { TimelineCursor } from './TimelineCursor';
 import { BubbleLayer } from './BubbleLayer';
+import { StandaloneCommentLayer } from './StandaloneCommentLayer';
 import { ArrowLayer } from './ArrowLayer';
 import { CostRuler, COST_RULER_HEIGHT } from './CostRuler';
 import { snapTime } from '../../utils/snap';
-import { calculateItemCosts } from '../../utils/costCalc';
+import { calculateItemCosts, computeArmorCounts } from '../../utils/costCalc';
 import { costToDisplay } from '../../utils/timeFormat';
 import './Timeline.css';
 
@@ -19,8 +20,8 @@ interface Props {
 }
 
 let nextItemId = 1;
-
 let nextArrowId = 1;
+let nextScId = 1;
 
 export function Timeline({ state, dispatch, arrowMode }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -30,12 +31,17 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
   const [dragInfo, setDragInfo] = useState<{ timeMs: number; itemId: string } | null>(null);
   const [customTimeInput, setCustomTimeInput] = useState('');
   const [targetTimeInput, setTargetTimeInput] = useState('');
-  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [commentModal, setCommentModal] = useState<
+    | { kind: 'item'; id: string }
+    | { kind: 'sc-new'; timeMs: number }
+    | { kind: 'sc-edit'; id: string }
+    | null
+  >(null);
   const [commentInput, setCommentInput] = useState('');
   const [arrowClickFrom, setArrowClickFrom] = useState<string | null>(null);
   const [containerWidth, setContainerWidth] = useState(800);
 
-  const { snapMode, layers, items, arrows, slots, totalTimeMs, slotCostConfigs, targetTimeMs } = state;
+  const { snapMode, layers, items, arrows, slots, totalTimeMs, slotCostConfigs, targetTimeMs, standaloneComments } = state;
   const totalTimeS = totalTimeMs / 1000;
 
   // zoomLevel をビューポート幅から自動算出
@@ -89,7 +95,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
           const prevOffset = map.get(prev.id) ?? 0;
           const prevEffectiveX = prevBaseX + prevOffset;
           const distance = Math.abs(baseX - prevEffectiveX);
-          if (distance < ITEM_WIDTH) {
+          if (distance <= ITEM_WIDTH) {
             xOffset = prevEffectiveX + ITEM_WIDTH - baseX;
             break;
           }
@@ -102,8 +108,9 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
 
   // Calculate cost for each item
   const itemCostMap = useMemo(() => {
-    return calculateItemCosts(slots, items, slotCostConfigs, totalTimeMs, state.heavyArmorCount, state.redWinterCount);
-  }, [slots, items, slotCostConfigs, totalTimeMs, state.heavyArmorCount, state.redWinterCount]);
+    const { heavyArmorCount, redWinterCount } = computeArmorCounts(slots);
+    return calculateItemCosts(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount);
+  }, [slots, items, slotCostConfigs, totalTimeMs]);
 
   // ビューポート移動（30秒刻み）
   const scrollByStep = useCallback((direction: 'left' | 'right') => {
@@ -188,23 +195,59 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
   const handleDoubleClickItem = useCallback(
     (itemId: string) => {
       const item = items.find((i) => i.id === itemId);
-      setEditingCommentId(itemId);
-      setCommentInput(item?.comment ?? '');
+      if (!item) return;
+      // 即スタックの子をダブルクリックした場合、親（xOffset=0）にコメントを付ける
+      let targetId = itemId;
+      if ((itemXOffsetMap.get(itemId) ?? 0) > 0) {
+        const parent = items.find(
+          (it) => it.layerIndex === item.layerIndex && it.timeMs === item.timeMs && (itemXOffsetMap.get(it.id) ?? 0) === 0
+        );
+        if (parent) targetId = parent.id;
+      }
+      const targetItem = items.find((i) => i.id === targetId);
+      setCommentModal({ kind: 'item', id: targetId });
+      setCommentInput(targetItem?.comment ?? '');
     },
-    [items]
+    [items, itemXOffsetMap]
   );
 
   const handleCommentSubmit = useCallback(() => {
-    if (editingCommentId === null) return;
+    if (commentModal === null) return;
     const trimmed = commentInput.trim();
-    dispatch({
-      type: 'SET_COMMENT',
-      itemId: editingCommentId,
-      comment: trimmed || undefined,
-    });
-    setEditingCommentId(null);
+    if (commentModal.kind === 'item') {
+      dispatch({ type: 'SET_COMMENT', itemId: commentModal.id, comment: trimmed || undefined });
+    } else if (commentModal.kind === 'sc-new') {
+      if (trimmed) {
+        dispatch({ type: 'ADD_STANDALONE_COMMENT', id: `sc-${nextScId++}`, timeMs: commentModal.timeMs, text: trimmed });
+      }
+    } else if (commentModal.kind === 'sc-edit') {
+      if (trimmed) {
+        dispatch({ type: 'EDIT_STANDALONE_COMMENT', id: commentModal.id, text: trimmed });
+      } else {
+        dispatch({ type: 'REMOVE_STANDALONE_COMMENT', id: commentModal.id });
+      }
+    }
+    setCommentModal(null);
     setCommentInput('');
-  }, [editingCommentId, commentInput, dispatch]);
+  }, [commentModal, commentInput, dispatch]);
+
+  const handleDropStandaloneComment = useCallback((timeMs: number) => {
+    setCommentModal({ kind: 'sc-new', timeMs });
+    setCommentInput('');
+  }, []);
+
+  const handleMoveStandaloneComment = useCallback((id: string, timeMs: number) => {
+    dispatch({ type: 'MOVE_STANDALONE_COMMENT', id, timeMs });
+  }, [dispatch]);
+
+  const handleRemoveStandaloneComment = useCallback((id: string) => {
+    dispatch({ type: 'REMOVE_STANDALONE_COMMENT', id });
+  }, [dispatch]);
+
+  const handleEditStandaloneComment = useCallback((id: string, currentText: string) => {
+    setCommentModal({ kind: 'sc-edit', id });
+    setCommentInput(currentText);
+  }, []);
 
   const handleRemoveComment = useCallback(
     (itemId: string) => {
@@ -270,8 +313,8 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
     [dispatch]
   );
 
-  const layerAreaTop = RULER_HEIGHT + COST_RULER_HEIGHT;
-  const layerAreaBottom = RULER_HEIGHT + COST_RULER_HEIGHT + layers * LAYER_HEIGHT;
+  const layerAreaTop = RULER_HEIGHT + COST_RULER_HEIGHT + STANDALONE_COMMENT_HEIGHT;
+  const layerAreaBottom = RULER_HEIGHT + COST_RULER_HEIGHT + STANDALONE_COMMENT_HEIGHT + layers * LAYER_HEIGHT;
 
   // ドラッグ中のコスト値を取得
   const dragCostValue = dragInfo ? itemCostMap.get(dragInfo.itemId)?.cost : undefined;
@@ -311,15 +354,15 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
             onChange={(e) => setCustomTimeInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key !== 'Enter') return;
-              const m = customTimeInput.match(/^(\d+):(\d{1,2})$/);
+              const m = customTimeInput.match(/^(\d+):(\d{2})(?:\.(\d{1,3}))?$/);
               if (!m) return;
-              const ms = (Number(m[1]) * 60 + Number(m[2])) * 1000;
+              const ms = (Number(m[1]) * 60 + Number(m[2])) * 1000 + Number((m[3] ?? '').padEnd(3, '0'));
               if (ms > 0 && ms <= MAX_TOTAL_TIME_MS) {
                 dispatch({ type: 'SET_TOTAL_TIME', totalTimeMs: ms });
                 setCustomTimeInput('');
               }
             }}
-            title="自由入力（例: 4:30）Enterで確定（最大4:30）"
+            title="自由入力（例: 4:30 / 4:30.000）Enterで確定（最大4:30）"
           />
         </span>
         <span className="timeline-control">
@@ -360,7 +403,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
           <input
             className="custom-time-input"
             type="text"
-            placeholder="M:SS"
+            placeholder="M:SS.000"
             value={targetTimeInput}
             onChange={(e) => setTargetTimeInput(e.target.value)}
             onKeyDown={(e) => {
@@ -371,15 +414,15 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
                 setTargetTimeInput('');
                 return;
               }
-              const m = val.match(/^(\d+):(\d{1,2})$/);
+              const m = val.match(/^(\d+):(\d{2})(?:\.(\d{1,3}))?$/);
               if (!m) return;
-              const ms = (Number(m[1]) * 60 + Number(m[2])) * 1000;
+              const ms = (Number(m[1]) * 60 + Number(m[2])) * 1000 + Number((m[3] ?? '').padEnd(3, '0'));
               if (ms >= 0 && ms <= totalTimeMs) {
                 dispatch({ type: 'SET_TARGET_TIME', targetTimeMs: ms });
                 setTargetTimeInput('');
               }
             }}
-            title="目標時間を入力（例: 1:30）Enterで確定、空欄で削除"
+            title="目標時間を入力（例: 1:30 / 1:30.500）Enterで確定、空欄で削除"
           />
           {targetTimeMs !== undefined && (
             <button
@@ -419,8 +462,19 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
             totalTimeMs={totalTimeMs}
             zoomLevel={zoomLevel}
             totalWidth={totalWidth}
-            heavyArmorCount={state.heavyArmorCount}
-            redWinterCount={state.redWinterCount}
+          />
+          <StandaloneCommentLayer
+            comments={standaloneComments}
+            zoomLevel={zoomLevel}
+            zoomLevelRef={zoomRef}
+            totalWidth={totalWidth}
+            totalTimeMs={totalTimeMs}
+            snapMode={snapMode}
+            snapModeRef={snapRef}
+            onDrop={handleDropStandaloneComment}
+            onMove={handleMoveStandaloneComment}
+            onRemove={handleRemoveStandaloneComment}
+            onEdit={handleEditStandaloneComment}
           />
           <BubbleLayer
             items={items}
@@ -457,6 +511,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
                 onCostAdjust={handleCostAdjust}
                 onSetTarget={handleSetTarget}
                 onToggleTimeDisplay={handleToggleTimeDisplay}
+                onDropStandaloneComment={handleDropStandaloneComment}
               />
             ))}
             <ArrowLayer
@@ -521,8 +576,8 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
           )}
         </div>
       )}
-      {editingCommentId !== null && (
-        <div className="comment-modal-overlay" onClick={() => setEditingCommentId(null)}>
+      {commentModal !== null && (
+        <div className="comment-modal-overlay" onClick={() => { setCommentModal(null); setCommentInput(''); }}>
           <div className="comment-modal" onClick={(e) => e.stopPropagation()}>
             <div className="comment-modal-title">コメントを入力</div>
             <input
@@ -532,7 +587,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
               onChange={(e) => setCommentInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleCommentSubmit();
-                if (e.key === 'Escape') setEditingCommentId(null);
+                if (e.key === 'Escape') { setCommentModal(null); setCommentInput(''); }
               }}
               autoFocus
               placeholder="コメント（空欄で削除）"
@@ -542,7 +597,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
               <button className="comment-modal-btn ok" onClick={handleCommentSubmit}>
                 OK
               </button>
-              <button className="comment-modal-btn cancel" onClick={() => setEditingCommentId(null)}>
+              <button className="comment-modal-btn cancel" onClick={() => { setCommentModal(null); setCommentInput(''); }}>
                 キャンセル
               </button>
             </div>
