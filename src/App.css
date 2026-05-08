@@ -45,6 +45,28 @@ body {
   gap: 16px;
 }
 
+.saveload-btns {
+  display: flex;
+  gap: 4px;
+}
+
+.saveload-btn {
+  padding: 4px 12px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 4px;
+  background: var(--bg-control);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.saveload-btn:hover {
+  background: var(--bg-control-hover);
+  color: var(--text-primary);
+}
+
 .theme-selector {
   display: flex;
   align-items: center;

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { CharacterPanel } from './components/CharacterPanel/CharacterPanel';
 import { Timeline } from './components/Timeline/Timeline';
 import { SharePanel, buildLoadState } from './components/SharePanel/SharePanel';
+import { SaveLoadModal } from './components/SaveLoad/SaveLoadModal';
 import { useTimelineState } from './hooks/useTimelineState';
 import { decode } from './utils/shareCodec';
 import stCharacters from '../data/characters_st.json';
@@ -18,9 +19,11 @@ const THEME_LABELS: Record<Theme, string> = {
 };
 
 export default function App() {
-  const [state, dispatch] = useTimelineState();
+  const [state, dispatch, resetAll] = useTimelineState();
   const [arrowMode, setArrowMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [saveLoadMode, setSaveLoadMode] = useState<'save' | 'load'>('save');
+  const [showSaveLoad, setShowSaveLoad] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [theme, setTheme] = useState<Theme>(() => {
     return (localStorage.getItem('tl-theme') as Theme) || 'dark';
@@ -73,7 +76,23 @@ export default function App() {
       <header className="app-header">
         <h1>ブルアカ TL作成支援ツール</h1>
         <div className="app-header-right">
-          <SharePanel state={state} dispatch={dispatch} />
+          <div className="saveload-btns">
+            <button
+              className="saveload-btn"
+              onClick={() => { setSaveLoadMode('save'); setShowSaveLoad(true); }}
+              title="現在の状態をセーブ"
+            >
+              セーブ
+            </button>
+            <button
+              className="saveload-btn"
+              onClick={() => { setSaveLoadMode('load'); setShowSaveLoad(true); }}
+              title="セーブデータをロード"
+            >
+              ロード
+            </button>
+          </div>
+          <SharePanel state={state} />
           <div className="theme-selector">
             <label>テーマ:</label>
             <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)}>
@@ -105,8 +124,11 @@ export default function App() {
                   石割収支管理ツール
                 </a>
                 <div className="hamburger-divider" />
-                <a href="https://x.com/kur_3dcg" target="_blank" rel="noopener noreferrer" className="hamburger-contact" onClick={() => setMenuOpen(false)}>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLScPJZCQZhZ-gdIcls9e-DUvQalF9Fx4pCkHLtn-Ec59eJMFcw/viewform?usp=dialog" target="_blank" rel="noopener noreferrer" className="hamburger-contact" onClick={() => setMenuOpen(false)}>
                   ご意見・ご感想・バグ報告などはこちら
+                </a>
+                <a href="https://x.com/kur_3dcg" target="_blank" rel="noopener noreferrer" className="hamburger-contact" onClick={() => setMenuOpen(false)}>
+                  更新・開発情報はこちら
                 </a>
               </div>
             )}
@@ -132,16 +154,17 @@ export default function App() {
         onSetUniqueWeapon2={(slotIndex, value) =>
           dispatch({ type: 'SET_UNIQUE_WEAPON2', slotIndex, value })
         }
-        heavyArmorCount={state.heavyArmorCount}
-        redWinterCount={state.redWinterCount}
-        onSetHeavyArmorCount={(count) =>
-          dispatch({ type: 'SET_HEAVY_ARMOR_COUNT', count })
-        }
-        onSetRedWinterCount={(count) =>
-          dispatch({ type: 'SET_RED_WINTER_COUNT', count })
-        }
+        onResetAll={resetAll}
       />
       <Timeline state={state} dispatch={dispatch} arrowMode={arrowMode} />
+      {showSaveLoad && (
+        <SaveLoadModal
+          initialMode={saveLoadMode}
+          state={state}
+          dispatch={dispatch}
+          onClose={() => setShowSaveLoad(false)}
+        />
+      )}
     </div>
   );
 }

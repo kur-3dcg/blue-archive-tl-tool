@@ -1,0 +1,307 @@
+/* === オーバーレイ背景 === */
+.sl-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === モーダル本体 === */
+.sl-modal {
+  position: relative;
+  background: var(--bg-modal);
+  border: 1px solid var(--border-secondary);
+  border-radius: 12px;
+  width: 820px;
+  max-width: 96vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* === ヘッダー === */
+.sl-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-secondary);
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.sl-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.sl-tab {
+  padding: 6px 20px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  background: var(--bg-control);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sl-tab:hover {
+  background: var(--bg-control-hover);
+}
+
+.sl-tab.active {
+  background: var(--btn-export-bg);
+  color: var(--btn-export-text);
+  border-color: transparent;
+}
+
+.sl-close-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.sl-close-btn:hover {
+  background: var(--bg-control-hover);
+  color: var(--text-primary);
+}
+
+/* === スロットグリッド === */
+.sl-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* === スロットカード === */
+.sl-slot {
+  position: relative;
+  border: 1px solid var(--border-secondary);
+  border-radius: 8px;
+  padding: 8px;
+  min-height: 100px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--bg-secondary);
+}
+
+.sl-slot.filled:hover {
+  border-color: var(--btn-export-bg);
+  background: var(--bg-control-hover);
+}
+
+.sl-slot.empty:hover {
+  border-color: var(--text-muted);
+  background: var(--bg-control-hover);
+}
+
+.sl-slot.disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.sl-slot.disabled:hover {
+  border-color: var(--border-secondary);
+  background: var(--bg-secondary);
+}
+
+/* スロット番号 */
+.sl-slot-num {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* 削除ボタン */
+.sl-slot-delete {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.1s, background 0.1s;
+}
+
+.sl-slot:hover .sl-slot-delete {
+  opacity: 1;
+}
+
+.sl-slot-delete:hover {
+  background: rgba(200, 50, 50, 0.2);
+  color: #e74c3c;
+}
+
+/* キャラプレビュー */
+.sl-slot-preview {
+  flex: 1;
+}
+
+.sl-slot-chars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.sl-char-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 3px;
+  object-fit: cover;
+}
+
+.sl-char-empty {
+  width: 22px;
+  height: 22px;
+  border-radius: 3px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-tertiary);
+}
+
+/* セーブ名 */
+.sl-slot-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* メタ情報 */
+.sl-slot-meta {
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 空きスロットラベル */
+.sl-slot-empty-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* === ダイアログオーバーレイ === */
+.sl-dialog-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  z-index: 10;
+}
+
+.sl-dialog {
+  background: var(--bg-modal);
+  border: 1px solid var(--border-secondary);
+  border-radius: 10px;
+  padding: 24px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.sl-dialog-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sl-dialog-msg {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.sl-dialog-input {
+  padding: 8px 10px;
+  border: 1px solid var(--border-secondary);
+  border-radius: 6px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+}
+
+.sl-dialog-input:focus {
+  border-color: var(--btn-export-bg);
+}
+
+.sl-dialog-btns {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.sl-dialog-btn {
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border-tertiary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sl-dialog-btn.ok {
+  background: var(--btn-export-bg);
+  color: var(--btn-export-text);
+  border-color: transparent;
+}
+
+.sl-dialog-btn.ok:hover {
+  background: var(--btn-export-hover);
+}
+
+.sl-dialog-btn.danger {
+  background: #c0392b;
+  color: #fff;
+  border-color: transparent;
+}
+
+.sl-dialog-btn.danger:hover {
+  background: #e74c3c;
+}
+
+.sl-dialog-btn.cancel {
+  background: var(--bg-control);
+  color: var(--text-secondary);
+}
+
+.sl-dialog-btn.cancel:hover {
+  background: var(--bg-control-hover);
+}

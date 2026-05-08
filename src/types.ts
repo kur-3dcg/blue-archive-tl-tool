@@ -1,6 +1,12 @@
 export interface Character {
   name: string;
   image: string;
+  reading?: string;
+  school?: string;
+  attackType?: string;
+  armorType?: string;
+  cost?: number;
+  exDuration?: number | null;
 }
 
 export type SlotType = 'striker' | 'special';
@@ -45,8 +51,13 @@ export interface TimelineState {
   totalTimeMs: number; // total timeline duration in ms
   slotCostConfigs: SlotCostConfig[]; // 6スロット分
   targetTimeMs?: number; // 目標時間（赤い線で表示）
-  heavyArmorCount: number; // 重装甲ストライカー人数（0-3、カノエSS用）
-  redWinterCount: number;  // レッドウィンター人数（0-3、チェリノSS用）
+  standaloneComments: StandaloneComment[];
+}
+
+export interface StandaloneComment {
+  id: string;
+  timeMs: number;
+  text: string;
 }
 
 export type TimelineAction =
@@ -69,6 +80,9 @@ export type TimelineAction =
   | { type: 'SET_COST_ADJUSTMENT'; itemId: string; adjustment: number }
   | { type: 'SET_TARGET'; itemId: string; targetSlotIndex: number | undefined }
   | { type: 'TOGGLE_TIME_DISPLAY'; itemId: string }
-  | { type: 'SET_HEAVY_ARMOR_COUNT'; count: number }
-  | { type: 'SET_RED_WINTER_COUNT'; count: number }
-  | { type: 'LOAD_STATE'; state: Pick<TimelineState, 'slots' | 'items' | 'arrows' | 'layers' | 'totalTimeMs'> & { slotCostConfigs?: SlotCostConfig[]; targetTimeMs?: number; heavyArmorCount?: number; redWinterCount?: number } };
+  | { type: 'ADD_STANDALONE_COMMENT'; id: string; timeMs: number; text: string }
+  | { type: 'MOVE_STANDALONE_COMMENT'; id: string; timeMs: number }
+  | { type: 'REMOVE_STANDALONE_COMMENT'; id: string }
+  | { type: 'EDIT_STANDALONE_COMMENT'; id: string; text: string }
+  | { type: 'LOAD_STATE'; state: Pick<TimelineState, 'slots' | 'items' | 'arrows' | 'layers' | 'totalTimeMs'> & { slotCostConfigs?: SlotCostConfig[]; targetTimeMs?: number; heavyArmorCount?: number; redWinterCount?: number; standaloneComments?: StandaloneComment[] } }
+  | { type: 'RESET_ALL' };

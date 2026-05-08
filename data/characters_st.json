@@ -1,711 +1,1773 @@
 [
   {
     "name": "アイリ（バンド）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/airi_band.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/airi_band.png",
+    "reading": "あいり（ばんど）",
+    "school": "トリニティ",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "アオバ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/aoba.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/aoba.png",
+    "reading": "あおば",
+    "school": "ハイランダー",
+    "attackType": "振動",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "アカネ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/akane.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/akane.png",
+    "reading": "あかね",
+    "school": "ミレニアム",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "アカリ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/akari.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/akari.png",
+    "reading": "あかり",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "アコ（ドレス）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ako_dress.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ako_dress.png",
+    "reading": "あこ（どれす）",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 5,
+    "exDuration": 30.0
   },
   {
     "name": "アズサ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/azusa.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/azusa.png",
+    "reading": "あずさ",
+    "school": "トリニティ",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "アズサ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/azusa_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/azusa_swimsuit.png",
+    "reading": "あずさ（みずぎ）",
+    "school": "トリニティ",
+    "attackType": "神秘",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "アスナ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/asuna.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/asuna.png",
+    "reading": "あすな",
+    "school": "ミレニアム",
+    "attackType": "神秘",
+    "armorType": "軽装備",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "アスナ（バニーガール）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/asuna_bunnie.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/asuna_bunnie.png",
+    "reading": "あすな（ばにーがーる）",
+    "school": "ミレニアム",
+    "attackType": "神秘",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "アスナ（制服）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/asuna_uniform.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/asuna_uniform.png",
+    "reading": "あすな（せいふく）",
+    "school": "ミレニアム",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": 19.0
   },
   {
     "name": "アツコ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/atuko.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/atuko.png",
+    "reading": "あつこ",
+    "school": "アリウス",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": 30.0
   },
   {
     "name": "アリス",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/alice.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/alice.png",
+    "reading": "ありす",
+    "school": "ミレニアム",
+    "attackType": "神秘",
+    "armorType": "特殊装甲",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "アリス（メイド）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/alice_maid.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/alice_maid.png",
+    "reading": "ありす（めいど）",
+    "school": "ミレニアム",
+    "attackType": "神秘",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "アリス（臨戦）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/alice_rinsen.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/alice_rinsen.png",
+    "reading": "ありす（りんせん）",
+    "school": "ミレニアム",
+    "attackType": "神秘",
+    "armorType": "複合装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "アル",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/aru.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/aru.png",
+    "reading": "ある",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "アル（ドレス）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/aru_dress.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/aru_dress.png",
+    "reading": "ある（どれす）",
+    "school": "ゲヘナ",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "アル（正月）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/aru_newyear.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/aru_newyear.png",
+    "reading": "ある（しょうがつ）",
+    "school": "ゲヘナ",
+    "attackType": "貫通",
+    "armorType": "特殊装甲",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "イオリ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/iori.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/iori.png",
+    "reading": "いおり",
+    "school": "ゲヘナ",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "イオリ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/iori_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/iori_swimsuit.png",
+    "reading": "いおり（みずぎ）",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "イズナ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/izuna.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/izuna.png",
+    "reading": "いずな",
+    "school": "百鬼夜行",
+    "attackType": "神秘",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "イズナ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/izuna_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/izuna_swimsuit.png",
+    "reading": "いずな（みずぎ）",
+    "school": "百鬼夜行",
+    "attackType": "神秘",
+    "armorType": "特殊装甲",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "イズミ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/izumi.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/izumi.png",
+    "reading": "いずみ",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "イズミ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/izumi_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/izumi_swimsuit.png",
+    "reading": "いずみ（みずぎ）",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "イチカ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ichika.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ichika.png",
+    "reading": "いちか",
+    "school": "トリニティ",
+    "attackType": "振動",
+    "armorType": "重装甲",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "イブキ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ibuki.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ibuki.png",
+    "reading": "いぶき",
+    "school": "ゲヘナ",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": 35.0
   },
   {
     "name": "ウイ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ui.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ui.png",
+    "reading": "うい",
+    "school": "トリニティ",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": 46.0
   },
   {
     "name": "ウイ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ui_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/ui_swimsuit.png",
+    "reading": "うい（みずぎ）",
+    "school": "トリニティ",
+    "attackType": "貫通",
+    "armorType": "弾力装甲",
+    "cost": 4,
+    "exDuration": 45.0
   },
   {
     "name": "ウタハ（応援団）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/utaha_cheerleader.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/utaha_cheerleader.png",
+    "reading": "うたは（おうえんだん）",
+    "school": "ミレニアム",
+    "attackType": "神秘",
+    "armorType": "特殊装甲",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "ウミカ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/umika.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/umika.png",
+    "reading": "うみか",
+    "school": "百鬼夜行",
+    "attackType": "神秘",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": 50.0
   },
   {
     "name": "エイミ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/eimi.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/eimi.png",
+    "reading": "えいみ",
+    "school": "ミレニアム",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "エイミ（臨戦）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/eimi_rinsen.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/eimi_rinsen.png",
+    "reading": "えいみ（りんせん）",
+    "school": "ミレニアム",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "エリ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/eri.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/eri.png",
+    "reading": "えり",
+    "school": "ワイルドハント",
+    "attackType": "振動",
+    "armorType": "特殊装甲",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "オトギ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/otogi.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/otogi.png",
+    "reading": "おとぎ",
+    "school": "SRT",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "カズサ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kazusa.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kazusa.png",
+    "reading": "かずさ",
+    "school": "トリニティ",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "カズサ（バンド）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kazusa_band.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kazusa_band.png",
+    "reading": "かずさ（ばんど）",
+    "school": "トリニティ",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 4,
+    "exDuration": 40.0
   },
   {
     "name": "カスミ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kasumi.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kasumi.png",
+    "reading": "かすみ",
+    "school": "ゲヘナ",
+    "attackType": "振動",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "カノエ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kanoe.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kanoe.png",
+    "reading": "かのえ",
+    "school": "ワイルドハント",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "カホ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kaho.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kaho.png",
+    "reading": "かほ",
+    "school": "百鬼夜行",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "カヨコ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kayoko.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kayoko.png",
+    "reading": "かよこ",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "カヨコ（ドレス）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kayoko_dress.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kayoko_dress.png",
+    "reading": "かよこ（どれす）",
+    "school": "ゲヘナ",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "カヨコ（正月）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kayoko_newyear.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kayoko_newyear.png",
+    "reading": "かよこ（しょうがつ）",
+    "school": "ゲヘナ",
+    "attackType": "神秘",
+    "armorType": "特殊装甲",
+    "cost": 2,
+    "exDuration": 40.0
   },
   {
     "name": "カリン（バニーガール）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/karin_bunnie.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/karin_bunnie.png",
+    "reading": "かりん（ばにーがーる）",
+    "school": "ミレニアム",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 7,
+    "exDuration": null
   },
   {
     "name": "カンナ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kanna_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kanna_swimsuit.png",
+    "reading": "かんな（みずぎ）",
+    "school": "ヴァルキューレ",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 2,
+    "exDuration": 20.0
   },
   {
     "name": "キキョウ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kikyou.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kikyou.png",
+    "reading": "ききょう",
+    "school": "百鬼夜行",
+    "attackType": "振動",
+    "armorType": "重装甲",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "キララ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kirara.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kirara.png",
+    "reading": "きらら",
+    "school": "ゲヘナ",
+    "attackType": "振動",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "キリノ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kirino.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kirino.png",
+    "reading": "きりの",
+    "school": "ヴァルキューレ",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "クルミ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kurumi.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kurumi.png",
+    "reading": "くるみ",
+    "school": "SRT",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "ケイ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kei.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kei.png",
+    "reading": "けい",
+    "school": "ミレニアム",
+    "attackType": "神秘",
+    "armorType": "複合装甲",
+    "cost": 2,
+    "exDuration": 25.0
   },
   {
     "name": "ココナ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kokona.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kokona.png",
+    "reading": "ここな",
+    "school": "山海経",
+    "attackType": "貫通",
+    "armorType": "特殊装甲",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "コタマ（キャンプ）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kotama_camp.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kotama_camp.png",
+    "reading": "こたま（きゃんぷ）",
+    "school": "ミレニアム",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "コトリ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kotori.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kotori.png",
+    "reading": "ことり",
+    "school": "ミレニアム",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": 13.0
   },
   {
     "name": "コトリ（応援団）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kotori_cheerleader.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kotori_cheerleader.png",
+    "reading": "ことり（おうえんだん）",
+    "school": "ミレニアム",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "コノカ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/konoka.png"
-  },  
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/konoka.png",
+    "reading": "このか",
+    "school": "ヴァルキューレ",
+    "attackType": "神秘",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
+  },
   {
     "name": "コハル",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/koharu.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/koharu.png",
+    "reading": "こはる",
+    "school": "トリニティ",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "コハル（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/koharu_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/koharu_swimsuit.png",
+    "reading": "こはる（みずぎ）",
+    "school": "トリニティ",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "コユキ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/koyuki.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/koyuki.png",
+    "reading": "こゆき",
+    "school": "ミレニアム",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "サオリ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/saori.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/saori.png",
+    "reading": "さおり",
+    "school": "アリウス",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "サオリ（ドレス）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/saori_dress.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/saori_dress.png",
+    "reading": "さおり（どれす）",
+    "school": "アリウス",
+    "attackType": "振動",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "サオリ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/saori_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/saori_swimsuit.png",
+    "reading": "さおり（みずぎ）",
+    "school": "アリウス",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 7,
+    "exDuration": null
   },
   {
     "name": "サキ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/saki_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/saki_swimsuit.png",
+    "reading": "さき（みずぎ）",
+    "school": "SRT",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "サクラコ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sakurako.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sakurako.png",
+    "reading": "さくらこ",
+    "school": "トリニティ",
+    "attackType": "神秘",
+    "armorType": "特殊装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "サクラコ（アイドル）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sakurako_idol.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sakurako_idol.png",
+    "reading": "さくらこ（あいどる）",
+    "school": "トリニティ",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": 17.0
   },
   {
     "name": "シグレ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sigure.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sigure.png",
+    "reading": "しぐれ",
+    "school": "レッドウィンター",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "ジュリ（アルバイト）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/jyuri_part.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/jyuri_part.png",
+    "reading": "じゅり（あるばいと）",
+    "school": "ゲヘナ",
+    "attackType": "神秘",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "シュン",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/syun.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/syun.png",
+    "reading": "しゅん",
+    "school": "山海経",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "シュン（幼女）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/syun_infant.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/syun_infant.png",
+    "reading": "しゅん（幼女）",
+    "school": "山海経",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "ジュンコ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/jyunko.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/jyunko.png",
+    "reading": "じゅんこ",
+    "school": "ゲヘナ",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "ジュンコ（正月）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/jyunko_newyear.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/jyunko_newyear.png",
+    "reading": "じゅんこ（しょうがつ）",
+    "school": "ゲヘナ",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "シロコ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/siroko.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/siroko.png",
+    "reading": "しろこ",
+    "school": "アビドス",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "シロコ（ライディング）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/siroko_bicycle.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/siroko_bicycle.png",
+    "reading": "しろこ（らいでぃんぐ）",
+    "school": "アビドス",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "シロコ＊テラー",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/siroko_terror.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/siroko_terror.png",
+    "reading": "しろこ＊てらー",
+    "school": "アビドス",
+    "attackType": "神秘",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "スズミ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/suzumi.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/suzumi.png",
+    "reading": "すずみ",
+    "school": "トリニティ",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "スズミ（マジカル）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/suzumi_magic.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/suzumi_magic.png",
+    "reading": "すずみ（まじかる）",
+    "school": "トリニティ",
+    "attackType": "振動",
+    "armorType": "特殊装甲",
+    "cost": 5,
+    "exDuration": 41.0
+  },
+  {
+    "name": "スバル",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/subaru.png",
+    "reading": "すばる",
+    "school": "アリウス",
+    "attackType": "神秘",
+    "armorType": "特殊装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "スミレ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sumire.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sumire.png",
+    "reading": "すみれ",
+    "school": "ミレニアム",
+    "attackType": "貫通",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "セイア",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/seia.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/seia.png",
+    "reading": "せいあ",
+    "school": "トリニティ",
+    "attackType": "貫通",
+    "armorType": "弾力装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "セイア（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/seia_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/seia_swimsuit.png",
+    "reading": "せいあ（みずぎ）",
+    "school": "トリニティ",
+    "attackType": "貫通",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": 25.0
   },
   {
     "name": "セナ（私服）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sena_private.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/sena_private.png",
+    "reading": "せな（しふく）",
+    "school": "ゲヘナ",
+    "attackType": "振動",
+    "armorType": "重装甲",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "セリカ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/serika.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/serika.png",
+    "reading": "せりか",
+    "school": "アビドス",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "セリナ（クリスマス）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/serina_christmas.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/serina_christmas.png",
+    "reading": "せりな（くりすます）",
+    "school": "トリニティ",
+    "attackType": "貫通",
+    "armorType": "特殊装甲",
+    "cost": 4,
+    "exDuration": 50.0
   },
   {
     "name": "タカネ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/takane.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/takane.png",
+    "reading": "たかね",
+    "school": "レッドウィンター",
+    "attackType": "神秘",
+    "armorType": "軽装備",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "チアキ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tiaki.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tiaki.png",
+    "reading": "ちあき",
+    "school": "ゲヘナ",
+    "attackType": "振動",
+    "armorType": "特殊装甲",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "チェリノ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/cherino.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/cherino.png",
+    "reading": "ちぇりの",
+    "school": "レッドウィンター",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "チセ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tise.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tise.png",
+    "reading": "ちせ",
+    "school": "百鬼夜行",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "チセ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tise_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tise_swimsuit.png",
+    "reading": "ちせ（みずぎ）",
+    "school": "百鬼夜行",
+    "attackType": "神秘",
+    "armorType": "軽装備",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "チナツ（温泉）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tinatsu_spa.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tinatsu_spa.png",
+    "reading": "ちなつ（おんせん）",
+    "school": "ゲヘナ",
+    "attackType": "神秘",
+    "armorType": "軽装備",
+    "cost": 2,
+    "exDuration": 30.0
   },
   {
     "name": "ツクヨ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tukuyo.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tukuyo.png",
+    "reading": "つくよ",
+    "school": "百鬼夜行",
+    "attackType": "神秘",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "ツクヨ（ドレス）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tukuyo_dress.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tukuyo_dress.png",
+    "reading": "つくよ（どれす）",
+    "school": "百鬼夜行",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ツバキ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tubaki.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tubaki.png",
+    "reading": "つばき",
+    "school": "百鬼夜行",
+    "attackType": "貫通",
+    "armorType": "特殊装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ツルギ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/turugi.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/turugi.png",
+    "reading": "つるぎ",
+    "school": "トリニティ",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "ツルギ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/turugi_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/turugi_swimsuit.png",
+    "reading": "つるぎ（みずぎ）",
+    "school": "トリニティ",
+    "attackType": "神秘",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "トキ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/toki.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/toki.png",
+    "reading": "とき",
+    "school": "ミレニアム",
+    "attackType": "爆発",
+    "armorType": "弾力装甲",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "トキ（バニーガール）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/toki_bunnie.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/toki_bunnie.png",
+    "reading": "とき（ばにーがーる）",
+    "school": "ミレニアム",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "トキ（臨戦）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/toki_rinsen.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/toki_rinsen.png",
+    "reading": "とき（りんせん）",
+    "school": "ミレニアム",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "トモエ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tomoe.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tomoe.png",
+    "reading": "ともえ",
+    "school": "レッドウィンター",
+    "attackType": "貫通",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": 30.0
   },
   {
     "name": "ナグサ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/nagusa.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/nagusa.png",
+    "reading": "なぐさ",
+    "school": "百鬼夜行",
+    "attackType": "振動",
+    "armorType": "弾力装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ナツ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/natsu.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/natsu.png",
+    "reading": "なつ",
+    "school": "トリニティ",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "ナツ（バンド）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/natsu_band.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/natsu_band.png",
+    "reading": "なつ（ばんど）",
+    "school": "トリニティ",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ニコ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/niko.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/niko.png",
+    "reading": "にこ",
+    "school": "SRT",
+    "attackType": "爆発",
+    "armorType": "弾力装甲",
+    "cost": 4,
+    "exDuration": 35.0
   },
   {
     "name": "ネル",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/neru.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/neru.png",
+    "reading": "ねる",
+    "school": "ミレニアム",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "ネル（バニーガール）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/neru_bunnie.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/neru_bunnie.png",
+    "reading": "ねる（ばにーがーる）",
+    "school": "ミレニアム",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ネル（制服）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/neru_uniform.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/neru_uniform.png",
+    "reading": "ねる（せいふく）",
+    "school": "ミレニアム",
+    "attackType": "貫通",
+    "armorType": "弾力装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ノア",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/noa.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/noa.png",
+    "reading": "のあ",
+    "school": "ミレニアム",
+    "attackType": "神秘",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "ノア（パジャマ）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/noa_pajama.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/noa_pajama.png",
+    "reading": "のあ（ぱじゃま）",
+    "school": "ミレニアム",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "ノゾミ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/nozomi.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/nozomi.png",
+    "reading": "のぞみ",
+    "school": "ハイランダー",
+    "attackType": "振動",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ノノミ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/nonomi.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/nonomi.png",
+    "reading": "ののみ",
+    "school": "アビドス",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "ノノミ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/nonomi_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/nonomi_swimsuit.png",
+    "reading": "ののみ（みずぎ）",
+    "school": "アビドス",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "ハスミ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hasumi.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hasumi.png",
+    "reading": "はすみ",
+    "school": "トリニティ",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "ハスミ（体操服）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hasumi_gym.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hasumi_gym.png",
+    "reading": "はすみ（たいそうふく）",
+    "school": "トリニティ",
+    "attackType": "神秘",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "ハスミ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hasumi_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hasumi_swimsuit.png",
+    "reading": "はすみ（みずぎ）",
+    "school": "トリニティ",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "ハナコ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hanako_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hanako_swimsuit.png",
+    "reading": "はなこ（みずぎ）",
+    "school": "トリニティ",
+    "attackType": "振動",
+    "armorType": "重装甲",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "ハルカ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/haruka.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/haruka.png",
+    "reading": "はるか",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ハルナ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/haruna.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/haruna.png",
+    "reading": "はるな",
+    "school": "ゲヘナ",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "ハルナ（正月）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/haruna_newyear.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/haruna_newyear.png",
+    "reading": "はるな（しょうがつ）",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "ハレ（キャンプ）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hare_camp.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hare_camp.png",
+    "reading": "はれ（きゃんぷ）",
+    "school": "ミレニアム",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 2,
+    "exDuration": 26.0
   },
   {
     "name": "ヒカリ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hikari.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hikari.png",
+    "reading": "ひかり",
+    "school": "ハイランダー",
+    "attackType": "振動",
+    "armorType": "軽装備",
+    "cost": 2,
+    "exDuration": 32.0
   },
   {
     "name": "ヒナ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hina.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hina.png",
+    "reading": "ひな",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 7,
+    "exDuration": null
   },
   {
     "name": "ヒナ（ドレス）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hina_dress.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hina_dress.png",
+    "reading": "ひな（どれす）",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "弾力装甲",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "ヒナ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hina_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hina_swimsuit.png",
+    "reading": "ひな（みずぎ）",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "ヒナタ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hinata.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hinata.png",
+    "reading": "ひなた",
+    "school": "トリニティ",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "ヒビキ（応援団）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hibiki_cheerleader.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hibiki_cheerleader.png",
+    "reading": "ひびき（おうえんだん）",
+    "school": "ミレニアム",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 7,
+    "exDuration": null
   },
   {
     "name": "ヒフミ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hifumi.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hifumi.png",
+    "reading": "ひふみ",
+    "school": "トリニティ",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "ヒヨリ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hiyori_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hiyori_swimsuit.png",
+    "reading": "ひより（みずぎ）",
+    "school": "アリウス",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "フィーナ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/fi-na.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/fi-na.png",
+    "reading": "ふぃーな",
+    "school": "百鬼夜行",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "フブキ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/fubuki.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/fubuki.png",
+    "reading": "ふぶき",
+    "school": "ヴァルキューレ",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "フユ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/fuyu.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/fuyu.png",
+    "reading": "ふゆ",
+    "school": "ワイルドハント",
+    "attackType": "振動",
+    "armorType": "特殊装甲",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "ホシノ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hoshino.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hoshino.png",
+    "reading": "ほしの",
+    "school": "アビドス",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ホシノ（攻撃）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hoshino_rinsen_a.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hoshino_rinsen_a.png",
+    "reading": "ほしの（こうげき）",
+    "school": "アビドス",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "ホシノ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hoshino_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hoshino_swimsuit.png",
+    "reading": "ほしの（みずぎ）",
+    "school": "アビドス",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 5,
+    "exDuration": 50.0
   },
   {
     "name": "ホシノ（防御）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hoshino_rinsen_d.png"
-  },
-  {
-    "name": "ホシノ（臨戦）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hoshino_rinsen.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hoshino_rinsen_d.png",
+    "reading": "ほしの（ぼうぎょ）",
+    "school": "アビドス",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "マキ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/maki.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/maki.png",
+    "reading": "まき",
+    "school": "ミレニアム",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "マリー（アイドル）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mari-_idol.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mari-_idol.png",
+    "reading": "まりー（あいどる）",
+    "school": "トリニティ",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "マリー（体操服）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mari-_gym.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mari-_gym.png",
+    "reading": "まりー（たいそうふく）",
+    "school": "トリニティ",
+    "attackType": "神秘",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "マリナ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/marina.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/marina.png",
+    "reading": "まりな",
+    "school": "レッドウィンター",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "マリナ（チーパオ）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/marina_cheepaw.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/marina_cheepaw.png",
+    "reading": "まりな（ちーぱお）",
+    "school": "レッドウィンター",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "ミカ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mika.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mika.png",
+    "reading": "みか",
+    "school": "トリニティ",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "ミカ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mika_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mika_swimsuit.png",
+    "reading": "みか（みずぎ）",
+    "school": "トリニティ",
+    "attackType": "振動",
+    "armorType": "特殊装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ミサキ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/misaki.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/misaki.png",
+    "reading": "みさき",
+    "school": "アリウス",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "ミチル",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/michiru.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/michiru.png",
+    "reading": "みちる",
+    "school": "百鬼夜行",
+    "attackType": "神秘",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "ミドリ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/midori.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/midori.png",
+    "reading": "みどり",
+    "school": "ミレニアム",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "ミドリ（メイド）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/midori_maid.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/midori_maid.png",
+    "reading": "みどり（めいど）",
+    "school": "ミレニアム",
+    "attackType": "振動",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "ミナ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mina.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mina.png",
+    "reading": "みな",
+    "school": "山海経",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "ミネ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mine.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mine.png",
+    "reading": "みね",
+    "school": "トリニティ",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "ミネ（アイドル）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mine_idol.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mine_idol.png",
+    "reading": "みね（あいどる）",
+    "school": "トリニティ",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": 30.0
   },
   {
     "name": "ミモリ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mimori.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mimori.png",
+    "reading": "みもり",
+    "school": "百鬼夜行",
+    "attackType": "神秘",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": 40.0
   },
   {
     "name": "ミヤコ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/miyako.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/miyako.png",
+    "reading": "みやこ",
+    "school": "SRT",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "ミヤコ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/miyako_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/miyako_swimsuit.png",
+    "reading": "みやこ（みずぎ）",
+    "school": "SRT",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "ミユ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/miyu.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/miyu.png",
+    "reading": "みゆ",
+    "school": "SRT",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "ミヨ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/miyo.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/miyo.png",
+    "reading": "みよ",
+    "school": "ワイルドハント",
+    "attackType": "振動",
+    "armorType": "弾力装甲",
+    "cost": 2,
+    "exDuration": 18.0
   },
   {
     "name": "ムツキ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mutsuki.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mutsuki.png",
+    "reading": "むつき",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ムツキ（正月）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mutsuki_newyear.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/mutsuki_newyear.png",
+    "reading": "むつき（しょうがつ）",
+    "school": "ゲヘナ",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "メグ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/megu.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/megu.png",
+    "reading": "めぐ",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "メル",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/meru.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/meru.png",
+    "reading": "める",
+    "school": "レッドウィンター",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "モエ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/moe_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/moe_swimsuit.png",
+    "reading": "もえ（みずぎ）",
+    "school": "SRT",
+    "attackType": "振動",
+    "armorType": "特殊装甲",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "モミジ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/momiji.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/momiji.png",
+    "reading": "もみじ",
+    "school": "レッドウィンター",
+    "attackType": "振動",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "モモイ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/momoi.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/momoi.png",
+    "reading": "ももい",
+    "school": "ミレニアム",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "モモイ（メイド）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/momoi_maid.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/momoi_maid.png",
+    "reading": "ももい（めいど）",
+    "school": "ミレニアム",
+    "attackType": "振動",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ユウカ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yuuka.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yuuka.png",
+    "reading": "ゆうか",
+    "school": "ミレニアム",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "ユウカ（パジャマ）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yuuka_pajama.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yuuka_pajama.png",
+    "reading": "ゆうか（ぱじゃま）",
+    "school": "ミレニアム",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 2,
+    "exDuration": null
   },
   {
     "name": "ユウカ（体操服）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yuuka_gym.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yuuka_gym.png",
+    "reading": "ゆうか（たいそうふく）",
+    "school": "ミレニアム",
+    "attackType": "神秘",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": 25.0
   },
   {
     "name": "ユカリ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yukari.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yukari.png",
+    "reading": "ゆかり",
+    "school": "百鬼夜行",
+    "attackType": "振動",
+    "armorType": "重装甲",
+    "cost": 7,
+    "exDuration": null
   },
-    {
+  {
     "name": "ユカリ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yukari_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yukari_swimsuit.png",
+    "reading": "ゆかり（みずぎ）",
+    "school": "百鬼夜行",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 6,
+    "exDuration": null
   },
   {
     "name": "ユズ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yuzu.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yuzu.png",
+    "reading": "ゆず",
+    "school": "ミレニアム",
+    "attackType": "貫通",
+    "armorType": "特殊装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ラブ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rabu.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rabu.png",
+    "reading": "らぶ",
+    "school": "トリニティ",
+    "attackType": "振動",
+    "armorType": "特殊装甲",
+    "cost": 4,
+    "exDuration": 40.0
   },
   {
     "name": "リオ（臨戦）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rio_rinsen.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rio_rinsen.png",
+    "reading": "りお（りんせん）",
+    "school": "ミレニアム",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ヨシミ（バンド）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yoshimi_band.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/yoshimi_band.png",
+    "reading": "よしみ（ばんど）",
+    "school": "トリニティ",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 10,
+    "exDuration": null
   },
   {
     "name": "ルミ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rumi.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rumi.png",
+    "reading": "るみ",
+    "school": "山海経",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "レイ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rei.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rei.png",
+    "reading": "れい",
+    "school": "ミレニアム",
+    "attackType": "振動",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "レイサ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/reisa.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/reisa.png",
+    "reading": "れいさ",
+    "school": "トリニティ",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "レイジョ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/reijyo.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/reijyo.png",
+    "reading": "れいじょ",
+    "school": "山海経",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "レナ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rena.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/rena.png",
+    "reading": "れな",
+    "school": "ワイルドハント",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": 18.0
   },
   {
     "name": "レンゲ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/renge.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/renge.png",
+    "reading": "れんげ",
+    "school": "百鬼夜行",
+    "attackType": "振動",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
-   {
+  {
     "name": "レンゲ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/renge_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/renge_swimsuit.png",
+    "reading": "れんげ（みずぎ）",
+    "school": "百鬼夜行",
+    "attackType": "振動",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "ワカモ",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/wakamo.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/wakamo.png",
+    "reading": "わかも",
+    "school": "百鬼夜行",
+    "attackType": "神秘",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": null
   },
   {
     "name": "ワカモ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/wakamo_swimsuit.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/wakamo_swimsuit.png",
+    "reading": "わかも（みずぎ）",
+    "school": "百鬼夜行",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "御坂美琴",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/misaka.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/misaka.png",
+    "reading": "みさかみこと",
+    "school": "その他",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "食蜂操祈",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/syokuhou.png"
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/syokuhou.png",
+    "reading": "しょくほうみさき",
+    "school": "その他",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 5,
+    "exDuration": null
   },
   {
     "name": "未選択",

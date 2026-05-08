@@ -28,9 +28,6 @@ const COST_RECOVERY_SS_NAMES = [
   'ミチル（ドレス）', 'ヒマリ（臨戦）', 'ニヤ',
 ];
 
-// チェリノSS: +511 + レッドウィンター1人あたり+146（最大3人）
-const CHERINO_NAMES = ['チェリノ', 'チェリノ（温泉）'];
-
 // カノエSS: +342 + 重装甲ストライカー1人あたり+85（最大3人）
 const KANOE_NAME = 'カノエ';
 
@@ -60,6 +57,34 @@ interface CostEvent {
  * コスト上限を計算
  * 基本10 + 0.5 × 固有4チェック済みSP生徒数
  */
+/**
+ * スロット構成からカノエ用重装甲数・チェリノ用RW数を自動算出
+ */
+export function computeArmorCounts(slots: CharacterSlot[]): { heavyArmorCount: number; redWinterCount: number } {
+  // チェリノSS: トリガーはチェリノ（ST版）のみ。チェリノ（温泉）はRW生徒としてカウント対象
+  const hasCherino = slots.some((s) => s.character?.name === 'チェリノ');
+  const redWinterCount = hasCherino
+    ? Math.min(3, slots.filter((s) =>
+        s.character &&
+        s.character.name !== 'チェリノ' &&
+        s.character.school === 'レッドウィンター'
+      ).length)
+    : 0;
+
+  // カノエSS: 自身を除く重装甲ストライカー数（最大3）
+  const hasKanoe = slots.some((s) => s.type === 'striker' && s.character?.name === KANOE_NAME);
+  const heavyArmorCount = hasKanoe
+    ? Math.min(3, slots.filter((s) =>
+        s.type === 'striker' &&
+        s.character &&
+        s.character.name !== KANOE_NAME &&
+        s.character.armorType === '重装甲'
+      ).length)
+    : 0;
+
+  return { heavyArmorCount, redWinterCount };
+}
+
 export function calculateCostCap(slotCostConfigs: SlotCostConfig[]): number {
   let cap = 10;
   // SPスロットは index 4,5 (STRIKER_COUNT以降)
@@ -84,9 +109,9 @@ function getBaseRecovery(
   let baseSum = BASE_PER_CHAR * TOTAL_MEMBERS;
   let multiplier = 1;
 
-  // チェリノSS: +511 + レッドウィンター1人あたり+146（最大3人）
+  // チェリノSS: +511 + レッドウィンター1人あたり+146（最大3人）。トリガーはチェリノ（ST版）のみ
   const hasCherino = slots.some(
-    (s) => s.character && CHERINO_NAMES.includes(s.character.name)
+    (s) => s.character?.name === 'チェリノ'
   );
   if (hasCherino) {
     baseSum += 511 + 146 * Math.min(3, redWinterCount);
@@ -176,6 +201,70 @@ function checkBuffTrigger(
   return false;
 }
 
+/**
+ * スロットごとのバフイベントをリフレッシュ対応で生成する。
+ * バフ効果時間内に同一キャラが再使用した場合はタイマーをリセット（スタックしない）。
+ */
+function buildAllBuffEvents(
+  items: TimelineItem[],
+  slots: CharacterSlot[],
+  slotCostConfigs: SlotCostConfig[],
+  slotItemsSorted: Map<number, TimelineItem[]>
+): CostEvent[] {
+  // スロットごとに発動したバフ使用をまとめる
+  const slotTriggered = new Map<number, { timeMs: number; recoveryDelta: number; durationMs: number }[]>();
+
+  for (const item of items) {
+    const slot = slots[item.slotIndex];
+    const config = slotCostConfigs[item.slotIndex];
+    if (!slot?.character) continue;
+
+    const buffParams = getExBuffParams(slot.character.name, config?.hasUniqueWeapon2 ?? true);
+    if (!buffParams) continue;
+    if (!checkBuffTrigger(buffParams, item, slotItemsSorted)) continue;
+
+    const arr = slotTriggered.get(item.slotIndex) ?? [];
+    arr.push({ timeMs: item.timeMs, recoveryDelta: buffParams.recoveryDelta, durationMs: buffParams.durationMs });
+    slotTriggered.set(item.slotIndex, arr);
+  }
+
+  const result: CostEvent[] = [];
+
+  for (const uses of slotTriggered.values()) {
+    uses.sort((a, b) => b.timeMs - a.timeMs); // 時間降順（戦闘開始側から）
+    const { recoveryDelta, durationMs } = uses[0];
+
+    // 連続使用による重複区間をマージ（リフレッシュ）
+    const intervals: { start: number; end: number }[] = [];
+    let curStart: number | null = null;
+    let curEnd: number | null = null;
+
+    for (const use of uses) {
+      const expectedEnd = Math.max(0, use.timeMs - durationMs);
+      if (curStart === null) {
+        curStart = use.timeMs;
+        curEnd = expectedEnd;
+      } else if (use.timeMs > curEnd!) {
+        // バフ効果中に再使用 → タイマーリセット（終了時刻を更新するだけ）
+        curEnd = expectedEnd;
+      } else {
+        // バフ切れ後の新たな使用
+        intervals.push({ start: curStart, end: curEnd! });
+        curStart = use.timeMs;
+        curEnd = expectedEnd;
+      }
+    }
+    if (curStart !== null) intervals.push({ start: curStart, end: curEnd! });
+
+    for (const { start, end } of intervals) {
+      result.push({ timeMs: start, type: 'buff_start', recoveryDelta });
+      result.push({ timeMs: end, type: 'buff_end', recoveryDelta });
+    }
+  }
+
+  return result;
+}
+
 export interface ItemCostInfo {
   cost: number;       // 使用時の残りコスト
   isOverrun: boolean; // コスト不足（残りコスト < スキルコスト）
@@ -232,24 +321,10 @@ export function calculateItemCosts(
       costAdjustment: item.costAdjustment ?? 0,
     });
 
-    const buffParams = getExBuffParams(slot.character.name, config?.hasUniqueWeapon2 ?? true);
-    if (buffParams) {
-      const shouldTrigger = checkBuffTrigger(buffParams, item, slotItemsSorted);
-      if (shouldTrigger) {
-        events.push({
-          timeMs: item.timeMs,
-          type: 'buff_start',
-          recoveryDelta: buffParams.recoveryDelta,
-        });
-        const endTimeMs = Math.max(0, item.timeMs - buffParams.durationMs);
-        events.push({
-          timeMs: endTimeMs,
-          type: 'buff_end',
-          recoveryDelta: buffParams.recoveryDelta,
-        });
-      }
-    }
   }
+
+  // バフイベントをリフレッシュ対応で追加
+  events.push(...buildAllBuffEvents(items, slots, slotCostConfigs, slotItemsSorted));
 
   // 時間降順でソート（totalTimeMs → 0方向）、同一時間ならbuff_start → skill_use → buff_end
   const typePriority = { buff_start: 0, skill_use: 1, buff_end: 2 };
@@ -355,24 +430,10 @@ export function calculateCostTimeline(
       costAdjustment: item.costAdjustment ?? 0,
     });
 
-    const buffParams = getExBuffParams(slot.character.name, config?.hasUniqueWeapon2 ?? true);
-    if (buffParams) {
-      const shouldTrigger = checkBuffTrigger(buffParams, item, slotItemsSorted);
-      if (shouldTrigger) {
-        events.push({
-          timeMs: item.timeMs,
-          type: 'buff_start',
-          recoveryDelta: buffParams.recoveryDelta,
-        });
-        const endTimeMs = Math.max(0, item.timeMs - buffParams.durationMs);
-        events.push({
-          timeMs: endTimeMs,
-          type: 'buff_end',
-          recoveryDelta: buffParams.recoveryDelta,
-        });
-      }
-    }
   }
+
+  // バフイベントをリフレッシュ対応で追加
+  events.push(...buildAllBuffEvents(items, slots, slotCostConfigs, slotItemsSorted));
 
   const typePriority = { buff_start: 0, skill_use: 1, buff_end: 2 };
   events.sort((a, b) => {

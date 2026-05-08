@@ -86,22 +86,28 @@ export function ArrowLayer({
         const endY = to.y - (dy / dist) * iconRadius;
 
         return (
-          <line
-            key={arrow.id}
-            x1={startX}
-            y1={startY}
-            x2={endX}
-            y2={endY}
-            stroke="var(--arrow-color, #ff9800)"
-            strokeWidth={2.5}
-            markerEnd="url(#arrowhead)"
-            style={{ pointerEvents: 'stroke', cursor: 'pointer' }}
-            onContextMenu={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onRemoveArrow(arrow.id);
-            }}
-          />
+          <g key={arrow.id}>
+            {/* 見た目の矢印 */}
+            <line
+              x1={startX} y1={startY} x2={endX} y2={endY}
+              stroke="var(--arrow-color, #ff9800)"
+              strokeWidth={2.5}
+              markerEnd="url(#arrowhead)"
+              style={{ pointerEvents: 'none' }}
+            />
+            {/* 当たり判定用の透明な太い線（右クリックで削除） */}
+            <line
+              x1={startX} y1={startY} x2={endX} y2={endY}
+              stroke="rgba(0,0,0,0)"
+              strokeWidth={16}
+              style={{ pointerEvents: 'stroke', cursor: 'pointer' }}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onRemoveArrow(arrow.id);
+              }}
+            />
+          </g>
         );
       })}
 

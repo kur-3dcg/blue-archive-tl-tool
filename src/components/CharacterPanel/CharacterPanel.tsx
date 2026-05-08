@@ -14,10 +14,7 @@ interface Props {
   onSetSlotCost: (slotIndex: number, skillCost: number) => void;
   onSetUniqueWeapon4: (slotIndex: number, value: boolean) => void;
   onSetUniqueWeapon2: (slotIndex: number, value: boolean) => void;
-  heavyArmorCount: number;
-  redWinterCount: number;
-  onSetHeavyArmorCount: (count: number) => void;
-  onSetRedWinterCount: (count: number) => void;
+  onResetAll: () => void;
 }
 
 export function CharacterPanel({
@@ -31,10 +28,7 @@ export function CharacterPanel({
   onSetSlotCost,
   onSetUniqueWeapon4,
   onSetUniqueWeapon2,
-  heavyArmorCount,
-  redWinterCount,
-  onSetHeavyArmorCount,
-  onSetRedWinterCount,
+  onResetAll,
 }: Props) {
   const [editMode, setEditMode] = useState(true);
 
@@ -80,6 +74,21 @@ export function CharacterPanel({
           ))}
         </div>
       </div>
+      <div
+        className={`comment-drag-btn${editMode ? ' disabled' : ''}`}
+        draggable={!editMode}
+        onDragStart={(e) => {
+          if (editMode) { e.preventDefault(); return; }
+          e.dataTransfer.setData('application/x-standalone-comment', 'true');
+          e.dataTransfer.effectAllowed = 'copy';
+        }}
+        title={editMode ? 'TL作成中モードでドラッグしてコメントを配置' : 'ドラッグしてタイムラインにコメントを配置'}
+      >
+        <svg className="comment-drag-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+        </svg>
+        <div className="comment-drag-label">コメント</div>
+      </div>
       <button
         className={`mode-toggle-btn${editMode ? ' editing' : ''}`}
         onClick={() => setEditMode((v) => !v)}
@@ -94,30 +103,17 @@ export function CharacterPanel({
       >
         矢印
       </button>
-      <div className="panel-extra-settings">
-        <label className="extra-setting" title="カノエSS用：重装甲ストライカーの人数（自身除外、最大3）">
-          重装甲:
-          <select
-            value={heavyArmorCount}
-            onChange={(e) => onSetHeavyArmorCount(Number(e.target.value))}
-          >
-            {[0, 1, 2, 3].map((n) => (
-              <option key={n} value={n}>{n}</option>
-            ))}
-          </select>
-        </label>
-        <label className="extra-setting" title="チェリノSS用：レッドウィンター生��の人数（自身除外、最大3）">
-          RW:
-          <select
-            value={redWinterCount}
-            onChange={(e) => onSetRedWinterCount(Number(e.target.value))}
-          >
-            {[0, 1, 2, 3].map((n) => (
-              <option key={n} value={n}>{n}</option>
-            ))}
-          </select>
-        </label>
-      </div>
+      <button
+        className="reset-all-btn"
+        onClick={() => {
+          if (window.confirm('編成・TLのデータをすべてクリアします。\nこの操作は取り消せません。よろしいですか？')) {
+            onResetAll();
+          }
+        }}
+        title="編成・TLをすべてリセット"
+      >
+        全クリア
+      </button>
     </div>
   );
 }

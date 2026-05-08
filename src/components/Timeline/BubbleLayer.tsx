@@ -1,5 +1,5 @@
 import type { TimelineItem as TItem, CharacterSlot } from '../../types';
-import { ITEM_WIDTH, LAYER_HEIGHT, RULER_HEIGHT, TIMELINE_PAD_RIGHT } from '../../constants';
+import { ITEM_WIDTH, LAYER_HEIGHT, RULER_HEIGHT, TIMELINE_PAD_RIGHT, STANDALONE_COMMENT_HEIGHT } from '../../constants';
 
 interface Props {
   items: TItem[];
@@ -41,7 +41,7 @@ export function BubbleLayer({ items, slots, zoomLevel, totalWidth, onRemoveComme
     const textWidth = Math.max(BUBBLE_MIN_WIDTH, (item.comment?.length ?? 0) * 13 + 20);
     const left = cx - textWidth / 2;
     const right = cx + textWidth / 2;
-    const anchorY = RULER_HEIGHT + item.layerIndex * LAYER_HEIGHT + LAYER_HEIGHT / 2;
+    const anchorY = RULER_HEIGHT + STANDALONE_COMMENT_HEIGHT + item.layerIndex * LAYER_HEIGHT + LAYER_HEIGHT / 2;
 
     // Find the lowest row where this bubble fits
     let placed = false;

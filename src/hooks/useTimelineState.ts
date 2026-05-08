@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useReducer, useEffect, useCallback } from 'react';
 import type { TimelineState, TimelineAction, CharacterSlot, SlotCostConfig } from '../types';
 import {
   STRIKER_COUNT,
@@ -27,6 +27,8 @@ function createInitialCostConfigs(): SlotCostConfig[] {
   return configs;
 }
 
+const STORAGE_KEY = 'ba-tl-state';
+
 const initialState: TimelineState = {
   slots: createInitialSlots(),
   items: [],
@@ -36,8 +38,7 @@ const initialState: TimelineState = {
   totalTimeMs: DEFAULT_TOTAL_TIME_MS,
   slotCostConfigs: createInitialCostConfigs(),
   targetTimeMs: undefined,
-  heavyArmorCount: 0,
-  redWinterCount: 0,
+  standaloneComments: [],
 };
 
 function reducer(state: TimelineState, action: TimelineAction): TimelineState {
@@ -60,27 +61,31 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
           ),
         };
       }
-      return { ...state, slots: newSlots };
+      // キャラ設定時、キャラのコストデータがあれば skillCost を自動設定（なければ 3）
+      const autoSkillCost = action.character.cost ?? 3;
+      const newCostConfigs = state.slotCostConfigs.map((c, i) =>
+        i === action.slotIndex ? { ...c, skillCost: autoSkillCost } : c
+      );
+      return { ...state, slots: newSlots, slotCostConfigs: newCostConfigs };
     }
 
     case 'ADD_ITEM':
       return { ...state, items: [...state.items, action.item] };
 
-    case 'MOVE_ITEM':
+    case 'MOVE_ITEM': {
+      // 移動したアイテムを配列末尾に移動することで、ドラッグしたものが常にスタックの末尾（即チェーンの最後）になる
+      const movedItem = state.items.find((it) => it.id === action.itemId);
+      if (!movedItem) return state;
+      const updatedItem = {
+        ...movedItem,
+        timeMs: action.timeMs,
+        ...(action.layerIndex !== undefined ? { layerIndex: action.layerIndex } : {}),
+      };
       return {
         ...state,
-        items: state.items.map((item) =>
-          item.id === action.itemId
-            ? {
-                ...item,
-                timeMs: action.timeMs,
-                ...(action.layerIndex !== undefined
-                  ? { layerIndex: action.layerIndex }
-                  : {}),
-              }
-            : item
-        ),
+        items: [...state.items.filter((it) => it.id !== action.itemId), updatedItem],
       };
+    }
 
     case 'REMOVE_ITEM':
       return {
@@ -213,11 +218,33 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
     case 'SET_TARGET_TIME':
       return { ...state, targetTimeMs: action.targetTimeMs };
 
-    case 'SET_HEAVY_ARMOR_COUNT':
-      return { ...state, heavyArmorCount: Math.max(0, Math.min(3, action.count)) };
+    case 'ADD_STANDALONE_COMMENT':
+      return {
+        ...state,
+        standaloneComments: [...state.standaloneComments, { id: action.id, timeMs: action.timeMs, text: action.text }],
+      };
 
-    case 'SET_RED_WINTER_COUNT':
-      return { ...state, redWinterCount: Math.max(0, Math.min(3, action.count)) };
+    case 'MOVE_STANDALONE_COMMENT':
+      return {
+        ...state,
+        standaloneComments: state.standaloneComments.map((c) =>
+          c.id === action.id ? { ...c, timeMs: action.timeMs } : c
+        ),
+      };
+
+    case 'REMOVE_STANDALONE_COMMENT':
+      return {
+        ...state,
+        standaloneComments: state.standaloneComments.filter((c) => c.id !== action.id),
+      };
+
+    case 'EDIT_STANDALONE_COMMENT':
+      return {
+        ...state,
+        standaloneComments: state.standaloneComments.map((c) =>
+          c.id === action.id ? { ...c, text: action.text } : c
+        ),
+      };
 
     case 'LOAD_STATE':
       return {
@@ -232,15 +259,57 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
           hasUniqueWeapon2: c.hasUniqueWeapon2 ?? true,
         })),
         targetTimeMs: action.state.targetTimeMs,
-        heavyArmorCount: action.state.heavyArmorCount ?? 0,
-        redWinterCount: action.state.redWinterCount ?? 0,
+        standaloneComments: action.state.standaloneComments ?? [],
       };
+
+    case 'RESET_ALL':
+      return initialState;
 
     default:
       return state;
   }
 }
 
+function loadFromStorage(base: TimelineState): TimelineState {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return base;
+    const parsed = JSON.parse(saved) as Partial<TimelineState>;
+    return {
+      ...base,
+      slots: parsed.slots ?? base.slots,
+      items: parsed.items ?? base.items,
+      arrows: parsed.arrows ?? base.arrows,
+      layers: parsed.layers ?? base.layers,
+      snapMode: parsed.snapMode ?? base.snapMode,
+      totalTimeMs: parsed.totalTimeMs ?? base.totalTimeMs,
+      slotCostConfigs: (parsed.slotCostConfigs ?? base.slotCostConfigs).map((c) => ({
+        ...c,
+        hasUniqueWeapon2: c.hasUniqueWeapon2 ?? true,
+      })),
+      targetTimeMs: parsed.targetTimeMs,
+      standaloneComments: parsed.standaloneComments ?? base.standaloneComments,
+    };
+  } catch {
+    return base;
+  }
+}
+
 export function useTimelineState() {
-  return useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState, loadFromStorage);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {
+      // quota exceeded 等は無視
+    }
+  }, [state]);
+
+  const resetAll = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
+    dispatch({ type: 'RESET_ALL' });
+  }, []);
+
+  return [state, dispatch, resetAll] as const;
 }
