@@ -83,9 +83,9 @@ export function CharacterPanel({
       <button
         className={`mode-toggle-btn${editMode ? ' editing' : ''}`}
         onClick={() => setEditMode((v) => !v)}
-        title={editMode ? '編集モード：生徒の追加・削除ができます' : '使用モード：ドラッグでタイムラインに配置'}
+        title={editMode ? '編成モード：生徒の追加・削除ができます' : 'TL作成モード：ドラッグでタイムラインに配置'}
       >
-        {editMode ? '編集中' : '使用中'}
+        {editMode ? '編成中' : 'TL作成中'}
       </button>
       <button
         className={`arrow-mode-btn${arrowMode ? ' active' : ''}`}
