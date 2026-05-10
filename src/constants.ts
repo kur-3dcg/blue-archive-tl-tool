@@ -1,10 +1,11 @@
 export const DEFAULT_TOTAL_TIME_MS = 240_000; // 4 minutes
-export const MAX_TOTAL_TIME_MS = 270_000; // 4:30
+export const MAX_TOTAL_TIME_MS = 300_000; // 5:00
 
 export const TIME_PRESETS: { label: string; ms: number }[] = [
   { label: '3:00', ms: 180_000 },
   { label: '4:00', ms: 240_000 },
   { label: '4:30', ms: 270_000 },
+  { label: '5:00', ms: 300_000 },
 ];
 
 export const VIEWPORT_DURATION_S = 60; // ビューポートに表示する時間幅（秒）
@@ -21,6 +22,8 @@ export const MIN_LAYERS = 1;
 
 export const STRIKER_COUNT = 4;
 export const SPECIAL_COUNT = 2;
+export const EXTENDED_STRIKER_COUNT = 6;
+export const EXTENDED_SPECIAL_COUNT = 4;
 
 // スロットごとのバフバー色（将来10スロット対応想定）
 export const SLOT_COLORS = [

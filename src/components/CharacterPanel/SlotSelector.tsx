@@ -124,6 +124,7 @@ export function SlotSelector({
       {showSearch && (
         <CharacterSearch
           characters={characters}
+          currentCharacter={character}
           onSelect={(c) => {
             onSelect(c);
             setShowSearch(false);

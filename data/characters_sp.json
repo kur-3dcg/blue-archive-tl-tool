@@ -1,5 +1,9 @@
 [
   {
+    "name": "未選択",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/noimage.png"
+  },
+  {
     "name": "アイリ",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/airi.png",
     "reading": "あいり",
@@ -10,16 +14,6 @@
     "exDuration": null
   },
   {
-    "name": "アカネ（バニーガール）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/akane_bunnie.png",
-    "reading": "あかね（ばにーがーる）",
-    "school": "ミレニアム",
-    "attackType": "神秘",
-    "armorType": "重装甲",
-    "cost": 3,
-    "exDuration": null
-  },
-  {
     "name": "アカネ（制服）",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/akane_uniform.png",
     "reading": "あかね（せいふく）",
@@ -27,6 +21,16 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 4,
+    "exDuration": null
+  },
+  {
+    "name": "アカネ（バニーガール）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/akane_bunnie.png",
+    "reading": "あかね（ばにーがーる）",
+    "school": "ミレニアム",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 3,
     "exDuration": null
   },
   {
@@ -47,7 +51,7 @@
     "attackType": "神秘",
     "armorType": "重装甲",
     "cost": 3,
-    "exDuration": 16.0
+    "exDuration": 16
   },
   {
     "name": "アツコ（水着）",
@@ -80,6 +84,16 @@
     "exDuration": null
   },
   {
+    "name": "イズミ（正月）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/izumi_newyear.png",
+    "reading": "いずみ（しょうがつ）",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": 30
+  },
+  {
     "name": "イチカ（水着）",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/ichika_swimsuit.png",
     "reading": "いちか（みずぎ）",
@@ -88,16 +102,6 @@
     "armorType": "特殊装甲",
     "cost": 2,
     "exDuration": null
-  },
-  {
-    "name": "イズミ（正月）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/izumi_newyear.png",
-    "reading": "いずみ（しょうがつ）",
-    "school": "ゲヘナ",
-    "attackType": "爆発",
-    "armorType": "軽装備",
-    "cost": 5,
-    "exDuration": 30.0
   },
   {
     "name": "イロハ",
@@ -127,7 +131,7 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 4,
-    "exDuration": 30.0
+    "exDuration": 30
   },
   {
     "name": "カエデ",
@@ -137,7 +141,7 @@
     "attackType": "爆発",
     "armorType": "特殊装甲",
     "cost": 4,
-    "exDuration": 16.0
+    "exDuration": 16
   },
   {
     "name": "カリン",
@@ -177,7 +181,7 @@
     "attackType": "振動",
     "armorType": "重装甲",
     "cost": 4,
-    "exDuration": 30.0
+    "exDuration": 30
   },
   {
     "name": "キサキ",
@@ -187,7 +191,7 @@
     "attackType": "振動",
     "armorType": "弾力装甲",
     "cost": 3,
-    "exDuration": 15.0
+    "exDuration": 15
   },
   {
     "name": "キリノ（水着）",
@@ -197,7 +201,7 @@
     "attackType": "神秘",
     "armorType": "重装甲",
     "cost": 5,
-    "exDuration": 45.0
+    "exDuration": 45
   },
   {
     "name": "コタマ",
@@ -207,7 +211,7 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": 30.0
+    "exDuration": 30
   },
   {
     "name": "コユキ（パジャマ）",
@@ -217,7 +221,7 @@
     "attackType": "神秘",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": 30.0
+    "exDuration": 30
   },
   {
     "name": "サキ",
@@ -240,6 +244,16 @@
     "exDuration": null
   },
   {
+    "name": "佐天涙子",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/shaten.png",
+    "reading": "さてんるいこ",
+    "school": "その他",
+    "attackType": "貫通",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": null
+  },
+  {
     "name": "サヤ",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/saya.png",
     "reading": "さや",
@@ -247,7 +261,7 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": null
+    "exDuration": 8
   },
   {
     "name": "サヤ（私服）",
@@ -257,7 +271,7 @@
     "attackType": "貫通",
     "armorType": "特殊装甲",
     "cost": 6,
-    "exDuration": null
+    "exDuration": 20
   },
   {
     "name": "シグレ（温泉）",
@@ -277,7 +291,7 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 3,
-    "exDuration": 30.0
+    "exDuration": 30
   },
   {
     "name": "シズコ（水着）",
@@ -287,7 +301,7 @@
     "attackType": "神秘",
     "armorType": "重装甲",
     "cost": 3,
-    "exDuration": 30.0
+    "exDuration": 30
   },
   {
     "name": "シミコ",
@@ -297,7 +311,7 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": 30.0
+    "exDuration": 30
   },
   {
     "name": "ジュリ",
@@ -340,16 +354,6 @@
     "exDuration": null
   },
   {
-    "name": "セリカ（水着）",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/serika_swimsuit.png",
-    "reading": "せりか（みずぎ）",
-    "school": "アビドス",
-    "attackType": "神秘",
-    "armorType": "重装甲",
-    "cost": 6,
-    "exDuration": null
-  },
-  {
     "name": "セリカ（正月）",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/serika_newyear.png",
     "reading": "せりか（しょうがつ）",
@@ -357,6 +361,16 @@
     "attackType": "貫通",
     "armorType": "特殊装甲",
     "cost": 4,
+    "exDuration": null
+  },
+  {
+    "name": "セリカ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/serika_swimsuit.png",
+    "reading": "せりか（みずぎ）",
+    "school": "アビドス",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 6,
     "exDuration": null
   },
   {
@@ -407,7 +421,7 @@
     "attackType": "貫通",
     "armorType": "重装甲",
     "cost": 6,
-    "exDuration": 45.0
+    "exDuration": 45
   },
   {
     "name": "トモエ（チーパオ）",
@@ -417,7 +431,7 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 3,
-    "exDuration": 25.0
+    "exDuration": 25
   },
   {
     "name": "ナギサ",
@@ -427,7 +441,7 @@
     "attackType": "爆発",
     "armorType": "重装甲",
     "cost": 3,
-    "exDuration": 26.0
+    "exDuration": null
   },
   {
     "name": "ナギサ（水着）",
@@ -437,7 +451,7 @@
     "attackType": "振動",
     "armorType": "弾力装甲",
     "cost": 3,
-    "exDuration": null
+    "exDuration": 26
   },
   {
     "name": "ニヤ",
@@ -457,7 +471,7 @@
     "attackType": "爆発",
     "armorType": "重装甲",
     "cost": 3,
-    "exDuration": 30.0
+    "exDuration": 30
   },
   {
     "name": "ノドカ（温泉）",
@@ -468,6 +482,16 @@
     "armorType": "特殊装甲",
     "cost": 4,
     "exDuration": null
+  },
+  {
+    "name": "初音ミク",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/miku.png",
+    "reading": "はつねみく",
+    "school": "その他",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 5,
+    "exDuration": 26
   },
   {
     "name": "ハナエ",
@@ -567,7 +591,7 @@
     "attackType": "貫通",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": 13.0
+    "exDuration": 13
   },
   {
     "name": "ヒマリ（臨戦）",
@@ -577,7 +601,7 @@
     "attackType": "貫通",
     "armorType": "弾力装甲",
     "cost": 3,
-    "exDuration": null
+    "exDuration": 30
   },
   {
     "name": "ヒヨリ",
@@ -617,7 +641,7 @@
     "attackType": "貫通",
     "armorType": "特殊装甲",
     "cost": 2,
-    "exDuration": 35.0
+    "exDuration": 35
   },
   {
     "name": "フブキ（水着）",
@@ -677,7 +701,7 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 2,
-    "exDuration": 20.0
+    "exDuration": 20
   },
   {
     "name": "ミサキ（水着）",
@@ -717,7 +741,7 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 3,
-    "exDuration": 20.0
+    "exDuration": 20
   },
   {
     "name": "ミユ（水着）",
@@ -766,7 +790,7 @@
     "school": "ミレニアム",
     "attackType": "神秘",
     "armorType": "特殊装甲",
-    "cost": 5,
+    "cost": 4,
     "exDuration": null
   },
   {
@@ -787,7 +811,7 @@
     "attackType": "神秘",
     "armorType": "弾力装甲",
     "cost": 2,
-    "exDuration": 20.0
+    "exDuration": 20
   },
   {
     "name": "リツ",
@@ -797,7 +821,7 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 2,
-    "exDuration": 24.0
+    "exDuration": 24
   },
   {
     "name": "レイサ（マジカル）",
@@ -808,29 +832,5 @@
     "armorType": "特殊装甲",
     "cost": 4,
     "exDuration": null
-  },
-  {
-    "name": "佐天涙子",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/shaten.png",
-    "reading": "さてんるいこ",
-    "school": "その他",
-    "attackType": "貫通",
-    "armorType": "特殊装甲",
-    "cost": 3,
-    "exDuration": null
-  },
-  {
-    "name": "初音ミク",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/miku.png",
-    "reading": "はつねみく",
-    "school": "その他",
-    "attackType": "爆発",
-    "armorType": "軽装備",
-    "cost": 5,
-    "exDuration": 26.0
-  },
-  {
-    "name": "未選択",
-    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/noimage.png"
   }
 ]

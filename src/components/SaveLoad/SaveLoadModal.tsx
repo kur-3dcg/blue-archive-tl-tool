@@ -72,9 +72,10 @@ interface Props {
   state: TimelineState;
   dispatch: React.Dispatch<TimelineAction>;
   onClose: () => void;
+  onSaved?: () => void;
 }
 
-export function SaveLoadModal({ initialMode, state, dispatch, onClose }: Props) {
+export function SaveLoadModal({ initialMode, state, dispatch, onClose, onSaved }: Props) {
   const [slots, setSlots] = useState<SlotArray>(loadSlots);
   const [mode, setMode] = useState<'save' | 'load'>(initialMode);
   const [overlay, setOverlay] = useState<OverlayState>(null);
@@ -123,6 +124,7 @@ export function SaveLoadModal({ initialMode, state, dispatch, onClose }: Props) 
     setSlots(next);
     saveSlots(next);
     setOverlay(null);
+    onSaved?.();
   };
 
   const doLoad = (slotIdx: number) => {

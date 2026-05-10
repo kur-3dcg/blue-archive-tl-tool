@@ -14,7 +14,8 @@ export function displayToMs(str: string): number {
   return Number(minPart) * 60_000 + Number(secPart) * 1000 + Number(msPart);
 }
 
-/** コスト値 → "X.X" or "XX.X" 表示（0.1未満切り捨て） */
+/** コスト値 → 整数なら "X"、小数なら "X.X" 表示（0.1未満切り捨て） */
 export function costToDisplay(cost: number): string {
-  return (Math.floor(cost * 10) / 10).toFixed(1);
+  const floored = Math.floor(cost * 10) / 10;
+  return floored % 1 === 0 ? String(floored | 0) : floored.toFixed(1);
 }

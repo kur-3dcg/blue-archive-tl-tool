@@ -25,7 +25,7 @@ export function CostRuler({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const totalTimeS = totalTimeMs / 1000;
 
-  const costCap = useMemo(() => calculateCostCap(slotCostConfigs), [slotCostConfigs]);
+  const costCap = useMemo(() => calculateCostCap(slotCostConfigs, slots), [slotCostConfigs, slots]);
 
   const keypoints = useMemo(() => {
     const { heavyArmorCount, redWinterCount } = computeArmorCounts(slots);
@@ -110,14 +110,13 @@ export function CostRuler({
       ctx.globalAlpha = 1;
     }
 
-    // Draw cost curve with overrun segments in red
+    // Draw cost curve with colored segments (red=overrun, yellow=overcost, blue=normal)
     if (keypoints.length >= 2) {
-      // Split into segments: each pair of consecutive keypoints is a segment
-      // Draw filled area and line per segment, colored by overrun state
       for (let i = 0; i < keypoints.length - 1; i++) {
         const kpA = keypoints[i];
         const kpB = keypoints[i + 1];
         const isRedSegment = kpA.isOverrun || kpB.isOverrun;
+        const isYellowSegment = !isRedSegment && (kpA.isOvercost || kpB.isOvercost);
 
         const ax = timeMsToX(kpA.timeMs);
         const bx = timeMsToX(kpB.timeMs);
@@ -134,6 +133,8 @@ export function CostRuler({
         ctx.closePath();
         ctx.fillStyle = isRedSegment
           ? 'rgba(239, 68, 68, 0.2)'
+          : isYellowSegment
+          ? 'rgba(200, 160, 0, 0.25)'
           : 'rgba(59, 130, 246, 0.15)';
         ctx.fill();
 
@@ -143,6 +144,8 @@ export function CostRuler({
         ctx.lineTo(bx, by);
         ctx.strokeStyle = isRedSegment
           ? 'rgba(239, 68, 68, 0.9)'
+          : isYellowSegment
+          ? 'rgba(200, 160, 0, 0.95)'
           : 'rgba(59, 130, 246, 0.8)';
         ctx.lineWidth = 1.5;
         ctx.stroke();

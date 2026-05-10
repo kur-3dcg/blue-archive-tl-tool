@@ -317,7 +317,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
   const layerAreaBottom = RULER_HEIGHT + COST_RULER_HEIGHT + STANDALONE_COMMENT_HEIGHT + layers * LAYER_HEIGHT;
 
   // ドラッグ中のコスト値を取得
-  const dragCostValue = dragInfo ? itemCostMap.get(dragInfo.itemId)?.cost : undefined;
+  const dragCostValue = dragInfo ? itemCostMap.get(dragInfo.itemId)?.usedCost : undefined;
 
   // 目標時間のX座標
   const targetLineX = targetTimeMs !== undefined
@@ -335,7 +335,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
           <span><b>Shift+クリック:</b> EX対象</span>
           <span><b>Ctrl+クリック:</b> 矢印接続</span>
         </div>
-        <span className="timeline-control">
+        <span className="timeline-control" style={{ marginLeft: 'auto' }}>
           時間:
           {TIME_PRESETS.map((p) => (
             <button
@@ -362,7 +362,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
                 setCustomTimeInput('');
               }
             }}
-            title="自由入力（例: 4:30 / 4:30.000）Enterで確定（最大4:30）"
+            title="自由入力（例: 4:30 / 4:30.000）Enterで確定（最大5:00）"
           />
         </span>
         <span className="timeline-control">
@@ -532,6 +532,24 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
             layerTop={layerAreaTop}
             layerBottom={layerAreaBottom}
           />
+          {/* スタンドアロンコメントのティール縦線 */}
+          {standaloneComments.map((comment) => {
+            const lineX = totalWidth - TIMELINE_PAD_RIGHT - (comment.timeMs / 1000) * zoomLevel;
+            return (
+              <div key={comment.id}>
+                <div
+                  className="timeline-marker-line"
+                  style={{ left: lineX, top: layerAreaTop, height: layerAreaBottom - layerAreaTop }}
+                  title={comment.text}
+                />
+                {comment.text && (
+                  <div className="timeline-marker-label" style={{ left: lineX }}>
+                    {comment.text}
+                  </div>
+                )}
+              </div>
+            );
+          })}
           {/* 目標時間の赤い縦線 */}
           {targetLineX !== null && (
             <>

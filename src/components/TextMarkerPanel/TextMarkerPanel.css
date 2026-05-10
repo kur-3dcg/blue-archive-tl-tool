@@ -1,0 +1,72 @@
+.text-marker-panel-wrapper {
+  position: relative;
+}
+
+.text-marker-btn {
+  padding: 4px 10px;
+  font-size: 13px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.text-marker-btn:hover {
+  background: var(--bg-tertiary);
+}
+
+.text-marker-btn.active {
+  background: rgba(77, 208, 225, 0.2);
+  border-color: #4dd0e1;
+  color: #4dd0e1;
+}
+
+.text-marker-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 280px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+}
+
+.text-marker-panel-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4dd0e1;
+  letter-spacing: 0.04em;
+}
+
+.text-marker-textarea {
+  width: 100%;
+  min-height: 140px;
+  resize: vertical;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: monospace;
+  padding: 6px 8px;
+  box-sizing: border-box;
+  line-height: 1.6;
+}
+
+.text-marker-textarea:focus {
+  outline: none;
+  border-color: #4dd0e1;
+}
+
+.text-marker-panel-hint {
+  font-size: 10px;
+  color: var(--text-muted);
+}

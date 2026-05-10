@@ -86,7 +86,7 @@ export function generateTlText(state: TimelineState): string {
     } else {
       const [parent, ...children] = entry.group;
       const costInfo = costMap.get(parent.id);
-      const costStr = costInfo !== undefined ? costToDisplay(costInfo.cost) : '';
+      const costStr = costInfo !== undefined ? costToDisplay(costInfo.usedCost) : '';
       const exStr = [parent, ...children].map((item) => formatEntry(item, slots)).join('→');
       rows.push([msToMSS(parent.timeMs), costStr, exStr, parent.comment ?? '']);
     }

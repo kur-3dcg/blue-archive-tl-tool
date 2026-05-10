@@ -1,5 +1,4 @@
 import type { CharacterSlot, TimelineItem, SlotCostConfig } from '../types';
-import { STRIKER_COUNT } from '../constants';
 
 // コスト回復開始遅延（戦闘開始から2.033秒後に回復開始）
 const RECOVERY_DELAY_MS = 2033;
@@ -30,6 +29,10 @@ const COST_RECOVERY_SS_NAMES = [
 
 // カノエSS: +342 + 重装甲ストライカー1人あたり+85（最大3人）
 const KANOE_NAME = 'カノエ';
+
+// ナギサ（水着）: オーバーコスト（コスト下限 -5）
+const NAGISA_SWIMSUIT = 'ナギサ（水着）';
+const OVERCOST_FLOOR = -5;
 
 // シュンNS: 戦闘開始時にコスト+3.8
 const SHUN_NAME = 'シュン';
@@ -85,11 +88,16 @@ export function computeArmorCounts(slots: CharacterSlot[]): { heavyArmorCount: n
   return { heavyArmorCount, redWinterCount };
 }
 
-export function calculateCostCap(slotCostConfigs: SlotCostConfig[]): number {
-  let cap = 10;
-  // SPスロットは index 4,5 (STRIKER_COUNT以降)
-  for (let i = STRIKER_COUNT; i < slotCostConfigs.length; i++) {
-    if (slotCostConfigs[i].hasUniqueWeapon4) {
+import { EXTENDED_STRIKER_COUNT, EXTENDED_SPECIAL_COUNT } from '../constants';
+
+const EXTENDED_SLOT_COUNT = EXTENDED_STRIKER_COUNT + EXTENDED_SPECIAL_COUNT; // 10
+
+export function calculateCostCap(slotCostConfigs: SlotCostConfig[], slots: CharacterSlot[]): number {
+  // 制約解除決戦モード（10スロット）はコスト上限20、通常は10
+  const baseCap = slots.length >= EXTENDED_SLOT_COUNT ? 20 : 10;
+  let cap = baseCap;
+  for (let i = 0; i < slotCostConfigs.length; i++) {
+    if (slots[i]?.type === 'special' && slotCostConfigs[i].hasUniqueWeapon4) {
       cap += 0.5;
     }
   }
@@ -105,8 +113,7 @@ function getBaseRecovery(
   redWinterCount: number
 ): { baseSum: number; multiplier: number } {
   const BASE_PER_CHAR = 700;
-  const TOTAL_MEMBERS = 6;
-  let baseSum = BASE_PER_CHAR * TOTAL_MEMBERS;
+  let baseSum = BASE_PER_CHAR * slots.length;
   let multiplier = 1;
 
   // チェリノSS: +511 + レッドウィンター1人あたり+146（最大3人）。トリガーはチェリノ（ST版）のみ
@@ -266,8 +273,19 @@ function buildAllBuffEvents(
 }
 
 export interface ItemCostInfo {
-  cost: number;       // 使用時の残りコスト
-  isOverrun: boolean; // コスト不足（残りコスト < スキルコスト）
+  cost: number;        // 使用後の残りコスト
+  usedCost: number;    // スキル使用前の所持コスト
+  isOverrun: boolean;  // 真のコスト不足（使用後コスト < costFloor）
+  isOvercost: boolean; // オーバーコスト使用中（使用後コスト in [OVERCOST_FLOOR, 0)）
+}
+
+/** ナギサ（水着）のオーバーコストが有効かを判定 */
+function getOvercostFloor(slots: CharacterSlot[]): number {
+  const hasNagisa = slots.some(
+    (s) => s.type === 'special' && s.character?.name === NAGISA_SWIMSUIT
+  );
+  const allFilled = slots.length > 0 && slots.every((s) => s.character !== null);
+  return hasNagisa && allFilled ? OVERCOST_FLOOR : 0;
 }
 
 /**
@@ -288,7 +306,8 @@ export function calculateItemCosts(
   const result = new Map<string, ItemCostInfo>();
   if (items.length === 0) return result;
 
-  const costCap = calculateCostCap(slotCostConfigs);
+  const costCap = calculateCostCap(slotCostConfigs, slots);
+  const costFloor = getOvercostFloor(slots);
   const { baseSum, multiplier } = getBaseRecovery(slots, heavyArmorCount, redWinterCount);
 
   // イベントリストを構築
@@ -366,9 +385,11 @@ export function calculateItemCosts(
       case 'skill_use': {
         const baseSkillCost = event.skillCost ?? 3;
         const adjustedSkillCost = Math.max(0, Math.min(10, baseSkillCost + (event.costAdjustment ?? 0)));
-        const isOverrun = currentCost < adjustedSkillCost;
-        result.set(event.itemId!, { cost: currentCost, isOverrun });
-        currentCost = Math.max(0, currentCost - adjustedSkillCost);
+        const resultCost = currentCost - adjustedSkillCost;
+        const isOverrun = resultCost < costFloor;
+        const isOvercost = costFloor < 0 && resultCost < 0 && !isOverrun;
+        result.set(event.itemId!, { cost: resultCost, usedCost: currentCost, isOverrun, isOvercost });
+        currentCost = Math.max(costFloor, resultCost);
         break;
       }
     }
@@ -387,7 +408,8 @@ export function calculateItemCosts(
 export interface CostKeypoint {
   timeMs: number;
   cost: number;
-  isOverrun?: boolean; // コスト不足区間
+  isOverrun?: boolean;  // コスト不足区間
+  isOvercost?: boolean; // オーバーコスト区間（コスト < 0 だが使用可能）
 }
 
 export function calculateCostTimeline(
@@ -398,7 +420,8 @@ export function calculateCostTimeline(
   heavyArmorCount = 0,
   redWinterCount = 0
 ): CostKeypoint[] {
-  const costCap = calculateCostCap(slotCostConfigs);
+  const costCap = calculateCostCap(slotCostConfigs, slots);
+  const costFloor = getOvercostFloor(slots);
   const { baseSum, multiplier } = getBaseRecovery(slots, heavyArmorCount, redWinterCount);
   const keypoints: CostKeypoint[] = [];
 
@@ -446,6 +469,7 @@ export function calculateCostTimeline(
   let activeBuffDelta = 0;
   const recoveryStartMs = totalTimeMs - RECOVERY_DELAY_MS;
   let shunApplied = false;
+  let isOvercostZone = false;
 
   // 開始点
   keypoints.push({ timeMs: totalTimeMs, cost: 0 });
@@ -478,7 +502,19 @@ export function calculateCostTimeline(
 
       // 回復開始地点のキーポイント（遅延→回復の境界、シュンで追加済みならスキップ）
       if (!shunJustApplied && currentTimeMs > recoveryStartMs && event.timeMs < recoveryStartMs) {
-        keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
+        keypoints.push({ timeMs: recoveryStartMs, cost: currentCost, isOvercost: isOvercostZone || undefined });
+      }
+
+      // ゼロ越え: オーバーコストゾーンからコスト0を越えて回復する場合
+      if (currentCost < 0 && newCost >= 0 && recoveryPerSec > 0) {
+        const timeToZeroSec = (-currentCost) / recoveryPerSec;
+        const fromMs = Math.min(currentTimeMs, recoveryStartMs);
+        const zeroCrossingMs = fromMs - timeToZeroSec * 1000;
+        if (zeroCrossingMs > event.timeMs) {
+          keypoints.push({ timeMs: zeroCrossingMs, cost: 0, isOvercost: true });
+          keypoints.push({ timeMs: zeroCrossingMs, cost: 0 });
+          isOvercostZone = false;
+        }
       }
 
       // キャップに到達するタイミングを計算
@@ -492,30 +528,34 @@ export function calculateCostTimeline(
       }
 
       currentCost = newCost;
+      if (currentCost >= 0) isOvercostZone = false;
     } else {
       // 回復なし区間でも境界ポイントは記録
       if (!shunJustApplied && currentTimeMs > recoveryStartMs && event.timeMs <= recoveryStartMs) {
-        keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
+        keypoints.push({ timeMs: recoveryStartMs, cost: currentCost, isOvercost: isOvercostZone || undefined });
       }
     }
     currentTimeMs = event.timeMs;
 
     switch (event.type) {
       case 'buff_start':
-        keypoints.push({ timeMs: event.timeMs, cost: currentCost });
+        keypoints.push({ timeMs: event.timeMs, cost: Math.max(0, currentCost), isOvercost: isOvercostZone || undefined });
         activeBuffDelta += event.recoveryDelta!;
         break;
       case 'buff_end':
-        keypoints.push({ timeMs: event.timeMs, cost: currentCost });
+        keypoints.push({ timeMs: event.timeMs, cost: Math.max(0, currentCost), isOvercost: isOvercostZone || undefined });
         activeBuffDelta -= event.recoveryDelta!;
         break;
       case 'skill_use': {
         const baseSkillCost = event.skillCost ?? 3;
         const adjustedSkillCost = Math.max(0, Math.min(10, baseSkillCost + (event.costAdjustment ?? 0)));
-        const overrun = currentCost < adjustedSkillCost;
-        keypoints.push({ timeMs: event.timeMs, cost: currentCost, isOverrun: overrun || undefined });
-        currentCost = Math.max(0, currentCost - adjustedSkillCost);
-        keypoints.push({ timeMs: event.timeMs, cost: currentCost, isOverrun: overrun || undefined });
+        const resultCost = currentCost - adjustedSkillCost;
+        const overrun = resultCost < costFloor;
+        const overcost = !overrun && costFloor < 0 && resultCost < 0;
+        keypoints.push({ timeMs: event.timeMs, cost: Math.max(0, currentCost), isOverrun: overrun || undefined });
+        currentCost = Math.max(costFloor, resultCost);
+        isOvercostZone = overcost;
+        keypoints.push({ timeMs: event.timeMs, cost: Math.max(0, currentCost), isOverrun: overrun || undefined, isOvercost: overcost || undefined });
         break;
       }
     }
@@ -539,7 +579,19 @@ export function calculateCostTimeline(
 
       // 回復開始境界
       if (currentTimeMs > recoveryStartMs) {
-        keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
+        keypoints.push({ timeMs: recoveryStartMs, cost: currentCost, isOvercost: isOvercostZone || undefined });
+      }
+
+      // ゼロ越え: オーバーコストゾーンからの回復
+      if (currentCost < 0 && finalCost >= 0 && recoveryPerSec > 0) {
+        const timeToZeroSec = (-currentCost) / recoveryPerSec;
+        const fromMs = Math.min(currentTimeMs, recoveryStartMs);
+        const zeroCrossingMs = fromMs - timeToZeroSec * 1000;
+        if (zeroCrossingMs > 0) {
+          keypoints.push({ timeMs: zeroCrossingMs, cost: 0, isOvercost: true });
+          keypoints.push({ timeMs: zeroCrossingMs, cost: 0 });
+          isOvercostZone = false;
+        }
       }
 
       if (currentCost < costCap && finalCost >= costCap && recoveryPerSec > 0) {
@@ -551,16 +603,16 @@ export function calculateCostTimeline(
         }
       }
 
-      keypoints.push({ timeMs: 0, cost: finalCost });
+      keypoints.push({ timeMs: 0, cost: Math.max(0, finalCost) });
     } else {
       // 全区間が遅延内
       if (currentTimeMs > recoveryStartMs && recoveryStartMs > 0) {
-        keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
+        keypoints.push({ timeMs: recoveryStartMs, cost: currentCost, isOvercost: isOvercostZone || undefined });
       }
-      keypoints.push({ timeMs: 0, cost: currentCost });
+      keypoints.push({ timeMs: 0, cost: Math.max(0, currentCost), isOvercost: isOvercostZone || undefined });
     }
   } else {
-    keypoints.push({ timeMs: 0, cost: currentCost });
+    keypoints.push({ timeMs: 0, cost: Math.max(0, currentCost), isOvercost: isOvercostZone || undefined });
   }
 
   return keypoints;

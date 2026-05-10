@@ -36,6 +36,8 @@ export interface TimelineItem {
 
 export type SnapMode = '1s' | '0.1s';
 
+export type GameMode = 'normal' | 'extended';
+
 export interface TimelineArrow {
   id: string;
   fromItemId: string;
@@ -43,13 +45,14 @@ export interface TimelineArrow {
 }
 
 export interface TimelineState {
+  mode: GameMode;
   slots: CharacterSlot[];
   items: TimelineItem[];
   arrows: TimelineArrow[];
   layers: number; // number of layers (1-6)
   snapMode: SnapMode;
   totalTimeMs: number; // total timeline duration in ms
-  slotCostConfigs: SlotCostConfig[]; // 6スロット分
+  slotCostConfigs: SlotCostConfig[]; // 6 or 10スロット分
   targetTimeMs?: number; // 目標時間（赤い線で表示）
   standaloneComments: StandaloneComment[];
 }
@@ -84,5 +87,7 @@ export type TimelineAction =
   | { type: 'MOVE_STANDALONE_COMMENT'; id: string; timeMs: number }
   | { type: 'REMOVE_STANDALONE_COMMENT'; id: string }
   | { type: 'EDIT_STANDALONE_COMMENT'; id: string; text: string }
-  | { type: 'LOAD_STATE'; state: Pick<TimelineState, 'slots' | 'items' | 'arrows' | 'layers' | 'totalTimeMs'> & { slotCostConfigs?: SlotCostConfig[]; targetTimeMs?: number; heavyArmorCount?: number; redWinterCount?: number; standaloneComments?: StandaloneComment[] } }
+  | { type: 'SET_STANDALONE_COMMENTS_BULK'; comments: StandaloneComment[] }
+  | { type: 'LOAD_STATE'; state: Pick<TimelineState, 'slots' | 'items' | 'arrows' | 'layers' | 'totalTimeMs'> & { mode?: GameMode; slotCostConfigs?: SlotCostConfig[]; targetTimeMs?: number; heavyArmorCount?: number; redWinterCount?: number; standaloneComments?: StandaloneComment[] } }
+  | { type: 'SET_MODE'; mode: GameMode }
   | { type: 'RESET_ALL' };

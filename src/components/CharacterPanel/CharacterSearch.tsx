@@ -35,11 +35,12 @@ function useFavorites() {
 
 interface Props {
   characters: Character[];
+  currentCharacter?: Character | null;
   onSelect: (character: Character) => void;
   onClose: () => void;
 }
 
-export function CharacterSearch({ characters, onSelect, onClose }: Props) {
+export function CharacterSearch({ characters, currentCharacter, onSelect, onClose }: Props) {
   const [filter, setFilter] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const [favorites, toggleFavorite] = useFavorites();
@@ -52,10 +53,12 @@ export function CharacterSearch({ characters, onSelect, onClose }: Props) {
     ? characters.filter((c) => c.name.includes(filter) || (c.reading && c.reading.includes(filter)))
     : characters;
 
-  // お気に入りを先頭に、それ以外は元の順序を維持
+  // 現在の生徒 → お気に入り → その他
+  const currentName = currentCharacter?.name;
   const sorted = [
-    ...filtered.filter((c) => favorites.has(c.name)),
-    ...filtered.filter((c) => !favorites.has(c.name)),
+    ...filtered.filter((c) => c.name === currentName),
+    ...filtered.filter((c) => c.name !== currentName && favorites.has(c.name)),
+    ...filtered.filter((c) => c.name !== currentName && !favorites.has(c.name)),
   ];
 
   return (

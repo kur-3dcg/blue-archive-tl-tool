@@ -5,3 +5,4 @@ CLAUDE.md
 *.BAK
 *.txt
 *.png
+.env

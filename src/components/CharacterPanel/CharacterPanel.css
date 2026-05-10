@@ -1,15 +1,65 @@
 .character-panel {
-  display: flex;
-  gap: 24px;
   padding: 12px 16px;
   background: var(--bg-secondary);
   border-bottom: 2px solid var(--separator-color);
+}
+
+.panel-main-row {
+  display: flex;
+  gap: 24px;
   align-items: flex-start;
   flex-wrap: wrap;
 }
 
+.panel-btn-group {
+  align-self: flex-start;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.panel-action-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.panel-mode-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-mode-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.game-mode-btn {
+  padding: 4px 14px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--bg-control);
+  color: var(--text-secondary);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.game-mode-btn:hover {
+  background: var(--bg-control-hover);
+}
+
+.game-mode-btn.active {
+  background: var(--bg-active);
+  border-color: var(--bg-active-border);
+  color: var(--text-active);
+}
+
 .mode-toggle-btn {
-  align-self: center;
   padding: 8px 18px;
   border: 1px solid var(--border-tertiary);
   border-radius: 6px;
@@ -37,7 +87,6 @@
 }
 
 .arrow-mode-btn {
-  align-self: center;
   padding: 8px 18px;
   border: 1px solid var(--border-tertiary);
   border-radius: 6px;
@@ -60,7 +109,6 @@
 }
 
 .reset-all-btn {
-  align-self: center;
   padding: 8px 18px;
   border: 1px solid var(--border-tertiary);
   border-radius: 6px;
@@ -78,11 +126,20 @@
   color: #fff;
 }
 
-/* Comment drag button */
-.comment-drag-btn {
+/* Comment area (drag button + text marker panel) */
+.comment-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
   align-self: flex-start;
   margin-left: 16px;
-  margin-top: 20px; /* slot-group-label の高さ分下げて顔画像の上端に揃える */
+  margin-top: 20px;
+}
+
+/* Comment drag button */
+.comment-drag-btn {
+  align-self: stretch;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -8,6 +8,7 @@ import './SharePanel.css';
 
 interface Props {
   state: TimelineState;
+  onCoreAction?: () => void;
 }
 
 /**
@@ -64,7 +65,7 @@ export function buildLoadState(
   };
 }
 
-export function SharePanel({ state }: Props) {
+export function SharePanel({ state, onCoreAction }: Props) {
   const [toast, setToast] = useState<{ id: number; message: string } | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -92,6 +93,7 @@ export function SharePanel({ state }: Props) {
       setError('');
       await navigator.clipboard.writeText(url);
       fireToast('URLをコピーしました');
+      onCoreAction?.();
     } catch {
       setError('エクスポートに失敗しました');
     } finally {
@@ -104,14 +106,15 @@ export function SharePanel({ state }: Props) {
       const text = generateTlText(state);
       await navigator.clipboard.writeText(text);
       fireToast('TLテキストをコピーしました');
+      onCoreAction?.();
     } catch {
       setError('TLテキストのコピーに失敗しました');
     }
   };
 
-  const handleExportImage = async () => {
+  const handleExportImage = async (transparent: boolean) => {
     try {
-      const blob = await generateTlImage(state);
+      const blob = await generateTlImage(state, { transparent });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -119,6 +122,7 @@ export function SharePanel({ state }: Props) {
       a.click();
       URL.revokeObjectURL(url);
       fireToast('画像を保存しました');
+      onCoreAction?.();
     } catch {
       setError('画像出力に失敗しました');
     }
@@ -134,8 +138,11 @@ export function SharePanel({ state }: Props) {
         <button className="share-btn export-tl" onClick={handleExportTl} title="TLをTSV形式でクリップボードにコピー">
           TL出力
         </button>
-        <button className="share-btn export-image" onClick={handleExportImage} title="TLを画像（PNG）として保存">
-          画像出力
+        <button className="share-btn export-image" onClick={() => handleExportImage(true)} title="TLを画像（PNG透過）として保存">
+          画像出力（透過）
+        </button>
+        <button className="share-btn export-image" onClick={() => handleExportImage(false)} title="TLを画像（PNG白背景）として保存">
+          画像出力（白）
         </button>
       </div>
       {error && <div className="share-panel-error">{error}</div>}

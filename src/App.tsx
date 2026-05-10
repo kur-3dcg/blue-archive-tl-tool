@@ -22,6 +22,9 @@ export default function App() {
   const [state, dispatch, resetAll] = useTimelineState();
   const [arrowMode, setArrowMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showMenuTooltip, setShowMenuTooltip] = useState(
+    () => !localStorage.getItem('tl-tooltip-seen')
+  );
   const [saveLoadMode, setSaveLoadMode] = useState<'save' | 'load'>('save');
   const [showSaveLoad, setShowSaveLoad] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -29,6 +32,30 @@ export default function App() {
     return (localStorage.getItem('tl-theme') as Theme) || 'dark';
   });
   const hashImported = useRef(false);
+
+  const hideTooltip = () => {
+    setShowMenuTooltip(false);
+    localStorage.setItem('tl-tooltip-seen', '1');
+    localStorage.setItem('tl-tooltip-core-seen', '1');
+  };
+
+  const triggerCoreTooltip = () => {
+    if (!localStorage.getItem('tl-tooltip-core-seen')) {
+      setShowMenuTooltip(true);
+    }
+  };
+
+  // ツールチップ: 5秒後に自動非表示
+  useEffect(() => {
+    if (!showMenuTooltip) return;
+    const timer = setTimeout(hideTooltip, 5000);
+    return () => clearTimeout(timer);
+  }, [showMenuTooltip]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // メニューを開いたらツールチップを非表示
+  useEffect(() => {
+    if (menuOpen) hideTooltip();
+  }, [menuOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // メニュー外クリックで閉じる
   useEffect(() => {
@@ -92,7 +119,7 @@ export default function App() {
               ロード
             </button>
           </div>
-          <SharePanel state={state} />
+          <SharePanel state={state} onCoreAction={triggerCoreTooltip} />
           <div className="theme-selector">
             <label>テーマ:</label>
             <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)}>
@@ -104,6 +131,11 @@ export default function App() {
             </select>
           </div>
           <div className="hamburger-menu" ref={menuRef}>
+            {showMenuTooltip && (
+              <div className="hamburger-tooltip" onAnimationEnd={hideTooltip}>
+                意見・感想・バグ報告はこちら
+              </div>
+            )}
             <button
               className={`hamburger-btn${menuOpen ? ' open' : ''}`}
               onClick={() => setMenuOpen((v) => !v)}
@@ -136,6 +168,8 @@ export default function App() {
         </div>
       </header>
       <CharacterPanel
+        mode={state.mode}
+        onSetMode={(mode) => dispatch({ type: 'SET_MODE', mode })}
         slots={state.slots}
         stCharacters={stCharacters}
         spCharacters={spCharacters}
@@ -155,6 +189,10 @@ export default function App() {
           dispatch({ type: 'SET_UNIQUE_WEAPON2', slotIndex, value })
         }
         onResetAll={resetAll}
+        standaloneComments={state.standaloneComments}
+        onSetStandaloneComments={(comments) =>
+          dispatch({ type: 'SET_STANDALONE_COMMENTS_BULK', comments })
+        }
       />
       <Timeline state={state} dispatch={dispatch} arrowMode={arrowMode} />
       {showSaveLoad && (
@@ -163,6 +201,7 @@ export default function App() {
           state={state}
           dispatch={dispatch}
           onClose={() => setShowSaveLoad(false)}
+          onSaved={triggerCoreTooltip}
         />
       )}
     </div>

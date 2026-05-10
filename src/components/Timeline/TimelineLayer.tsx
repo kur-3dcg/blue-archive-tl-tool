@@ -26,7 +26,7 @@ interface Props {
   arrowMode?: boolean;
   onArrowClick?: (itemId: string) => void;
   arrowClickFrom?: string | null;
-  itemCostMap?: Map<string, { cost: number; isOverrun: boolean }>;
+  itemCostMap?: Map<string, { cost: number; usedCost: number; isOverrun: boolean; isOvercost: boolean }>;
   onCostAdjust?: (itemId: string, delta: number) => void;
   onSetTarget?: (itemId: string, targetSlotIndex: number | undefined) => void;
   onToggleTimeDisplay?: (itemId: string) => void;
@@ -194,8 +194,9 @@ export function TimelineLayer({
             arrowMode={arrowMode}
             onArrowClick={onArrowClick}
             arrowClickFrom={arrowClickFrom}
-            costValue={itemCostMap?.get(item.id)?.cost}
+            costValue={itemCostMap?.get(item.id)?.usedCost}
             costOverrun={itemCostMap?.get(item.id)?.isOverrun}
+            costOvercost={itemCostMap?.get(item.id)?.isOvercost}
             onCostAdjust={onCostAdjust}
             onSetTarget={onSetTarget}
             onToggleTimeDisplay={onToggleTimeDisplay}

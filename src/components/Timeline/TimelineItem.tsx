@@ -30,6 +30,7 @@ interface Props {
   arrowClickFrom?: string | null;
   costValue?: number;
   costOverrun?: boolean;
+  costOvercost?: boolean;
   onCostAdjust?: (itemId: string, delta: number) => void;
   onSetTarget?: (itemId: string, targetSlotIndex: number | undefined) => void;
   onToggleTimeDisplay?: (itemId: string) => void;
@@ -59,6 +60,7 @@ export function TimelineItem({
   arrowClickFrom,
   costValue,
   costOverrun,
+  costOvercost,
   onCostAdjust,
   onSetTarget,
   onToggleTimeDisplay,
@@ -67,8 +69,6 @@ export function TimelineItem({
   const dragRef = useRef<{
     layerTop: number;
     moved: boolean;
-    // Offset between mouse position and item center at drag start (in time ms)
-    offsetMs: number;
   } | null>(null);
   const didDragRef = useRef(false);
   const character = slot.character;
@@ -104,17 +104,11 @@ export function TimelineItem({
       ? layersContainer.getBoundingClientRect().top
       : 0;
 
-    // Calculate offset: difference between item's actual time and where the mouse is pointing
-    const curZoom = zoomLevelRef?.current ?? zoomLevel;
-    const mouseTimeMs = clientXToTime(e.clientX, curZoom);
-    const offsetMs = item.timeMs - mouseTimeMs;
-
     didDragRef.current = false;
 
     dragRef.current = {
       layerTop,
       moved: false,
-      offsetMs,
     };
 
     onItemDragStart?.(item.id);
@@ -126,10 +120,9 @@ export function TimelineItem({
       const curZoom = zoomLevelRef?.current ?? zoomLevel;
       const curSnap = snapModeRef?.current ?? snapMode;
 
-      // Convert mouse position directly to time, add the initial offset
+      // Snap mouse position directly to grid (no offset, always aligns to snap grid)
       const mouseTime = clientXToTime(ev.clientX, curZoom);
-      let newTimeMs = mouseTime + dragRef.current.offsetMs;
-      newTimeMs = snapTime(Math.max(0, Math.min(totalTimeMs, newTimeMs)), curSnap);
+      let newTimeMs = snapTime(Math.max(0, Math.min(totalTimeMs, mouseTime)), curSnap);
 
       const relY = ev.clientY - dragRef.current.layerTop;
       let newLayer = Math.floor(relY / LAYER_HEIGHT);
@@ -181,14 +174,12 @@ export function TimelineItem({
     clickCountRef.current += 1;
     if (clickCountRef.current === 1) {
       clickTimerRef.current = setTimeout(() => {
-        // シングルクリック: 表示切替
         if (clickCountRef.current === 1) {
           onToggleTimeDisplay?.(item.id);
         }
         clickCountRef.current = 0;
       }, DOUBLE_CLICK_MS);
     } else if (clickCountRef.current === 2) {
-      // ダブルクリック: コメント
       if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
       clickCountRef.current = 0;
       onDoubleClick(item.id);
@@ -224,7 +215,7 @@ export function TimelineItem({
         </div>
       )}
       <img src={character.image} alt={character.name} width={48} height={48} />
-      <div className={`timeline-item-time${showCost ? ' cost-mode' : ''}${costOverrun ? ' overrun' : ''}`}>{timeLabel}</div>
+      <div className={`timeline-item-time${showCost ? ' cost-mode' : ''}${costOverrun ? ' overrun' : ''}${costOvercost ? ' overcost' : ''}`}>{timeLabel}</div>
       {item.comment && <div className="timeline-item-comment-dot" />}
       {targetChar && (
         <img

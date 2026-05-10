@@ -1,27 +1,39 @@
 import { useReducer, useEffect, useCallback } from 'react';
-import type { TimelineState, TimelineAction, CharacterSlot, SlotCostConfig } from '../types';
+import type { TimelineState, TimelineAction, CharacterSlot, SlotCostConfig, GameMode, Character } from '../types';
+import stCharacters from '../../data/characters_st.json';
+import spCharacters from '../../data/characters_sp.json';
 import {
   STRIKER_COUNT,
   SPECIAL_COUNT,
+  EXTENDED_STRIKER_COUNT,
+  EXTENDED_SPECIAL_COUNT,
   DEFAULT_TOTAL_TIME_MS,
   MAX_LAYERS,
   MIN_LAYERS,
 } from '../constants';
 
-function createInitialSlots(): CharacterSlot[] {
+function getSlotCounts(mode: GameMode): { stCount: number; spCount: number } {
+  return mode === 'extended'
+    ? { stCount: EXTENDED_STRIKER_COUNT, spCount: EXTENDED_SPECIAL_COUNT }
+    : { stCount: STRIKER_COUNT, spCount: SPECIAL_COUNT };
+}
+
+function createInitialSlots(mode: GameMode = 'normal'): CharacterSlot[] {
+  const { stCount, spCount } = getSlotCounts(mode);
   const slots: CharacterSlot[] = [];
-  for (let i = 0; i < STRIKER_COUNT; i++) {
+  for (let i = 0; i < stCount; i++) {
     slots.push({ type: 'striker', index: i, character: null });
   }
-  for (let i = 0; i < SPECIAL_COUNT; i++) {
+  for (let i = 0; i < spCount; i++) {
     slots.push({ type: 'special', index: i, character: null });
   }
   return slots;
 }
 
-function createInitialCostConfigs(): SlotCostConfig[] {
+function createInitialCostConfigs(mode: GameMode = 'normal'): SlotCostConfig[] {
+  const { stCount, spCount } = getSlotCounts(mode);
   const configs: SlotCostConfig[] = [];
-  for (let i = 0; i < STRIKER_COUNT + SPECIAL_COUNT; i++) {
+  for (let i = 0; i < stCount + spCount; i++) {
     configs.push({ skillCost: 3, hasUniqueWeapon4: false, hasUniqueWeapon2: true });
   }
   return configs;
@@ -30,6 +42,7 @@ function createInitialCostConfigs(): SlotCostConfig[] {
 const STORAGE_KEY = 'ba-tl-state';
 
 const initialState: TimelineState = {
+  mode: 'normal',
   slots: createInitialSlots(),
   items: [],
   arrows: [],
@@ -246,21 +259,40 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         ),
       };
 
-    case 'LOAD_STATE':
+    case 'SET_STANDALONE_COMMENTS_BULK':
+      return { ...state, standaloneComments: action.comments };
+
+    case 'SET_MODE': {
+      if (action.mode === state.mode) return state;
       return {
         ...state,
+        mode: action.mode,
+        slots: createInitialSlots(action.mode),
+        slotCostConfigs: createInitialCostConfigs(action.mode),
+        items: [],
+        arrows: [],
+        standaloneComments: [],
+      };
+    }
+
+    case 'LOAD_STATE': {
+      const loadedMode = action.state.mode ?? 'normal';
+      return {
+        ...state,
+        mode: loadedMode,
         slots: action.state.slots,
         items: action.state.items,
         arrows: action.state.arrows ?? [],
         layers: action.state.layers,
         totalTimeMs: action.state.totalTimeMs ?? state.totalTimeMs,
-        slotCostConfigs: (action.state.slotCostConfigs ?? createInitialCostConfigs()).map((c) => ({
+        slotCostConfigs: (action.state.slotCostConfigs ?? createInitialCostConfigs(loadedMode)).map((c) => ({
           ...c,
           hasUniqueWeapon2: c.hasUniqueWeapon2 ?? true,
         })),
         targetTimeMs: action.state.targetTimeMs,
         standaloneComments: action.state.standaloneComments ?? [],
       };
+    }
 
     case 'RESET_ALL':
       return initialState;
@@ -270,20 +302,37 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
   }
 }
 
+// 名前からキャラクターデータを最新JSONで引き直す
+const allCharacters: Character[] = [
+  ...(stCharacters as Character[]),
+  ...(spCharacters as Character[]),
+];
+function resolveCharacter(saved: Character | null): Character | null {
+  if (!saved) return null;
+  const fresh = allCharacters.find((c) => c.name === saved.name);
+  return fresh ?? saved;
+}
+
 function loadFromStorage(base: TimelineState): TimelineState {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) return base;
     const parsed = JSON.parse(saved) as Partial<TimelineState>;
+    const savedMode: GameMode = (parsed.mode as GameMode) ?? 'normal';
+    const slots = (parsed.slots ?? createInitialSlots(savedMode)).map((s) => ({
+      ...s,
+      character: resolveCharacter(s.character),
+    }));
     return {
       ...base,
-      slots: parsed.slots ?? base.slots,
+      mode: savedMode,
+      slots,
       items: parsed.items ?? base.items,
       arrows: parsed.arrows ?? base.arrows,
       layers: parsed.layers ?? base.layers,
       snapMode: parsed.snapMode ?? base.snapMode,
       totalTimeMs: parsed.totalTimeMs ?? base.totalTimeMs,
-      slotCostConfigs: (parsed.slotCostConfigs ?? base.slotCostConfigs).map((c) => ({
+      slotCostConfigs: (parsed.slotCostConfigs ?? createInitialCostConfigs(savedMode)).map((c) => ({
         ...c,
         hasUniqueWeapon2: c.hasUniqueWeapon2 ?? true,
       })),

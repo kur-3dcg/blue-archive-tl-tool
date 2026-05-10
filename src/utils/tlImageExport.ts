@@ -54,7 +54,8 @@ function drawTextClipped(
   ctx.fillText(truncated + '…', x, y);
 }
 
-export async function generateTlImage(state: TimelineState): Promise<Blob> {
+export async function generateTlImage(state: TimelineState, options: { transparent?: boolean } = {}): Promise<Blob> {
+  const transparent = options.transparent ?? true;
   const { slots, items, slotCostConfigs, totalTimeMs, targetTimeMs, standaloneComments } = state;
 
   const { heavyArmorCount, redWinterCount } = computeArmorCounts(slots);
@@ -158,6 +159,12 @@ export async function generateTlImage(state: TimelineState): Promise<Blob> {
   roundedRectPath(ctx, 0, 0, W, H, 10);
   ctx.clip();
 
+  // White background when not transparent
+  if (!transparent) {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+  }
+
   // Header: subtle light gray background
   ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
   ctx.fillRect(0, 0, W, HEADER_H);
@@ -200,7 +207,7 @@ export async function generateTlImage(state: TimelineState): Promise<Blob> {
     if (entry.kind === 'skill') {
       const [parent] = entry.group;
       const costInfo = costMap.get(parent.id);
-      const costStr = costInfo !== undefined ? costToDisplay(costInfo.cost) : '';
+      const costStr = costInfo !== undefined ? costToDisplay(costInfo.usedCost) : '';
       const isOverrun = costInfo?.isOverrun ?? false;
 
       // Cost column
