@@ -101,7 +101,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>ブルアカ TL作成支援ツール</h1>
+        <h1>ブルアカ TL作成支援ツール <span className="app-build-date">{__BUILD_DATE__}</span></h1>
         <div className="app-header-right">
           <div className="saveload-btns">
             <button

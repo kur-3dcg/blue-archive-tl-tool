@@ -9,4 +9,9 @@ export default defineConfig({
       '@': '/src',
     },
   },
+  define: {
+    __BUILD_DATE__: JSON.stringify(
+      new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Tokyo' }).replace(/\//g, '.')
+    ),
+  },
 });
