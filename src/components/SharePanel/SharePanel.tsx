@@ -53,6 +53,14 @@ export function buildLoadState(
     text: sc.text,
   }));
 
+  const stageGimmicks = data.stageGimmicks?.map((g, i) => ({
+    id: `imported-gimmick-${Date.now()}-${i}`,
+    timeMs: g.timeMs,
+    durationMs: g.durationMs,
+    recoveryDelta: g.recoveryDelta,
+    label: g.label,
+  }));
+
   return {
     slots,
     items,
@@ -62,6 +70,7 @@ export function buildLoadState(
     slotCostConfigs: data.slotCostConfigs,
     targetTimeMs: data.targetTimeMs,
     standaloneComments,
+    stageGimmicks,
   };
 }
 
@@ -81,7 +90,7 @@ export function SharePanel({ state, onCoreAction }: Props) {
     return encode(
       state.slots, state.items, state.layers, state.totalTimeMs,
       state.arrows, state.slotCostConfigs, state.targetTimeMs,
-      state.standaloneComments,
+      state.standaloneComments, state.stageGimmicks,
     );
   };
 

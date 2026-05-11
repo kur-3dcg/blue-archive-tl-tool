@@ -25,6 +25,10 @@ export const SPECIAL_COUNT = 2;
 export const EXTENDED_STRIKER_COUNT = 6;
 export const EXTENDED_SPECIAL_COUNT = 4;
 
+export const STAGE_GIMMICK_PRESETS = [
+  { label: 'コクマー バリスタ', recoveryDelta: 1000, durationMs: 22000 },
+] as const;
+
 // スロットごとのバフバー色（将来10スロット対応想定）
 export const SLOT_COLORS = [
   '#29B6F6', // 0 - 水色

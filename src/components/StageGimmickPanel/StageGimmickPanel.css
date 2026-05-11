@@ -1,0 +1,165 @@
+.stage-gimmick-wrapper {
+  position: relative;
+}
+
+.stage-gimmick-btn {
+  padding: 4px 10px;
+  font-size: 13px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.stage-gimmick-btn:hover {
+  background: var(--bg-tertiary);
+}
+
+.stage-gimmick-btn.active {
+  background: rgba(251, 146, 60, 0.2);
+  border-color: #fb923c;
+  color: #fb923c;
+}
+
+.stage-gimmick-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 310px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+}
+
+.stage-gimmick-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fb923c;
+  letter-spacing: 0.04em;
+}
+
+.stage-gimmick-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stage-gimmick-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stage-gimmick-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  min-width: 72px;
+  flex-shrink: 0;
+}
+
+.stage-gimmick-select {
+  flex: 1;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-size: 12px;
+}
+
+.stage-gimmick-input {
+  flex: 1;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+.stage-gimmick-input--short {
+  max-width: 80px;
+  flex: none;
+}
+
+.stage-gimmick-input:focus,
+.stage-gimmick-select:focus {
+  outline: none;
+  border-color: #fb923c;
+}
+
+.stage-gimmick-add-btn {
+  padding: 3px 10px;
+  font-size: 12px;
+  background: rgba(251, 146, 60, 0.15);
+  color: #fb923c;
+  border: 1px solid #fb923c;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.stage-gimmick-add-btn:hover {
+  background: rgba(251, 146, 60, 0.3);
+}
+
+.stage-gimmick-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-top: 1px solid var(--border-primary);
+  padding-top: 6px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.stage-gimmick-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  padding: 3px 4px;
+  border-radius: 3px;
+  background: rgba(251, 146, 60, 0.08);
+}
+
+.stage-gimmick-item-label {
+  font-weight: 600;
+  color: #fb923c;
+  flex-shrink: 0;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stage-gimmick-item-detail {
+  color: var(--text-muted);
+  flex: 1;
+  font-family: monospace;
+  font-size: 10px;
+}
+
+.stage-gimmick-remove-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 13px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.stage-gimmick-remove-btn:hover {
+  color: #ef4444;
+}

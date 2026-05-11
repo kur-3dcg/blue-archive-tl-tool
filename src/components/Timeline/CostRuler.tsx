@@ -1,9 +1,10 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
-import type { CharacterSlot, TimelineItem, SlotCostConfig } from '../../types';
+import type { CharacterSlot, TimelineItem, SlotCostConfig, StageGimmick } from '../../types';
 import { TIMELINE_PAD_LEFT, TIMELINE_PAD_RIGHT } from '../../constants';
 import { calculateCostTimeline, calculateCostCap, computeArmorCounts } from '../../utils/costCalc';
 
 const COST_RULER_HEIGHT = 140;
+const GIMMICK_BAND_HEIGHT = 16;
 
 interface Props {
   slots: CharacterSlot[];
@@ -12,6 +13,7 @@ interface Props {
   totalTimeMs: number;
   zoomLevel: number;
   totalWidth: number;
+  stageGimmicks?: StageGimmick[];
 }
 
 export function CostRuler({
@@ -21,6 +23,7 @@ export function CostRuler({
   totalTimeMs,
   zoomLevel,
   totalWidth,
+  stageGimmicks,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const totalTimeS = totalTimeMs / 1000;
@@ -29,8 +32,8 @@ export function CostRuler({
 
   const keypoints = useMemo(() => {
     const { heavyArmorCount, redWinterCount } = computeArmorCounts(slots);
-    return calculateCostTimeline(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount);
-  }, [slots, items, slotCostConfigs, totalTimeMs]);
+    return calculateCostTimeline(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks);
+  }, [slots, items, slotCostConfigs, totalTimeMs, stageGimmicks]);
 
   // Re-render on theme change
   const [theme, setTheme] = useState(document.documentElement.getAttribute('data-theme'));
@@ -60,7 +63,8 @@ export function CostRuler({
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, totalWidth, COST_RULER_HEIGHT);
 
-    const graphTop = 4;
+    const gimmickBandH = (stageGimmicks && stageGimmicks.length > 0) ? GIMMICK_BAND_HEIGHT : 0;
+    const graphTop = 4 + gimmickBandH;
     const graphBottom = COST_RULER_HEIGHT - 4;
     const graphHeight = graphBottom - graphTop;
 
@@ -68,6 +72,37 @@ export function CostRuler({
     const costToY = (cost: number) => graphBottom - (cost / maxCostDisplay) * graphHeight;
     const timeMsToX = (timeMs: number) =>
       totalWidth - TIMELINE_PAD_RIGHT - (timeMs / 1000) * zoomLevel;
+
+    // ギミック帯（グラフ最上部に描画）
+    if (stageGimmicks && stageGimmicks.length > 0) {
+      ctx.font = '9px monospace';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      for (const g of stageGimmicks) {
+        const startX = timeMsToX(g.timeMs);
+        const endMs = Math.max(0, g.timeMs - g.durationMs);
+        const endX = timeMsToX(endMs);
+        const bandY = 2;
+        ctx.fillStyle = 'rgba(251, 146, 60, 0.3)';
+        ctx.fillRect(endX, bandY, startX - endX, GIMMICK_BAND_HEIGHT - 2);
+        // ボーダー
+        ctx.strokeStyle = 'rgba(251, 146, 60, 0.7)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(endX + 0.5, bandY + 0.5, startX - endX - 1, GIMMICK_BAND_HEIGHT - 3);
+        // ラベル
+        ctx.fillStyle = 'rgba(251, 146, 60, 0.95)';
+        const bandWidth = startX - endX;
+        const labelText = g.label ? `${g.label} +${g.recoveryDelta}` : `+${g.recoveryDelta}`;
+        if (bandWidth > 20) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(endX + 2, bandY, bandWidth - 4, GIMMICK_BAND_HEIGHT - 2);
+          ctx.clip();
+          ctx.fillText(labelText, endX + 3, bandY + (GIMMICK_BAND_HEIGHT - 2) / 2);
+          ctx.restore();
+        }
+      }
+    }
 
     // Draw horizontal grid lines at each integer cost
     ctx.font = '10px monospace';
@@ -151,7 +186,7 @@ export function CostRuler({
         ctx.stroke();
       }
     }
-  }, [keypoints, costCap, zoomLevel, totalWidth, totalTimeS, theme, totalTimeMs]);
+  }, [keypoints, costCap, zoomLevel, totalWidth, totalTimeS, theme, totalTimeMs, stageGimmicks]);
 
   return <canvas ref={canvasRef} className="cost-ruler" />;
 }

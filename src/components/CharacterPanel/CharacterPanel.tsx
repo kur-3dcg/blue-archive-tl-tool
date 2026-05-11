@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import type { Character, CharacterSlot, SlotCostConfig, GameMode, StandaloneComment } from '../../types';
+import type { Character, CharacterSlot, SlotCostConfig, GameMode, StandaloneComment, StageGimmick } from '../../types';
 import { STRIKER_COUNT, EXTENDED_STRIKER_COUNT } from '../../constants';
 import { SlotSelector } from './SlotSelector';
 import { TextMarkerPanel } from '../TextMarkerPanel/TextMarkerPanel';
+import { StageGimmickPanel } from '../StageGimmickPanel/StageGimmickPanel';
 import './CharacterPanel.css';
 
 interface Props {
@@ -21,6 +22,10 @@ interface Props {
   onResetAll: () => void;
   standaloneComments: StandaloneComment[];
   onSetStandaloneComments: (comments: StandaloneComment[]) => void;
+  totalTimeMs: number;
+  stageGimmicks: StageGimmick[];
+  onAddStageGimmick: (gimmick: StageGimmick) => void;
+  onRemoveStageGimmick: (id: string) => void;
 }
 
 export function CharacterPanel({
@@ -39,6 +44,10 @@ export function CharacterPanel({
   onResetAll,
   standaloneComments,
   onSetStandaloneComments,
+  totalTimeMs,
+  stageGimmicks,
+  onAddStageGimmick,
+  onRemoveStageGimmick,
 }: Props) {
   const [editMode, setEditMode] = useState(true);
 
@@ -117,6 +126,12 @@ export function CharacterPanel({
           <TextMarkerPanel
             standaloneComments={standaloneComments}
             onSetComments={onSetStandaloneComments}
+          />
+          <StageGimmickPanel
+            stageGimmicks={stageGimmicks}
+            totalTimeMs={totalTimeMs}
+            onAdd={onAddStageGimmick}
+            onRemove={onRemoveStageGimmick}
           />
         </div>
         <div className="panel-btn-group">

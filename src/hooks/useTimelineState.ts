@@ -1,5 +1,5 @@
 import { useReducer, useEffect, useCallback } from 'react';
-import type { TimelineState, TimelineAction, CharacterSlot, SlotCostConfig, GameMode, Character } from '../types';
+import type { TimelineState, TimelineAction, CharacterSlot, SlotCostConfig, GameMode, Character, StageGimmick } from '../types';
 import stCharacters from '../../data/characters_st.json';
 import spCharacters from '../../data/characters_sp.json';
 import {
@@ -52,6 +52,7 @@ const initialState: TimelineState = {
   slotCostConfigs: createInitialCostConfigs(),
   targetTimeMs: undefined,
   standaloneComments: [],
+  stageGimmicks: [],
 };
 
 function reducer(state: TimelineState, action: TimelineAction): TimelineState {
@@ -262,6 +263,15 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
     case 'SET_STANDALONE_COMMENTS_BULK':
       return { ...state, standaloneComments: action.comments };
 
+    case 'ADD_STAGE_GIMMICK':
+      return { ...state, stageGimmicks: [...state.stageGimmicks, action.gimmick] };
+
+    case 'REMOVE_STAGE_GIMMICK':
+      return { ...state, stageGimmicks: state.stageGimmicks.filter((g) => g.id !== action.id) };
+
+    case 'SET_STAGE_GIMMICKS':
+      return { ...state, stageGimmicks: action.gimmicks };
+
     case 'SET_MODE': {
       if (action.mode === state.mode) return state;
       return {
@@ -272,6 +282,7 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         items: [],
         arrows: [],
         standaloneComments: [],
+        stageGimmicks: [],
       };
     }
 
@@ -291,6 +302,7 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         })),
         targetTimeMs: action.state.targetTimeMs,
         standaloneComments: action.state.standaloneComments ?? [],
+        stageGimmicks: action.state.stageGimmicks ?? [],
       };
     }
 
@@ -338,6 +350,7 @@ function loadFromStorage(base: TimelineState): TimelineState {
       })),
       targetTimeMs: parsed.targetTimeMs,
       standaloneComments: parsed.standaloneComments ?? base.standaloneComments,
+      stageGimmicks: (parsed.stageGimmicks as StageGimmick[] | undefined) ?? base.stageGimmicks,
     };
   } catch {
     return base;

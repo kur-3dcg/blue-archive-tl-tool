@@ -41,7 +41,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
   const [arrowClickFrom, setArrowClickFrom] = useState<string | null>(null);
   const [containerWidth, setContainerWidth] = useState(800);
 
-  const { snapMode, layers, items, arrows, slots, totalTimeMs, slotCostConfigs, targetTimeMs, standaloneComments } = state;
+  const { snapMode, layers, items, arrows, slots, totalTimeMs, slotCostConfigs, targetTimeMs, standaloneComments, stageGimmicks } = state;
   const totalTimeS = totalTimeMs / 1000;
 
   // zoomLevel をビューポート幅から自動算出
@@ -109,8 +109,8 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
   // Calculate cost for each item
   const itemCostMap = useMemo(() => {
     const { heavyArmorCount, redWinterCount } = computeArmorCounts(slots);
-    return calculateItemCosts(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount);
-  }, [slots, items, slotCostConfigs, totalTimeMs]);
+    return calculateItemCosts(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks);
+  }, [slots, items, slotCostConfigs, totalTimeMs, stageGimmicks]);
 
   // ビューポート移動（30秒刻み）
   const scrollByStep = useCallback((direction: 'left' | 'right') => {
@@ -462,6 +462,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
             totalTimeMs={totalTimeMs}
             zoomLevel={zoomLevel}
             totalWidth={totalWidth}
+            stageGimmicks={stageGimmicks}
           />
           <StandaloneCommentLayer
             comments={standaloneComments}

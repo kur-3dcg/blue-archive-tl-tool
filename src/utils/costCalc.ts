@@ -1,4 +1,4 @@
-import type { CharacterSlot, TimelineItem, SlotCostConfig } from '../types';
+import type { CharacterSlot, TimelineItem, SlotCostConfig, StageGimmick } from '../types';
 
 // コスト回復開始遅延（戦闘開始から2.033秒後に回復開始）
 const RECOVERY_DELAY_MS = 2033;
@@ -301,7 +301,8 @@ export function calculateItemCosts(
   slotCostConfigs: SlotCostConfig[],
   totalTimeMs: number,
   heavyArmorCount = 0,
-  redWinterCount = 0
+  redWinterCount = 0,
+  stageGimmicks?: StageGimmick[]
 ): Map<string, ItemCostInfo> {
   const result = new Map<string, ItemCostInfo>();
   if (items.length === 0) return result;
@@ -344,6 +345,12 @@ export function calculateItemCosts(
 
   // バフイベントをリフレッシュ対応で追加
   events.push(...buildAllBuffEvents(items, slots, slotCostConfigs, slotItemsSorted));
+
+  // ステージギミックのバフイベントを追加
+  for (const g of stageGimmicks ?? []) {
+    events.push({ timeMs: g.timeMs, type: 'buff_start', recoveryDelta: g.recoveryDelta });
+    events.push({ timeMs: g.timeMs - g.durationMs, type: 'buff_end', recoveryDelta: g.recoveryDelta });
+  }
 
   // 時間降順でソート（totalTimeMs → 0方向）、同一時間ならbuff_start → skill_use → buff_end
   const typePriority = { buff_start: 0, skill_use: 1, buff_end: 2 };
@@ -418,7 +425,8 @@ export function calculateCostTimeline(
   slotCostConfigs: SlotCostConfig[],
   totalTimeMs: number,
   heavyArmorCount = 0,
-  redWinterCount = 0
+  redWinterCount = 0,
+  stageGimmicks?: StageGimmick[]
 ): CostKeypoint[] {
   const costCap = calculateCostCap(slotCostConfigs, slots);
   const costFloor = getOvercostFloor(slots);
@@ -457,6 +465,12 @@ export function calculateCostTimeline(
 
   // バフイベントをリフレッシュ対応で追加
   events.push(...buildAllBuffEvents(items, slots, slotCostConfigs, slotItemsSorted));
+
+  // ステージギミックのバフイベントを追加
+  for (const g of stageGimmicks ?? []) {
+    events.push({ timeMs: g.timeMs, type: 'buff_start', recoveryDelta: g.recoveryDelta });
+    events.push({ timeMs: g.timeMs - g.durationMs, type: 'buff_end', recoveryDelta: g.recoveryDelta });
+  }
 
   const typePriority = { buff_start: 0, skill_use: 1, buff_end: 2 };
   events.sort((a, b) => {

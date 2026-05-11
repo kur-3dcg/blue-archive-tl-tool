@@ -1,4 +1,4 @@
-import type { CharacterSlot, TimelineItem, TimelineArrow, SlotCostConfig, StandaloneComment } from '../types';
+import type { CharacterSlot, TimelineItem, TimelineArrow, SlotCostConfig, StandaloneComment, StageGimmick } from '../types';
 import stCharacters from '../../data/characters_st.json';
 import spCharacters from '../../data/characters_sp.json';
 
@@ -33,6 +33,7 @@ interface CompactData {
   H?: number;                                              // heavyArmorCount
   W?: number;                                              // redWinterCount
   N?: { t: number; x: string }[];                         // standaloneComments: timeMs, text
+  K?: { t: number; d: number; r: number; l?: string }[];  // stageGimmicks: timeMs, durationMs, recoveryDelta, label
 }
 
 // Decoded result (unified)
@@ -47,6 +48,7 @@ export interface ShareData {
   heavyArmorCount?: number;
   redWinterCount?: number;
   standaloneComments?: { timeMs: number; text: string }[];
+  stageGimmicks?: { timeMs: number; durationMs: number; recoveryDelta: number; label?: string }[];
 }
 
 // --- Compression helpers using DecompressionStream/CompressionStream ---
@@ -126,6 +128,7 @@ export async function encode(
   slotCostConfigs?: SlotCostConfig[],
   targetTimeMs?: number,
   standaloneComments?: StandaloneComment[],
+  stageGimmicks?: StageGimmick[],
 ): Promise<string> {
   const itemIdToIndex = new Map(items.map((item, idx) => [item.id, idx]));
 
@@ -162,6 +165,9 @@ export async function encode(
     ...(targetTimeMs !== undefined ? { G: targetTimeMs } : {}),
     ...(standaloneComments && standaloneComments.length > 0
       ? { N: standaloneComments.map((sc) => ({ t: sc.timeMs, x: sc.text })) }
+      : {}),
+    ...(stageGimmicks && stageGimmicks.length > 0
+      ? { K: stageGimmicks.map((g) => ({ t: g.timeMs, d: g.durationMs, r: g.recoveryDelta, ...(g.label ? { l: g.label } : {}) })) }
       : {}),
   };
 
@@ -224,5 +230,6 @@ function compactToShareData(c: CompactData): ShareData {
     heavyArmorCount: c.H,
     redWinterCount: c.W,
     standaloneComments: c.N?.map((n) => ({ timeMs: n.t, text: n.x })),
+    stageGimmicks: c.K?.map((k) => ({ timeMs: k.t, durationMs: k.d, recoveryDelta: k.r, label: k.l })),
   };
 }

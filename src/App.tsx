@@ -193,6 +193,14 @@ export default function App() {
         onSetStandaloneComments={(comments) =>
           dispatch({ type: 'SET_STANDALONE_COMMENTS_BULK', comments })
         }
+        totalTimeMs={state.totalTimeMs}
+        stageGimmicks={state.stageGimmicks}
+        onAddStageGimmick={(gimmick) =>
+          dispatch({ type: 'ADD_STAGE_GIMMICK', gimmick })
+        }
+        onRemoveStageGimmick={(id) =>
+          dispatch({ type: 'REMOVE_STAGE_GIMMICK', id })
+        }
       />
       <Timeline state={state} dispatch={dispatch} arrowMode={arrowMode} />
       {showSaveLoad && (

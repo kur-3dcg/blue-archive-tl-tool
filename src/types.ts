@@ -55,12 +55,21 @@ export interface TimelineState {
   slotCostConfigs: SlotCostConfig[]; // 6 or 10スロット分
   targetTimeMs?: number; // 目標時間（赤い線で表示）
   standaloneComments: StandaloneComment[];
+  stageGimmicks: StageGimmick[];
 }
 
 export interface StandaloneComment {
   id: string;
   timeMs: number;
   text: string;
+}
+
+export interface StageGimmick {
+  id: string;
+  timeMs: number;       // 発動時刻（カウントダウン方向）
+  durationMs: number;   // 効果時間
+  recoveryDelta: number; // 回復力増加量
+  label?: string;       // 表示名
 }
 
 export type TimelineAction =
@@ -88,6 +97,9 @@ export type TimelineAction =
   | { type: 'REMOVE_STANDALONE_COMMENT'; id: string }
   | { type: 'EDIT_STANDALONE_COMMENT'; id: string; text: string }
   | { type: 'SET_STANDALONE_COMMENTS_BULK'; comments: StandaloneComment[] }
-  | { type: 'LOAD_STATE'; state: Pick<TimelineState, 'slots' | 'items' | 'arrows' | 'layers' | 'totalTimeMs'> & { mode?: GameMode; slotCostConfigs?: SlotCostConfig[]; targetTimeMs?: number; heavyArmorCount?: number; redWinterCount?: number; standaloneComments?: StandaloneComment[] } }
+  | { type: 'ADD_STAGE_GIMMICK'; gimmick: StageGimmick }
+  | { type: 'REMOVE_STAGE_GIMMICK'; id: string }
+  | { type: 'SET_STAGE_GIMMICKS'; gimmicks: StageGimmick[] }
+  | { type: 'LOAD_STATE'; state: Pick<TimelineState, 'slots' | 'items' | 'arrows' | 'layers' | 'totalTimeMs'> & { mode?: GameMode; slotCostConfigs?: SlotCostConfig[]; targetTimeMs?: number; heavyArmorCount?: number; redWinterCount?: number; standaloneComments?: StandaloneComment[]; stageGimmicks?: StageGimmick[] } }
   | { type: 'SET_MODE'; mode: GameMode }
   | { type: 'RESET_ALL' };
