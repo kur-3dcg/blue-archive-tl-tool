@@ -130,6 +130,7 @@ export function CharacterPanel({
           <StageGimmickPanel
             stageGimmicks={stageGimmicks}
             totalTimeMs={totalTimeMs}
+            slots={slots}
             onAdd={onAddStageGimmick}
             onRemove={onRemoveStageGimmick}
           />

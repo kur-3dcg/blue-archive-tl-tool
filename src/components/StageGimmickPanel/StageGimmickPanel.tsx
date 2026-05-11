@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import type { StageGimmick } from '../../types';
+import type { StageGimmick, CharacterSlot } from '../../types';
 import { STAGE_GIMMICK_PRESETS } from '../../constants';
 import './StageGimmickPanel.css';
 
 interface Props {
   stageGimmicks: StageGimmick[];
   totalTimeMs: number;
+  slots: CharacterSlot[];
   onAdd: (gimmick: StageGimmick) => void;
   onRemove: (id: string) => void;
 }
@@ -33,7 +34,7 @@ function secToDisplay(ms: number): string {
 
 const CUSTOM_KEY = '__custom__';
 
-export function StageGimmickPanel({ stageGimmicks, totalTimeMs, onAdd, onRemove }: Props) {
+export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, onRemove }: Props) {
   const [open, setOpen] = useState(false);
   const [preset, setPreset] = useState('0');
   const [timeInput, setTimeInput] = useState('');
@@ -44,6 +45,14 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, onAdd, onRemove 
 
   const isCustom = preset === CUSTOM_KEY;
   const presetData = !isCustom ? STAGE_GIMMICK_PRESETS[parseInt(preset)] : null;
+
+  // 現在のストライカー数（キャラが設定されているスロットのみ）
+  const strikerCount = slots.filter((s) => s.type === 'striker' && s.character !== null).length;
+
+  // プリセットの実効回復力（ストライカー数×per striker）
+  const presetRecoveryDelta = presetData && 'recoveryPerStriker' in presetData
+    ? presetData.recoveryPerStriker * strikerCount
+    : 0;
 
   // パネル外クリックで閉じる
   useEffect(() => {
@@ -73,8 +82,9 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, onAdd, onRemove 
       if (!isFinite(durationMs) || durationMs <= 0) return;
     } else if (presetData) {
       label = presetData.label;
-      recoveryDelta = presetData.recoveryDelta;
+      recoveryDelta = presetRecoveryDelta;
       durationMs = presetData.durationMs;
+      if (recoveryDelta <= 0) return; // ストライカー0人では追加しない
     } else {
       return;
     }
@@ -116,6 +126,11 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, onAdd, onRemove 
                 <option value={CUSTOM_KEY}>カスタム</option>
               </select>
             </div>
+            {!isCustom && presetData && 'recoveryPerStriker' in presetData && (
+              <div className="stage-gimmick-note">
+                回復力 +{presetData.recoveryPerStriker} × ST{strikerCount}人 = <strong>+{presetRecoveryDelta}</strong>
+              </div>
+            )}
             {isCustom && (
               <>
                 <div className="stage-gimmick-row">

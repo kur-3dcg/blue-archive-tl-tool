@@ -52,6 +52,19 @@
   gap: 6px;
 }
 
+.stage-gimmick-note {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 3px 6px;
+  background: rgba(251, 146, 60, 0.08);
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.stage-gimmick-note strong {
+  color: #fb923c;
+}
+
 .stage-gimmick-row {
   display: flex;
   align-items: center;

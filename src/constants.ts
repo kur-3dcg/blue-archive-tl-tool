@@ -26,7 +26,8 @@ export const EXTENDED_STRIKER_COUNT = 6;
 export const EXTENDED_SPECIAL_COUNT = 4;
 
 export const STAGE_GIMMICK_PRESETS = [
-  { label: 'コクマー バリスタ', recoveryDelta: 1000, durationMs: 22000 },
+  // recoveryPerStriker: 発動時のストライカー数 × この値が回復力増加量
+  { label: 'コクマー バリスタ', recoveryPerStriker: 1000, durationMs: 22000 },
 ] as const;
 
 // スロットごとのバフバー色（将来10スロット対応想定）
