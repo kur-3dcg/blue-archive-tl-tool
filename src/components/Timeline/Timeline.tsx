@@ -19,9 +19,6 @@ interface Props {
   arrowMode: boolean;
 }
 
-let nextItemId = 1;
-let nextArrowId = 1;
-let nextScId = 1;
 
 export function Timeline({ state, dispatch, arrowMode }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -153,7 +150,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
       dispatch({
         type: 'ADD_ITEM',
         item: {
-          id: `item-${nextItemId++}`,
+          id: crypto.randomUUID(),
           slotIndex,
           timeMs,
           layerIndex,
@@ -218,7 +215,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
       dispatch({ type: 'SET_COMMENT', itemId: commentModal.id, comment: trimmed || undefined });
     } else if (commentModal.kind === 'sc-new') {
       if (trimmed) {
-        dispatch({ type: 'ADD_STANDALONE_COMMENT', id: `sc-${nextScId++}`, timeMs: commentModal.timeMs, text: trimmed });
+        dispatch({ type: 'ADD_STANDALONE_COMMENT', id: crypto.randomUUID(), timeMs: commentModal.timeMs, text: trimmed });
       }
     } else if (commentModal.kind === 'sc-edit') {
       if (trimmed) {
@@ -296,7 +293,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
         dispatch({
           type: 'ADD_ARROW',
           arrow: {
-            id: `arrow-${nextArrowId++}`,
+            id: crypto.randomUUID(),
             fromItemId: arrowClickFrom,
             toItemId: itemId,
           },
