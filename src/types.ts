@@ -1,3 +1,10 @@
+export interface EtcIcon {
+  name: string;
+  image: string;
+  showWhen: string | null;
+  textPrefix?: string;
+}
+
 export interface Character {
   name: string;
   image: string;
@@ -31,6 +38,7 @@ export interface TimelineItem {
   comment?: string;
   costAdjustment?: number;   // 手動コスト増減
   targetSlotIndex?: number;  // EX対象スロット
+  targetEtcIcon?: string;    // etc対象アイコン名
   useTimeDisplay?: boolean;  // true=時間表示（デフォルトはコスト表示）
 }
 
@@ -91,6 +99,7 @@ export type TimelineAction =
   | { type: 'SET_UNIQUE_WEAPON2'; slotIndex: number; value: boolean }
   | { type: 'SET_COST_ADJUSTMENT'; itemId: string; adjustment: number }
   | { type: 'SET_TARGET'; itemId: string; targetSlotIndex: number | undefined }
+  | { type: 'SET_TARGET_ETC'; itemId: string; targetEtcIcon: string | undefined }
   | { type: 'TOGGLE_TIME_DISPLAY'; itemId: string }
   | { type: 'ADD_STANDALONE_COMMENT'; id: string; timeMs: number; text: string }
   | { type: 'MOVE_STANDALONE_COMMENT'; id: string; timeMs: number }

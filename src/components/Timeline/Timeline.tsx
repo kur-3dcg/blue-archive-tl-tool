@@ -1,5 +1,6 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
-import type { TimelineState, TimelineAction, SnapMode } from '../../types';
+import type { TimelineState, TimelineAction, SnapMode, EtcIcon } from '../../types';
+import etcData from '../../../data/etc.json';
 import { RULER_HEIGHT, LAYER_HEIGHT, ITEM_WIDTH, MAX_LAYERS, TIME_PRESETS, TIMELINE_PAD_LEFT, TIMELINE_PAD_RIGHT, VIEWPORT_DURATION_S, MAX_TOTAL_TIME_MS, STANDALONE_COMMENT_HEIGHT } from '../../constants';
 import { TimelineRuler } from './TimelineRuler';
 import { TimelineLayer } from './TimelineLayer';
@@ -272,6 +273,23 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
     [dispatch]
   );
 
+  const handleSetTargetEtc = useCallback(
+    (itemId: string, targetEtcIcon: string | undefined) => {
+      dispatch({ type: 'SET_TARGET_ETC', itemId, targetEtcIcon });
+    },
+    [dispatch]
+  );
+
+  // showWhen条件に一致するetcIconsを絞り込む
+  const etcIcons = useMemo((): EtcIcon[] => {
+    const icons = etcData as EtcIcon[];
+    return icons.filter(
+      (icon) =>
+        icon.showWhen === null ||
+        slots.some((s) => s.character?.name === icon.showWhen)
+    );
+  }, [slots]);
+
   const handleToggleTimeDisplay = useCallback(
     (itemId: string) => {
       dispatch({ type: 'TOGGLE_TIME_DISPLAY', itemId });
@@ -508,8 +526,10 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
                 itemCostMap={itemCostMap}
                 onCostAdjust={handleCostAdjust}
                 onSetTarget={handleSetTarget}
+                onSetTargetEtc={handleSetTargetEtc}
                 onToggleTimeDisplay={handleToggleTimeDisplay}
                 onDropStandaloneComment={handleDropStandaloneComment}
+                etcIcons={etcIcons}
               />
             ))}
             <ArrowLayer

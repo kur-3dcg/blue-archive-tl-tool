@@ -24,7 +24,7 @@ interface ShareDataLegacy {
 // --- Compact format (short keys, no image URLs) ---
 interface CompactData {
   s: { n: string; t: string; i: number }[];              // slots: name, type, index
-  m: { s: number; t: number; l: number; c?: string; a?: number; g?: number; d?: boolean }[]; // items
+  m: { s: number; t: number; l: number; c?: string; a?: number; g?: number; e?: string; d?: boolean }[]; // items
   r?: { f: number; o: number }[];                         // arrows: from, to
   l: number;                                               // layers
   T?: number;                                              // totalTimeMs
@@ -39,7 +39,7 @@ interface CompactData {
 // Decoded result (unified)
 export interface ShareData {
   slots: { name: string; image: string; type: string; index: number }[];
-  items: { slotIndex: number; timeMs: number; layerIndex: number; comment?: string; costAdjustment?: number; targetSlotIndex?: number; useTimeDisplay?: boolean }[];
+  items: { slotIndex: number; timeMs: number; layerIndex: number; comment?: string; costAdjustment?: number; targetSlotIndex?: number; targetEtcIcon?: string; useTimeDisplay?: boolean }[];
   arrows?: { fromIndex: number; toIndex: number }[];
   layers: number;
   totalTimeMs?: number;
@@ -147,6 +147,7 @@ export async function encode(
       ...(i.comment ? { c: i.comment } : {}),
       ...(i.costAdjustment ? { a: i.costAdjustment } : {}),
       ...(i.targetSlotIndex !== undefined ? { g: i.targetSlotIndex } : {}),
+      ...(i.targetEtcIcon ? { e: i.targetEtcIcon } : {}),
       ...(i.useTimeDisplay ? { d: true } : {}),
     })),
     ...(arrows.length > 0
@@ -220,6 +221,7 @@ function compactToShareData(c: CompactData): ShareData {
       ...(m.c ? { comment: m.c } : {}),
       ...(m.a ? { costAdjustment: m.a } : {}),
       ...(m.g !== undefined ? { targetSlotIndex: m.g } : {}),
+      ...(m.e ? { targetEtcIcon: m.e } : {}),
       ...(m.d ? { useTimeDisplay: true } : {}),
     })),
     ...(c.r ? { arrows: c.r.map((a) => ({ fromIndex: a.f, toIndex: a.o })) } : {}),

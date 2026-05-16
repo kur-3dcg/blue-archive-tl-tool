@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import type { TimelineItem as TItem, CharacterSlot, SnapMode } from '../../types';
+import type { TimelineItem as TItem, CharacterSlot, SnapMode, EtcIcon } from '../../types';
 import { ITEM_WIDTH, LAYER_HEIGHT, TIMELINE_PAD_RIGHT } from '../../constants';
 import { snapTime, snapToNearestItem } from '../../utils/snap';
 import { TimelineItem } from './TimelineItem';
@@ -29,8 +29,10 @@ interface Props {
   itemCostMap?: Map<string, { cost: number; usedCost: number; isOverrun: boolean; isOvercost: boolean }>;
   onCostAdjust?: (itemId: string, delta: number) => void;
   onSetTarget?: (itemId: string, targetSlotIndex: number | undefined) => void;
+  onSetTargetEtc?: (itemId: string, targetEtcIcon: string | undefined) => void;
   onToggleTimeDisplay?: (itemId: string) => void;
   onDropStandaloneComment?: (timeMs: number) => void;
+  etcIcons?: EtcIcon[];
 }
 
 interface ItemLayout {
@@ -62,8 +64,10 @@ export function TimelineLayer({
   itemCostMap,
   onCostAdjust,
   onSetTarget,
+  onSetTargetEtc,
   onToggleTimeDisplay,
   onDropStandaloneComment,
+  etcIcons,
 }: Props) {
   const [dragOver, setDragOver] = useState(false);
 
@@ -199,8 +203,10 @@ export function TimelineLayer({
             costOvercost={itemCostMap?.get(item.id)?.isOvercost}
             onCostAdjust={onCostAdjust}
             onSetTarget={onSetTarget}
+            onSetTargetEtc={onSetTargetEtc}
             onToggleTimeDisplay={onToggleTimeDisplay}
             allSlots={slots}
+            etcIcons={etcIcons}
           />
         );
       })}

@@ -219,6 +219,16 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         ),
       };
 
+    case 'SET_TARGET_ETC':
+      return {
+        ...state,
+        items: state.items.map((item) =>
+          item.id === action.itemId
+            ? { ...item, targetEtcIcon: action.targetEtcIcon }
+            : item
+        ),
+      };
+
     case 'TOGGLE_TIME_DISPLAY':
       return {
         ...state,

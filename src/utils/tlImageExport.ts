@@ -1,6 +1,7 @@
 import type { TimelineState } from '../types';
 import { calculateItemCosts, computeArmorCounts } from './costCalc';
 import { costToDisplay } from './timeFormat';
+import etcData from '../../data/etc.json';
 
 function msToMSS(ms: number): string {
   const totalSec = Math.round(ms / 1000);
@@ -118,6 +119,10 @@ export async function generateTlImage(state: TimelineState, options: { transpare
       if (item.targetSlotIndex !== undefined) {
         const tImg = slots[item.targetSlotIndex]?.character?.image;
         if (tImg) imageUrls.add(tImg);
+      }
+      if (item.targetEtcIcon) {
+        const etcImg = (etcData as { name: string; image: string }[]).find((e) => e.name === item.targetEtcIcon);
+        if (etcImg?.image) imageUrls.add(etcImg.image);
       }
     }
   }
@@ -271,6 +276,31 @@ export async function generateTlImage(state: TimelineState, options: { transpare
           // Amber border ring
           ctx.beginPath();
           ctx.arc(tcx, tcy, TR, 0, Math.PI * 2);
+          ctx.strokeStyle = '#f59e0b';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        // Etc target icon: circular badge at top-left corner
+        if (item.targetEtcIcon) {
+          const etcIconMeta = (etcData as { name: string; image: string }[]).find((e) => e.name === item.targetEtcIcon);
+          const eImgEl = etcIconMeta?.image ? imageCache.get(etcIconMeta.image) : undefined;
+          const TR = 8;
+          const ecx = iconX + TR - 2; // 2px outside left edge
+          const ecy = iconY + TR - 2;
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(ecx, ecy, TR, 0, Math.PI * 2);
+          ctx.clip();
+          if (eImgEl) {
+            ctx.drawImage(eImgEl, ecx - TR, ecy - TR, TR * 2, TR * 2);
+          } else {
+            ctx.fillStyle = 'rgba(180,180,180,0.7)';
+            ctx.fill();
+          }
+          ctx.restore();
+          ctx.beginPath();
+          ctx.arc(ecx, ecy, TR, 0, Math.PI * 2);
           ctx.strokeStyle = '#f59e0b';
           ctx.lineWidth = 1.5;
           ctx.stroke();

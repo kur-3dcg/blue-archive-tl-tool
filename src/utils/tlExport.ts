@@ -1,6 +1,7 @@
 import type { TimelineState, TimelineItem, CharacterSlot } from '../types';
 import { calculateItemCosts, computeArmorCounts } from './costCalc';
 import { costToDisplay } from './timeFormat';
+import etcData from '../../data/etc.json';
 
 function msToMSS(ms: number): string {
   const totalSec = Math.round(ms / 1000);
@@ -11,7 +12,10 @@ function msToMSS(ms: number): string {
 
 /** キャラ（対象）の形式で1つのエントリを生成 */
 function formatEntry(item: TimelineItem, slots: CharacterSlot[]): string {
-  const charName = slots[item.slotIndex]?.character?.name ?? '';
+  const etcPrefix = item.targetEtcIcon
+    ? ((etcData as { name: string; textPrefix?: string }[]).find((e) => e.name === item.targetEtcIcon)?.textPrefix ?? '')
+    : '';
+  const charName = etcPrefix + (slots[item.slotIndex]?.character?.name ?? '');
   const targetName =
     item.targetSlotIndex !== undefined ? (slots[item.targetSlotIndex]?.character?.name ?? '') : '';
   return targetName ? `${charName}（${targetName}）` : charName;

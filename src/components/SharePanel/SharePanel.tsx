@@ -36,6 +36,7 @@ export function buildLoadState(
     ...(di.comment ? { comment: di.comment } : {}),
     ...(di.costAdjustment ? { costAdjustment: di.costAdjustment } : {}),
     ...(di.targetSlotIndex !== undefined ? { targetSlotIndex: di.targetSlotIndex } : {}),
+    ...(di.targetEtcIcon ? { targetEtcIcon: di.targetEtcIcon } : {}),
     ...(di.useTimeDisplay ? { useTimeDisplay: true } : {}),
   }));
 

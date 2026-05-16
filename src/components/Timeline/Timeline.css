@@ -680,11 +680,24 @@
   background: var(--bg-control-hover);
 }
 
-/* Target icon */
+/* Target icon (right top: character slot) */
 .timeline-item-target {
   position: absolute;
   top: -8px;
   right: -8px;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  border: 2px solid #f59e0b !important;
+  background: var(--bg-secondary);
+  pointer-events: none;
+}
+
+/* Etc target icon (left top: copy icon etc.) */
+.timeline-item-target-etc {
+  position: absolute;
+  top: -8px;
+  left: -8px;
   width: 24px !important;
   height: 24px !important;
   border-radius: 50% !important;
@@ -739,4 +752,10 @@
   width: 20px !important;
   height: 20px !important;
   border: none !important;
+}
+
+.target-menu-separator {
+  height: 1px;
+  background: var(--border-secondary);
+  margin: 2px 4px;
 }
