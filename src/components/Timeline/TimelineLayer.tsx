@@ -84,9 +84,10 @@ export function TimelineLayer({
       const baseX = totalWidth - TIMELINE_PAD_RIGHT - (item.timeMs / 1000) * zoomLevel;
 
       // Look at previous items (already processed, higher or equal timeMs)
-      // to check if we overlap
+      // to check if we overlap. Find the rightmost effective position in the chain.
       let isInstant = false;
       let xOffset = 0;
+      let maxEffX = -Infinity;
 
       for (let j = i - 1; j >= 0; j--) {
         const prev = sorted[j];
@@ -94,14 +95,19 @@ export function TimelineLayer({
         const prevBaseX = totalWidth - TIMELINE_PAD_RIGHT - (prev.timeMs / 1000) * zoomLevel;
         const prevEffectiveX = prevBaseX + prevLayout.xOffset;
 
-        // Check if this item's base position overlaps with prev's effective position
-        const distance = Math.abs(baseX - prevEffectiveX);
-        if (distance <= ITEM_WIDTH) {
+        // Match if directly overlapping, OR if same timeMs (same chain).
+        // Don't break: find the rightmost (max effectiveX) chain member so that
+        // chains of 3+ items are placed correctly.
+        const directOverlap = Math.abs(baseX - prevEffectiveX) <= ITEM_WIDTH;
+        const sameBase = Math.abs(prevBaseX - baseX) < 0.5;
+        if ((directOverlap || sameBase) && prevEffectiveX > maxEffX) {
+          maxEffX = prevEffectiveX;
           isInstant = true;
-          // Place to the right of prev item (toward 0:00 direction = positive x)
-          xOffset = prevEffectiveX + ITEM_WIDTH - baseX;
-          break;
         }
+      }
+
+      if (isInstant) {
+        xOffset = maxEffX + ITEM_WIDTH - baseX;
       }
 
       map.set(item.id, { isInstant, xOffset });

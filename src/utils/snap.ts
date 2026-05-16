@@ -32,14 +32,21 @@ export function snapToNearestItem(
     const item = sorted[i];
     const baseX = totalWidth - TIMELINE_PAD_RIGHT - (item.timeMs / 1000) * zoomLevel;
     let xOffset = 0;
+    let maxEffX = -Infinity;
 
     for (let j = i - 1; j >= 0; j--) {
       const prev = sorted[j];
       const prevEffX = effectiveXMap.get(prev.id)!;
-      if (Math.abs(baseX - prevEffX) <= ITEM_WIDTH) {
-        xOffset = prevEffX + ITEM_WIDTH - baseX;
-        break;
+      const prevBaseX = totalWidth - TIMELINE_PAD_RIGHT - (prev.timeMs / 1000) * zoomLevel;
+      const directOverlap = Math.abs(baseX - prevEffX) <= ITEM_WIDTH;
+      const sameBase = Math.abs(prevBaseX - baseX) < 0.5;
+      if ((directOverlap || sameBase) && prevEffX > maxEffX) {
+        maxEffX = prevEffX;
       }
+    }
+
+    if (maxEffX > -Infinity) {
+      xOffset = maxEffX + ITEM_WIDTH - baseX;
     }
 
     effectiveXMap.set(item.id, baseX + xOffset);
