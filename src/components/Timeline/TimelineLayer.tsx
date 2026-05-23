@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import type { TimelineItem as TItem, CharacterSlot, SnapMode, EtcIcon } from '../../types';
+import type { TimelineItem as TItem, CharacterSlot, SnapMode, EtcIcon, SlotCostConfig } from '../../types';
 import { ITEM_WIDTH, LAYER_HEIGHT, TIMELINE_PAD_RIGHT } from '../../constants';
 import { snapTime, snapToNearestItem } from '../../utils/snap';
 import { TimelineItem } from './TimelineItem';
@@ -33,6 +33,7 @@ interface Props {
   onToggleTimeDisplay?: (itemId: string) => void;
   onDropStandaloneComment?: (timeMs: number) => void;
   etcIcons?: EtcIcon[];
+  slotCostConfigs: SlotCostConfig[];
 }
 
 interface ItemLayout {
@@ -68,6 +69,7 @@ export function TimelineLayer({
   onToggleTimeDisplay,
   onDropStandaloneComment,
   etcIcons,
+  slotCostConfigs,
 }: Props) {
   const [dragOver, setDragOver] = useState(false);
 
@@ -175,6 +177,7 @@ export function TimelineLayer({
       <BuffBarLayer
         items={items}
         slots={slots}
+        slotCostConfigs={slotCostConfigs}
         layoutMap={layoutMap}
         zoomLevel={zoomLevel}
         totalWidth={totalWidth}

@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
-import type { TimelineItem, CharacterSlot } from '../../types';
+import type { TimelineItem, CharacterSlot, SlotCostConfig } from '../../types';
 import { TIMELINE_PAD_RIGHT, LAYER_HEIGHT, SLOT_COLORS } from '../../constants';
+
+const BUFF_DURATION_MULTIPLIER = 1.19;
 
 // アイコンと同じ高さ (48px) でレイヤー中央に配置
 const BAR_HEIGHT = 48;
@@ -24,19 +26,25 @@ interface BarInfo {
 interface Props {
   items: TimelineItem[];
   slots: CharacterSlot[];
+  slotCostConfigs: SlotCostConfig[];
   layoutMap: Map<string, ItemLayout>;
   zoomLevel: number;
   totalWidth: number;
 }
 
-export function BuffBarLayer({ items, slots, layoutMap, zoomLevel, totalWidth }: Props) {
+export function BuffBarLayer({ items, slots, slotCostConfigs, layoutMap, zoomLevel, totalWidth }: Props) {
   // exDuration があるアイテムだけバーを生成
   const bars = useMemo<BarInfo[]>(() => {
     const result: BarInfo[] = [];
     for (const item of items) {
       const char = slots[item.slotIndex]?.character;
-      const dur = char?.exDuration;
-      if (!dur) continue;
+      const baseDur = char?.exDuration;
+      if (!baseDur) continue;
+      const config = slotCostConfigs[item.slotIndex];
+      const hasUnique2 = (config?.hasUniqueWeapon2 || config?.hasUniqueWeapon4) ?? false;
+      const dur = (char.hasDurationBuff && hasUnique2)
+        ? baseDur * BUFF_DURATION_MULTIPLIER
+        : baseDur;
       const startX = totalWidth - TIMELINE_PAD_RIGHT - (item.timeMs / 1000) * zoomLevel;
       const width = dur * zoomLevel;
       result.push({

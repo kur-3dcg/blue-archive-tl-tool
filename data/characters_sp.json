@@ -131,7 +131,18 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 4,
-    "exDuration": 30
+    "exDuration": 30,
+    "hasDurationBuff": true
+  },
+  {
+    "name": "エリカ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/erikapng",
+    "reading": "えりか",
+    "school": "ゲヘナ",
+    "attackType": "振動",
+    "armorType": "軽装備",
+    "cost": 3,
+    "exDuration": null
   },
   {
     "name": "カエデ",
@@ -191,7 +202,8 @@
     "attackType": "振動",
     "armorType": "弾力装甲",
     "cost": 3,
-    "exDuration": 15
+    "exDuration": 15,
+    "hasDurationBuff": true
   },
   {
     "name": "キリノ（水着）",
@@ -451,7 +463,8 @@
     "attackType": "振動",
     "armorType": "弾力装甲",
     "cost": 3,
-    "exDuration": 26
+    "exDuration": 26,
+    "hasDurationBuff": true
   },
   {
     "name": "ニヤ",
@@ -591,7 +604,8 @@
     "attackType": "貫通",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": 13
+    "exDuration": 13,
+    "hasDurationBuff": true
   },
   {
     "name": "ヒマリ（臨戦）",
@@ -771,7 +785,8 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "hasDurationBuff": true
   },
   {
     "name": "ユズ（メイド）",
@@ -811,7 +826,8 @@
     "attackType": "神秘",
     "armorType": "弾力装甲",
     "cost": 2,
-    "exDuration": 20
+    "exDuration": 20,
+    "hasDurationBuff": true
   },
   {
     "name": "リツ",
@@ -821,7 +837,8 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 2,
-    "exDuration": 24
+    "exDuration": 24,
+    "hasDurationBuff": true
   },
   {
     "name": "レイサ（マジカル）",

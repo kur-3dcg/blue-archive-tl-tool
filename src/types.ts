@@ -14,6 +14,7 @@ export interface Character {
   armorType?: string;
   cost?: number;
   exDuration?: number | null;
+  hasDurationBuff?: boolean; // 固有2↑でバフ効果持続力×1.19
 }
 
 export type SlotType = 'striker' | 'special';

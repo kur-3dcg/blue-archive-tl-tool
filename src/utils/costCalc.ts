@@ -168,12 +168,9 @@ interface ExBuffInfo {
 // バフ効果持続力倍率（固有2↑）
 const BUFF_DURATION_MULTIPLIER = 1.19;
 
-// 固有2でバフ時間が延長されるキャラ
-const UNIQUE2_BUFF_CHARS = [SEIA, SUZUMI_MAGICAL];
-
-function getExBuffParams(charName: string, hasUniqueWeapon2: boolean): ExBuffInfo | null {
+function getExBuffParams(charName: string, hasUniqueWeapon2: boolean, hasDurationBuff: boolean): ExBuffInfo | null {
   const applyDuration = (ms: number) =>
-    UNIQUE2_BUFF_CHARS.includes(charName) && hasUniqueWeapon2
+    hasDurationBuff && hasUniqueWeapon2
       ? Math.round(ms * BUFF_DURATION_MULTIPLIER)
       : ms;
 
@@ -226,7 +223,8 @@ function buildAllBuffEvents(
     const config = slotCostConfigs[item.slotIndex];
     if (!slot?.character) continue;
 
-    const buffParams = getExBuffParams(slot.character.name, config?.hasUniqueWeapon2 ?? true);
+    const hasUnique2 = (config?.hasUniqueWeapon2 || config?.hasUniqueWeapon4) ?? true;
+    const buffParams = getExBuffParams(slot.character.name, hasUnique2, slot.character.hasDurationBuff ?? false);
     if (!buffParams) continue;
     if (!checkBuffTrigger(buffParams, item, slotItemsSorted)) continue;
 

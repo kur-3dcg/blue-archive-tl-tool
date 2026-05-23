@@ -530,6 +530,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
                 onToggleTimeDisplay={handleToggleTimeDisplay}
                 onDropStandaloneComment={handleDropStandaloneComment}
                 etcIcons={etcIcons}
+                slotCostConfigs={slotCostConfigs}
               />
             ))}
             <ArrowLayer
