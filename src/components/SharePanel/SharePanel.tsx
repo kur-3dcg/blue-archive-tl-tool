@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import type { TimelineState, CharacterSlot } from '../../types';
-import { encode } from '../../utils/shareCodec';
+import { encode, decode } from '../../utils/shareCodec';
 import type { ShareData } from '../../utils/shareCodec';
 import { generateTlText } from '../../utils/tlExport';
 import { generateTlImage } from '../../utils/tlImageExport';
@@ -9,6 +9,7 @@ import './SharePanel.css';
 interface Props {
   state: TimelineState;
   onCoreAction?: () => void;
+  onImport?: (data: ShareData) => void;
 }
 
 /**
@@ -75,11 +76,12 @@ export function buildLoadState(
   };
 }
 
-export function SharePanel({ state, onCoreAction }: Props) {
+export function SharePanel({ state, onCoreAction, onImport }: Props) {
   const [toast, setToast] = useState<{ id: number; message: string } | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fireToast = (message: string) => {
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -138,6 +140,46 @@ export function SharePanel({ state, onCoreAction }: Props) {
     }
   };
 
+  const handleExportJson = async () => {
+    setLoading(true);
+    try {
+      const code = await doEncode();
+      const json = JSON.stringify({ version: 1, code }, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'timeline.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      setError('');
+      fireToast('JSONファイルを保存しました');
+      onCoreAction?.();
+    } catch {
+      setError('JSON保存に失敗しました');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImportJsonFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const json = JSON.parse(text);
+      const code: string = json.code ?? json;
+      const data = await decode(typeof code === 'string' ? code : JSON.stringify(code));
+      if (!data) { setError('JSONの読み込みに失敗しました'); return; }
+      onImport?.(data);
+      setError('');
+      fireToast('JSONを読み込みました');
+    } catch {
+      setError('JSONファイルの読み込みに失敗しました');
+    }
+  };
+
   return (
     <div className="share-panel">
       <div className="share-panel-title">共有:</div>
@@ -154,6 +196,21 @@ export function SharePanel({ state, onCoreAction }: Props) {
         <button className="share-btn export-image" onClick={() => handleExportImage(false)} title="TLを画像（PNG白背景）として保存">
           画像出力（白）
         </button>
+      </div>
+      <div className="share-panel-row">
+        <button className="share-btn export-json" onClick={handleExportJson} disabled={loading} title="現在のTLをJSONファイルとして保存">
+          {loading ? '...' : 'JSON保存'}
+        </button>
+        <button className="share-btn import-json" onClick={() => fileInputRef.current?.click()} title="JSONファイルからTLを読み込む">
+          JSONから読込
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json"
+          style={{ display: 'none' }}
+          onChange={handleImportJsonFile}
+        />
       </div>
       {error && <div className="share-panel-error">{error}</div>}
       {toast && (

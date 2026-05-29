@@ -119,7 +119,14 @@ export default function App() {
               ロード
             </button>
           </div>
-          <SharePanel state={state} onCoreAction={triggerCoreTooltip} />
+          <SharePanel
+            state={state}
+            onCoreAction={triggerCoreTooltip}
+            onImport={(data) => dispatch({
+              type: 'LOAD_STATE',
+              state: buildLoadState(data, state.slots, state.totalTimeMs),
+            })}
+          />
           <div className="theme-selector">
             <label>テーマ:</label>
             <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)}>
