@@ -38,6 +38,7 @@ interface Props {
   onToggleTimeDisplay?: (itemId: string) => void;
   allSlots?: CharacterSlot[];
   etcIcons?: EtcIcon[];
+  locked?: boolean;
 }
 
 export function TimelineItem({
@@ -71,6 +72,7 @@ export function TimelineItem({
   onToggleTimeDisplay,
   allSlots,
   etcIcons,
+  locked,
 }: Props) {
   const dragRef = useRef<{
     layerTop: number;
@@ -104,6 +106,9 @@ export function TimelineItem({
       onArrowClick?.(item.id);
       return;
     }
+
+    // ロック中はドラッグ移動を禁止（クリック系はonClickで動作）
+    if (locked) return;
 
     const layersContainer = (e.currentTarget as HTMLElement).closest('.timeline-layers');
     const layerTop = layersContainer

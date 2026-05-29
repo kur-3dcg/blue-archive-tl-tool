@@ -35,6 +35,7 @@ interface Props {
   onDropStandaloneComment?: (timeMs: number) => void;
   etcIcons?: EtcIcon[];
   slotCostConfigs: SlotCostConfig[];
+  locked?: boolean;
 }
 
 interface ItemLayout {
@@ -72,6 +73,7 @@ export function TimelineLayer({
   onDropStandaloneComment,
   etcIcons,
   slotCostConfigs,
+  locked,
 }: Props) {
   const [dragOver, setDragOver] = useState(false);
 
@@ -219,6 +221,7 @@ export function TimelineLayer({
             onToggleTimeDisplay={onToggleTimeDisplay}
             allSlots={slots}
             etcIcons={etcIcons}
+            locked={locked}
           />
         );
       })}

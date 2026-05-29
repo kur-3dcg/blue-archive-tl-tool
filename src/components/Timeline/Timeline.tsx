@@ -29,6 +29,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
   const [dragInfo, setDragInfo] = useState<{ timeMs: number; itemId: string } | null>(null);
   const [customTimeInput, setCustomTimeInput] = useState('');
   const [targetTimeInput, setTargetTimeInput] = useState('');
+  const [locked, setLocked] = useState(false);
   const [commentModal, setCommentModal] = useState<
     | { kind: 'item'; id: string }
     | { kind: 'sc-new'; timeMs: number }
@@ -415,6 +416,15 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
             {snapMode === '1s' ? '1秒' : '0.1秒'}
           </button>
         </span>
+        <span className="timeline-control">
+          <button
+            className={`preset-btn${locked ? ' active' : ''}`}
+            onClick={() => setLocked((v) => !v)}
+            title="ONにするとスキルアイコンのドラッグ移動を禁止（クリック操作は可能）"
+          >
+            {locked ? '🔒 移動禁止' : '🔓 移動可'}
+          </button>
+        </span>
         <label className="timeline-control">
           レイヤー:
           <select
@@ -558,6 +568,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
                 onDropStandaloneComment={handleDropStandaloneComment}
                 etcIcons={etcIcons}
                 slotCostConfigs={slotCostConfigs}
+                locked={locked}
               />
             ))}
             <ArrowLayer
