@@ -21,6 +21,7 @@ interface Props {
   onMove: (itemId: string, timeMs: number, layerIndex?: number) => void;
   onRemove: (itemId: string) => void;
   onDoubleClick: (itemId: string) => void;
+  onCtrlClick?: (itemId: string) => void;
   onItemDragStart?: (itemId: string) => void;
   onItemDragEnd?: (itemId: string) => void;
   zoomLevelRef?: React.RefObject<number>;
@@ -53,6 +54,7 @@ export function TimelineItem({
   onMove,
   onRemove,
   onDoubleClick,
+  onCtrlClick,
   onItemDragStart,
   onItemDragEnd,
   zoomLevelRef,
@@ -184,6 +186,12 @@ export function TimelineItem({
     if (e.ctrlKey || e.metaKey) {
       e.preventDefault();
       e.stopPropagation();
+      onCtrlClick?.(item.id);
+      return;
+    }
+    if (e.altKey) {
+      e.preventDefault();
+      e.stopPropagation();
       onArrowClick?.(item.id);
       return;
     }
@@ -202,7 +210,7 @@ export function TimelineItem({
       clickCountRef.current = 0;
       onDoubleClick(item.id);
     }
-  }, [arrowMode, item.id, onToggleTimeDisplay, onDoubleClick, onArrowClick]);
+  }, [arrowMode, item.id, onToggleTimeDisplay, onDoubleClick, onArrowClick, onCtrlClick]);
 
   const showCost = !item.useTimeDisplay && costValue !== undefined;
   const timeLabel = isInstant ? '即' : (
@@ -230,6 +238,7 @@ export function TimelineItem({
       data-item-id={item.id}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
+      onDoubleClick={(e) => e.stopPropagation()}
       onContextMenu={handleContextMenu}
       title={`${character.name} - ${msToDisplay(item.timeMs)}${costValue !== undefined ? ` (コスト: ${costToDisplay(costValue)})` : ''}${isInstant ? '（即）' : ''}（クリックで表示切替 / ダブルクリックでコメント / 右クリックで削除 / Shift+クリックで対象指定）`}
     >

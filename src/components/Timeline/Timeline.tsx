@@ -71,6 +71,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
     const onWheel = (e: WheelEvent) => {
       if (!e.ctrlKey) return;
       e.preventDefault();
+      el.scrollBy({ left: e.deltaY, behavior: 'auto' });
     };
 
     el.addEventListener('wheel', onWheel, { passive: false });
@@ -194,7 +195,17 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
     (itemId: string) => {
       const item = items.find((i) => i.id === itemId);
       if (!item) return;
-      // 即スタックの子をダブルクリックした場合、親（xOffset=0）にコメントを付ける
+      setCommentModal({ kind: 'sc-new', timeMs: item.timeMs });
+      setCommentInput('');
+    },
+    [items]
+  );
+
+  const handleCtrlClickItem = useCallback(
+    (itemId: string) => {
+      const item = items.find((i) => i.id === itemId);
+      if (!item) return;
+      // 即スタックの子をCtrl+クリックした場合、親（xOffset=0）にコメントを付ける
       let targetId = itemId;
       if ((itemXOffsetMap.get(itemId) ?? 0) > 0) {
         const parent = items.find(
@@ -233,6 +244,20 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
     setCommentModal({ kind: 'sc-new', timeMs });
     setCommentInput('');
   }, []);
+
+  const handleLayersDoubleClick = useCallback(
+    (e: React.MouseEvent) => {
+      const container = containerRef.current;
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      const xInContent = e.clientX - rect.left + container.scrollLeft;
+      const timeMs = ((totalWidth - TIMELINE_PAD_RIGHT - xInContent) / zoomLevel) * 1000;
+      const clampedTime = Math.max(0, Math.min(totalTimeMs, timeMs));
+      setCommentModal({ kind: 'sc-new', timeMs: snapTime(clampedTime, snapMode) });
+      setCommentInput('');
+    },
+    [totalWidth, zoomLevel, snapMode, totalTimeMs]
+  );
 
   const handleMoveStandaloneComment = useCallback((id: string, timeMs: number) => {
     dispatch({ type: 'MOVE_STANDALONE_COMMENT', id, timeMs });
@@ -344,11 +369,12 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
       <div className="timeline-controls">
         <div className="operation-ref">
           <span><b>クリック:</b> 選択</span>
-          <span><b>ダブルクリック:</b> コメント</span>
+          <span><b>ダブルクリック:</b> フリーコメント</span>
           <span><b>右クリック:</b> 削除</span>
           <span><b>ドラッグ:</b> 移動</span>
           <span><b>Shift+クリック:</b> EX対象</span>
-          <span><b>Ctrl+クリック:</b> 矢印接続</span>
+          <span><b>Ctrl+クリック:</b> コメント</span>
+          <span><b>Alt+クリック:</b> 矢印接続</span>
         </div>
         <span className="timeline-control" style={{ marginLeft: 'auto' }}>
           時間:
@@ -499,7 +525,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
             totalWidth={totalWidth}
             onRemoveComment={handleRemoveComment}
           />
-          <div className="timeline-layers">
+          <div className="timeline-layers" onDoubleClick={handleLayersDoubleClick}>
             {Array.from({ length: layers }, (_, i) => (
               <TimelineLayer
                 key={i}
@@ -516,6 +542,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
                 onMoveItem={handleMoveItem}
                 onRemoveItem={handleRemoveItem}
                 onDoubleClickItem={handleDoubleClickItem}
+                onCtrlClickItem={handleCtrlClickItem}
                 onItemDragStart={handleItemDragStart}
                 onItemDragEnd={handleItemDragEnd}
                 zoomLevelRef={zoomRef}

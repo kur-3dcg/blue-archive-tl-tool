@@ -19,6 +19,7 @@ interface Props {
   onMoveItem: (itemId: string, timeMs: number, layerIndex?: number) => void;
   onRemoveItem: (itemId: string) => void;
   onDoubleClickItem: (itemId: string) => void;
+  onCtrlClickItem?: (itemId: string) => void;
   onItemDragStart?: (itemId: string) => void;
   onItemDragEnd?: (itemId: string) => void;
   zoomLevelRef?: React.RefObject<number>;
@@ -55,6 +56,7 @@ export function TimelineLayer({
   onMoveItem,
   onRemoveItem,
   onDoubleClickItem,
+  onCtrlClickItem,
   onItemDragStart,
   onItemDragEnd,
   zoomLevelRef,
@@ -200,6 +202,7 @@ export function TimelineLayer({
             onMove={onMoveItem}
             onRemove={onRemoveItem}
             onDoubleClick={onDoubleClickItem}
+            onCtrlClick={onCtrlClickItem}
             onItemDragStart={onItemDragStart}
             onItemDragEnd={onItemDragEnd}
             zoomLevelRef={zoomLevelRef}
