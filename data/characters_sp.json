@@ -768,6 +768,16 @@
     "exDuration": null
   },
   {
+    "name": "ムツキ（ドレス）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/mutsuki_dress.png",
+    "reading": "むつき（どれす）",
+    "school": "ゲヘナ",
+    "attackType": "神秘",
+    "armorType": "重装甲",
+    "cost": 6,
+    "exDuration": null
+  },
+  {
     "name": "モエ",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/moe.png",
     "reading": "もえ",

@@ -1141,6 +1141,16 @@
     "exDuration": null
   },
   {
+    "name": "ハルカ（ドレス）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/haruka_dress.png",
+    "reading": "はるか（どれす）",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "軽装備",
+    "cost": 4,
+    "exDuration": null
+  },
+  {
     "name": "ハルナ",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/haruna.png",
     "reading": "はるな",
