@@ -156,6 +156,11 @@ export default function App() {
                   石割収支管理ツール
                 </a>
                 <div className="hamburger-divider" />
+                <div className="hamburger-section-label">マニュアル</div>
+                <a href="https://note.com/kur7263/n/n2b856fe0e2a4" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
+                  使い方・マニュアル（note）
+                </a>
+                <div className="hamburger-divider" />
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLScPJZCQZhZ-gdIcls9e-DUvQalF9Fx4pCkHLtn-Ec59eJMFcw/viewform?usp=dialog" target="_blank" rel="noopener noreferrer" className="hamburger-contact" onClick={() => setMenuOpen(false)}>
                   ご意見・ご感想・バグ報告などはこちら
                 </a>
