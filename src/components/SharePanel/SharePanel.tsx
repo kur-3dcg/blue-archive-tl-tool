@@ -164,19 +164,21 @@ export function SharePanel({ state, onCoreAction, onImport }: Props) {
 
   const handleImportJsonFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    e.target.value = '';
     if (!file) return;
     try {
       const text = await file.text();
+      e.target.value = '';
       const json = JSON.parse(text);
-      const code: string = json.code ?? json;
-      const data = await decode(typeof code === 'string' ? code : JSON.stringify(code));
+      const code = typeof json.code === 'string' ? json.code : null;
+      if (!code) { setError('JSONの形式が正しくありません'); return; }
+      const data = await decode(code);
       if (!data) { setError('JSONの読み込みに失敗しました'); return; }
       onImport?.(data);
       setError('');
       fireToast('JSONを読み込みました');
-    } catch {
-      setError('JSONファイルの読み込みに失敗しました');
+    } catch (err) {
+      e.target.value = '';
+      setError(`読み込みエラー: ${err instanceof Error ? err.message : String(err)}`);
     }
   };
 
