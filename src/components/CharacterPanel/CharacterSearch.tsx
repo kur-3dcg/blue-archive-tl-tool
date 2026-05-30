@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useContext } from 'react';
 import type { Character } from '../../types';
+import { useT, useCharName, LanguageContext, getCharName } from '../../i18n';
 
 const FAVORITES_KEY = 'ba-tl-favorites';
 
@@ -41,6 +42,9 @@ interface Props {
 }
 
 export function CharacterSearch({ characters, currentCharacter, onSelect, onClose }: Props) {
+  const t = useT();
+  const charName = useCharName();
+  const lang = useContext(LanguageContext);
   const [filter, setFilter] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const [favorites, toggleFavorite] = useFavorites();
@@ -49,8 +53,15 @@ export function CharacterSearch({ characters, currentCharacter, onSelect, onClos
     inputRef.current?.focus();
   }, []);
 
+  // 末尾の未変換ローマ字を除去して読みがな検索に使用（例: "かずs" → "かず"、"k" → ""）
+  const hiraganaFilter = filter.replace(/[a-zA-Zａ-ｚＡ-Ｚ]+$/, '');
+  const filterLower = filter.toLowerCase();
   const filtered = filter
-    ? characters.filter((c) => c.name.includes(filter) || (c.reading && c.reading.includes(filter)))
+    ? characters.filter((c) =>
+        c.name.includes(filter) ||
+        (hiraganaFilter.length > 0 && c.reading && c.reading.includes(hiraganaFilter)) ||
+        (lang !== 'ja' && getCharName(c, lang).toLowerCase().includes(filterLower))
+      )
     : characters;
 
   // 現在の生徒 → お気に入り → その他
@@ -70,7 +81,7 @@ export function CharacterSearch({ characters, currentCharacter, onSelect, onClos
         <input
           ref={inputRef}
           type="text"
-          placeholder="生徒名で検索..."
+          placeholder={t('生徒名で検索...')}
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           className="character-search-input"
@@ -83,7 +94,7 @@ export function CharacterSearch({ characters, currentCharacter, onSelect, onClos
               onClick={() => onSelect(c)}
             >
               <img src={c.image} alt={c.name} width={40} height={40} />
-              <span className="character-search-name">{c.name}</span>
+              <span className="character-search-name">{charName(c)}</span>
               <button
                 className={`character-search-fav${favorites.has(c.name) ? ' active' : ''}`}
                 onClick={(e) => {
@@ -97,7 +108,7 @@ export function CharacterSearch({ characters, currentCharacter, onSelect, onClos
             </button>
           ))}
           {sorted.length === 0 && (
-            <div className="character-search-empty">該当なし</div>
+            <div className="character-search-empty">{t('該当なし')}</div>
           )}
         </div>
       </div>

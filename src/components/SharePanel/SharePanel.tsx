@@ -4,6 +4,8 @@ import { encode, decode } from '../../utils/shareCodec';
 import type { ShareData } from '../../utils/shareCodec';
 import { generateTlText } from '../../utils/tlExport';
 import { generateTlImage } from '../../utils/tlImageExport';
+import { generateTlImagePaged } from '../../utils/tlImageExportPaged';
+import { useT } from '../../i18n';
 import './SharePanel.css';
 
 interface Props {
@@ -77,9 +79,11 @@ export function buildLoadState(
 }
 
 export function SharePanel({ state, onCoreAction, onImport }: Props) {
+  const t = useT();
   const [toast, setToast] = useState<{ id: number; message: string } | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -140,6 +144,22 @@ export function SharePanel({ state, onCoreAction, onImport }: Props) {
     }
   };
 
+  const handleExportImagePaged = async () => {
+    try {
+      const blob = await generateTlImagePaged(state, { rowsPerPage });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'timeline-pages.zip';
+      a.click();
+      URL.revokeObjectURL(url);
+      fireToast('ZIPを保存しました');
+      onCoreAction?.();
+    } catch {
+      setError('分割画像出力に失敗しました');
+    }
+  };
+
   const handleExportJson = async () => {
     setLoading(true);
     try {
@@ -184,27 +204,44 @@ export function SharePanel({ state, onCoreAction, onImport }: Props) {
 
   return (
     <div className="share-panel">
-      <div className="share-panel-title">共有:</div>
+      <div className="share-panel-title">{t('共有')}:</div>
       <div className="share-panel-row">
         <button className="share-btn export" onClick={handleExportUrl} disabled={loading} title="URLをクリップボードにコピー（Twitter等で共有）">
-          {loading ? '...' : 'URL出力'}
+          {loading ? '...' : t('URL出力')}
         </button>
         <button className="share-btn export-tl" onClick={handleExportTl} title="TLをTSV形式でクリップボードにコピー">
-          TL出力
+          {t('TL出力')}
         </button>
         <button className="share-btn export-image" onClick={() => handleExportImage(true)} title="TLを画像（PNG透過）として保存">
-          画像出力（透過）
+          {t('画像出力（透過）')}
         </button>
         <button className="share-btn export-image" onClick={() => handleExportImage(false)} title="TLを画像（PNG白背景）として保存">
-          画像出力（白）
+          {t('画像出力（白）')}
         </button>
       </div>
       <div className="share-panel-row">
+        <button className="share-btn export-image" onClick={handleExportImagePaged} title="TLを複数ページのPNG（ZIP）として保存">
+          {t('画像出力（分割）')}
+        </button>
+        <label className="share-rows-label" title="1ページあたりの行数">
+          {t('行/ページ')}:
+          <input
+            type="number"
+            className="share-rows-input"
+            value={rowsPerPage}
+            min={5}
+            max={50}
+            step={1}
+            onChange={(e) => setRowsPerPage(Math.max(5, Math.min(50, Number(e.target.value) || 20)))}
+          />
+        </label>
+      </div>
+      <div className="share-panel-row">
         <button className="share-btn export-json" onClick={handleExportJson} disabled={loading} title="現在のTLをJSONファイルとして保存">
-          {loading ? '...' : 'JSON保存'}
+          {loading ? '...' : t('JSON保存')}
         </button>
         <button className="share-btn import-json" onClick={() => fileInputRef.current?.click()} title="JSONファイルからTLを読み込む">
-          JSONから読込
+          {t('JSONから読込')}
         </button>
         <input
           ref={fileInputRef}

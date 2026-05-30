@@ -9,19 +9,24 @@ import { BubbleLayer } from './BubbleLayer';
 import { StandaloneCommentLayer } from './StandaloneCommentLayer';
 import { ArrowLayer } from './ArrowLayer';
 import { CostRuler, COST_RULER_HEIGHT } from './CostRuler';
-import { snapTime } from '../../utils/snap';
+import { snapTime, snapToNearestItem } from '../../utils/snap';
 import { calculateItemCosts, computeArmorCounts } from '../../utils/costCalc';
 import { costToDisplay } from '../../utils/timeFormat';
+import { validateSkillQueue, ACTIVE_SLOTS, EXTENDED_ACTIVE_SLOTS } from '../../utils/skillQueueValidator';
+import { useT } from '../../i18n';
 import './Timeline.css';
 
 interface Props {
   state: TimelineState;
   dispatch: React.Dispatch<TimelineAction>;
   arrowMode: boolean;
+  pendingSlotIndex: number | null;
+  onClearPendingSlot: () => void;
 }
 
 
-export function Timeline({ state, dispatch, arrowMode }: Props) {
+export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClearPendingSlot }: Props) {
+  const t = useT();
   const containerRef = useRef<HTMLDivElement>(null);
   const [cursorX, setCursorX] = useState(0);
   const [cursorTimeMs, setCursorTimeMs] = useState(0);
@@ -30,6 +35,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
   const [customTimeInput, setCustomTimeInput] = useState('');
   const [targetTimeInput, setTargetTimeInput] = useState('');
   const [locked, setLocked] = useState(false);
+  const [queueValidation, setQueueValidation] = useState(false);
   const [commentModal, setCommentModal] = useState<
     | { kind: 'item'; id: string }
     | { kind: 'sc-new'; timeMs: number }
@@ -111,6 +117,14 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
     const { heavyArmorCount, redWinterCount } = computeArmorCounts(slots);
     return calculateItemCosts(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks);
   }, [slots, items, slotCostConfigs, totalTimeMs, stageGimmicks]);
+
+  // スキルキュー検証
+  const queueErrorIds = useMemo(() => {
+    if (!queueValidation) return new Set<string>();
+    const filledSlotIndices = slots.map((s, i) => s.character ? i : -1).filter(i => i >= 0);
+    const activeSlots = state.mode === 'extended' ? EXTENDED_ACTIVE_SLOTS : ACTIVE_SLOTS;
+    return validateSkillQueue(items, state.skillQueueOrder, filledSlotIndices, activeSlots);
+  }, [queueValidation, items, state.skillQueueOrder, slots, state.mode]);
 
   // ビューポート移動（30秒刻み）
   const scrollByStep = useCallback((direction: 'left' | 'right') => {
@@ -246,8 +260,12 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
     setCommentInput('');
   }, []);
 
+  // ダブルクリックでのスタンドアロンコメント（pending中は無効）
+  const justPlacedRef = useRef(false);
   const handleLayersDoubleClick = useCallback(
     (e: React.MouseEvent) => {
+      if (justPlacedRef.current) return; // pending配置直後はスキップ
+      if (pendingSlotIndex !== null) return; // pending中はスキップ
       const container = containerRef.current;
       if (!container) return;
       const rect = container.getBoundingClientRect();
@@ -257,7 +275,35 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
       setCommentModal({ kind: 'sc-new', timeMs: snapTime(clampedTime, snapMode) });
       setCommentInput('');
     },
-    [totalWidth, zoomLevel, snapMode, totalTimeMs]
+    [pendingSlotIndex, totalWidth, zoomLevel, snapMode, totalTimeMs]
+  );
+
+  // pendingSlotIndex が設定された状態でのクリック → アイテムを配置
+  const handleLayersClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (pendingSlotIndex === null) return;
+      const container = containerRef.current;
+      if (!container) return;
+      const containerRect = container.getBoundingClientRect();
+      const xInContent = e.clientX - containerRect.left + container.scrollLeft;
+      let timeMs = snapTime(
+        Math.max(0, Math.min(totalTimeMs, ((totalWidth - TIMELINE_PAD_RIGHT - xInContent) / zoomRef.current) * 1000)),
+        snapRef.current
+      );
+      // レイヤーインデックスをY座標から算出
+      const layersEl = e.currentTarget as HTMLElement;
+      const layersRect = layersEl.getBoundingClientRect();
+      const yInLayers = e.clientY - layersRect.top;
+      const layerIndex = Math.max(0, Math.min(layers - 1, Math.floor(yInLayers / LAYER_HEIGHT)));
+      // 近接アイテムへのスナップ
+      const layerItems = items.filter(it => it.layerIndex === layerIndex);
+      timeMs = snapToNearestItem(timeMs, layerItems, '', zoomRef.current, totalWidth);
+      handleDrop(pendingSlotIndex, timeMs, layerIndex);
+      onClearPendingSlot();
+      justPlacedRef.current = true;
+      setTimeout(() => { justPlacedRef.current = false; }, 300);
+    },
+    [pendingSlotIndex, totalWidth, totalTimeMs, layers, items, handleDrop, onClearPendingSlot]
   );
 
   const handleMoveStandaloneComment = useCallback((id: string, timeMs: number) => {
@@ -369,16 +415,16 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
     <div className="timeline-wrapper">
       <div className="timeline-controls">
         <div className="operation-ref">
-          <span><b>クリック:</b> 選択</span>
-          <span><b>ダブルクリック:</b> フリーコメント</span>
-          <span><b>右クリック:</b> 削除</span>
-          <span><b>ドラッグ:</b> 移動</span>
-          <span><b>Shift+クリック:</b> EX対象</span>
-          <span><b>Ctrl+クリック:</b> コメント</span>
-          <span><b>Alt+クリック:</b> 矢印接続</span>
+          <span>{t('クリック: 選択')}</span>
+          <span>{t('ダブルクリック: フリーコメント')}</span>
+          <span>{t('右クリック: 削除')}</span>
+          <span>{t('ドラッグ: 移動')}</span>
+          <span>{t('Shift+クリック: EX対象')}</span>
+          <span>{t('Ctrl+クリック: コメント')}</span>
+          <span>{t('Alt+クリック: 矢印')}</span>
         </div>
         <span className="timeline-control" style={{ marginLeft: 'auto' }}>
-          時間:
+          {t('時間')}:
           {TIME_PRESETS.map((p) => (
             <button
               key={p.ms}
@@ -408,12 +454,12 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
           />
         </span>
         <span className="timeline-control">
-          スナップ:
+          {t('スナップ')}:
           <button
             className={`preset-btn${snapMode === '1s' ? ' active' : ''}`}
             onClick={() => dispatch({ type: 'SET_SNAP_MODE', snapMode: snapMode === '1s' ? '0.1s' : '1s' })}
           >
-            {snapMode === '1s' ? '1秒' : '0.1秒'}
+            {snapMode === '1s' ? t('1秒') : t('0.1秒')}
           </button>
         </span>
         <span className="timeline-control">
@@ -422,11 +468,20 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
             onClick={() => setLocked((v) => !v)}
             title="ONにするとスキルアイコンのドラッグ移動を禁止（クリック操作は可能）"
           >
-            {locked ? '🔒 移動禁止' : '🔓 移動可'}
+            {locked ? t('🔒移動禁止') : t('🔓移動可')}
+          </button>
+        </span>
+        <span className="timeline-control">
+          <button
+            className={`preset-btn${queueValidation ? ' active' : ''}`}
+            onClick={() => setQueueValidation((v) => !v)}
+            title="スキル順検証：ゲーム内のスキルカード順に合わないアイテムを赤くハイライト"
+          >
+            {t('スキル順')}
           </button>
         </span>
         <label className="timeline-control">
-          レイヤー:
+          {t('レイヤー')}:
           <select
             value={layers}
             onChange={(e) => {
@@ -450,7 +505,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
           </select>
         </label>
         <span className="timeline-control">
-          目標:
+          {t('目標')}:
           <input
             className="custom-time-input"
             type="text"
@@ -484,7 +539,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
               }}
               title="目標時間を削除"
             >
-              解除
+              {t('解除')}
             </button>
           )}
         </span>
@@ -499,7 +554,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
         </button>
         <div
           ref={containerRef}
-          className="timeline-scroll"
+          className={`timeline-scroll${pendingSlotIndex !== null ? ' pending-placement' : ''}`}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setCursorVisible(false)}
           onMouseUp={handleMouseUp}
@@ -535,7 +590,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
             totalWidth={totalWidth}
             onRemoveComment={handleRemoveComment}
           />
-          <div className="timeline-layers" onDoubleClick={handleLayersDoubleClick}>
+          <div className="timeline-layers" onDoubleClick={handleLayersDoubleClick} onClick={handleLayersClick}>
             {Array.from({ length: layers }, (_, i) => (
               <TimelineLayer
                 key={i}
@@ -569,6 +624,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
                 etcIcons={etcIcons}
                 slotCostConfigs={slotCostConfigs}
                 locked={locked}
+                queueErrorIds={queueErrorIds}
               />
             ))}
             <ArrowLayer
@@ -654,7 +710,7 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
       {commentModal !== null && (
         <div className="comment-modal-overlay" onClick={() => { setCommentModal(null); setCommentInput(''); }}>
           <div className="comment-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="comment-modal-title">コメントを入力</div>
+            <div className="comment-modal-title">{t('コメントを入力')}</div>
             <input
               className="comment-modal-input"
               type="text"
@@ -665,15 +721,15 @@ export function Timeline({ state, dispatch, arrowMode }: Props) {
                 if (e.key === 'Escape') { setCommentModal(null); setCommentInput(''); }
               }}
               autoFocus
-              placeholder="コメント（空欄で削除）"
+              placeholder={t('コメント（空欄で削除）')}
               maxLength={30}
             />
             <div className="comment-modal-actions">
               <button className="comment-modal-btn ok" onClick={handleCommentSubmit}>
-                OK
+                {t('OK')}
               </button>
               <button className="comment-modal-btn cancel" onClick={() => { setCommentModal(null); setCommentInput(''); }}>
-                キャンセル
+                {t('キャンセル')}
               </button>
             </div>
           </div>

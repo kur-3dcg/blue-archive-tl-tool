@@ -1,10 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { CharacterPanel } from './components/CharacterPanel/CharacterPanel';
 import { Timeline } from './components/Timeline/Timeline';
 import { SharePanel, buildLoadState } from './components/SharePanel/SharePanel';
 import { SaveLoadModal } from './components/SaveLoad/SaveLoadModal';
 import { useTimelineState } from './hooks/useTimelineState';
 import { decode } from './utils/shareCodec';
+import { computeCurrentQueueState, ACTIVE_SLOTS, EXTENDED_ACTIVE_SLOTS } from './utils/skillQueueValidator';
+import { LanguageContext, LANG_LABELS, useT } from './i18n';
+import type { Lang } from './i18n';
 import stCharacters from '../data/characters_st.json';
 import spCharacters from '../data/characters_sp.json';
 import './themes.css';
@@ -21,6 +24,36 @@ const THEME_LABELS: Record<Theme, string> = {
 export default function App() {
   const [state, dispatch, resetAll] = useTimelineState();
   const [arrowMode, setArrowMode] = useState(false);
+  const [gameReplayMode, setGameReplayMode] = useState(false);
+  const [editMode, setEditMode] = useState(true); // true=編成中, false=TL作成中
+  const [pendingSlotIndex, setPendingSlotIndex] = useState<number | null>(null);
+
+  // ゲーム再現モード用：現在のキュー状態（順序付き slotIndex 配列）
+  const currentQueueState = useMemo(() => {
+    const filledSlotIndices = state.slots.map((s, i) => s.character ? i : -1).filter(i => i >= 0);
+    return computeCurrentQueueState(state.items, state.skillQueueOrder, filledSlotIndices);
+  }, [state.slots, state.items, state.skillQueueOrder]);
+  // ゲーム再現モードのキーボードショートカット（Z/X/C/V/B）
+  useEffect(() => {
+    if (!gameReplayMode || editMode) { setPendingSlotIndex(null); return; }
+    const KEYS = ['z', 'x', 'c', 'v', 'b'];
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') return;
+      const key = e.key.toLowerCase();
+      if (key === 'escape') { setPendingSlotIndex(null); return; }
+      const keyIndex = KEYS.indexOf(key);
+      if (keyIndex === -1) return;
+      const activeCount = state.mode === 'extended' ? EXTENDED_ACTIVE_SLOTS : ACTIVE_SLOTS;
+      if (keyIndex >= activeCount) return;
+      const slotIdx = currentQueueState[keyIndex];
+      if (slotIdx === undefined || !state.slots[slotIdx]?.character) return;
+      setPendingSlotIndex(prev => prev === slotIdx ? null : slotIdx);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [gameReplayMode, editMode, currentQueueState, state.mode, state.slots]);
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [showMenuTooltip, setShowMenuTooltip] = useState(
     () => !localStorage.getItem('tl-tooltip-seen')
@@ -30,6 +63,9 @@ export default function App() {
   const menuRef = useRef<HTMLDivElement>(null);
   const [theme, setTheme] = useState<Theme>(() => {
     return (localStorage.getItem('tl-theme') as Theme) || 'dark';
+  });
+  const [lang, setLang] = useState<Lang>(() => {
+    return (localStorage.getItem('tl-lang') as Lang) || 'ja';
   });
   const hashImported = useRef(false);
 
@@ -74,6 +110,10 @@ export default function App() {
     localStorage.setItem('tl-theme', theme);
   }, [theme]);
 
+  useEffect(() => {
+    localStorage.setItem('tl-lang', lang);
+  }, [lang]);
+
   // URLハッシュからの自動インポート（初回のみ）
   useEffect(() => {
     if (hashImported.current) return;
@@ -98,10 +138,13 @@ export default function App() {
     })();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const t = useT();
+
   return (
+    <LanguageContext.Provider value={lang}>
     <div className="app">
       <header className="app-header">
-        <h1>ブルアカ TL作成支援ツール <span className="app-build-date">{__BUILD_DATE__}</span></h1>
+        <h1>{t('ブルアカ TL作成支援ツール')} <span className="app-build-date">{__BUILD_DATE__}</span></h1>
         <div className="app-header-right">
           <div className="saveload-btns">
             <button
@@ -109,14 +152,14 @@ export default function App() {
               onClick={() => { setSaveLoadMode('save'); setShowSaveLoad(true); }}
               title="現在の状態をセーブ"
             >
-              セーブ
+              {t('セーブ')}
             </button>
             <button
               className="saveload-btn"
               onClick={() => { setSaveLoadMode('load'); setShowSaveLoad(true); }}
               title="セーブデータをロード"
             >
-              ロード
+              {t('ロード')}
             </button>
           </div>
           <SharePanel
@@ -128,19 +171,27 @@ export default function App() {
             })}
           />
           <div className="theme-selector">
-            <label>テーマ:</label>
+            <label>{t('テーマ')}:</label>
             <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)}>
-              {(Object.keys(THEME_LABELS) as Theme[]).map((t) => (
-                <option key={t} value={t}>
-                  {THEME_LABELS[t]}
+              {(Object.keys(THEME_LABELS) as Theme[]).map((th) => (
+                <option key={th} value={th}>
+                  {t(THEME_LABELS[th])}
                 </option>
+              ))}
+            </select>
+          </div>
+          <div className="theme-selector">
+            <label>{t('言語')}:</label>
+            <select value={lang} onChange={(e) => setLang(e.target.value as Lang)}>
+              {(Object.keys(LANG_LABELS) as Lang[]).map((l) => (
+                <option key={l} value={l}>{LANG_LABELS[l]}</option>
               ))}
             </select>
           </div>
           <div className="hamburger-menu" ref={menuRef}>
             {showMenuTooltip && (
               <div className="hamburger-tooltip" onAnimationEnd={hideTooltip}>
-                意見・感想・バグ報告はこちら
+                {t('ご意見・ご感想・バグ報告などはこちらから')}
               </div>
             )}
             <button
@@ -152,27 +203,27 @@ export default function App() {
             </button>
             {menuOpen && (
               <div className="hamburger-dropdown">
-                <div className="hamburger-section-label">他のツール</div>
+                <div className="hamburger-section-label">{t('他のツール')}</div>
                 <a href="https://kur-3dcg.github.io/blue-archive-faceimage/index.html" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
-                  戦術対抗戦編成記録ツール
+                  {t('戦術対抗戦編成記録ツール')}
                 </a>
                 <a href="https://kur-3dcg.github.io/Furniture-placement-simulator/" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
-                  家具シミュレーションツール
+                  {t('家具シミュレーションツール')}
                 </a>
                 <a href="https://kur-3dcg.github.io/Tactical-Battle-Stone-Accounting/index.html" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
-                  石割収支管理ツール
+                  {t('石割収支管理ツール')}
                 </a>
                 <div className="hamburger-divider" />
-                <div className="hamburger-section-label">マニュアル</div>
+                <div className="hamburger-section-label">{t('マニュアル')}</div>
                 <a href="https://note.com/kur7263/n/n2b856fe0e2a4" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
-                  使い方・マニュアル（note）
+                  {t('使い方・マニュアル（note）')}
                 </a>
                 <div className="hamburger-divider" />
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLScPJZCQZhZ-gdIcls9e-DUvQalF9Fx4pCkHLtn-Ec59eJMFcw/viewform?usp=dialog" target="_blank" rel="noopener noreferrer" className="hamburger-contact" onClick={() => setMenuOpen(false)}>
-                  ご意見・ご感想・バグ報告などはこちら
+                  {t('ご意見・ご感想・バグ報告などはこちらから')}
                 </a>
                 <a href="https://x.com/kur_3dcg" target="_blank" rel="noopener noreferrer" className="hamburger-contact" onClick={() => setMenuOpen(false)}>
-                  更新・開発情報はこちら
+                  {t('更新・開発情報はこちら')}
                 </a>
               </div>
             )}
@@ -213,8 +264,25 @@ export default function App() {
         onRemoveStageGimmick={(id) =>
           dispatch({ type: 'REMOVE_STAGE_GIMMICK', id })
         }
+        skillQueueOrder={state.skillQueueOrder}
+        onSetSkillQueueOrder={(order) =>
+          dispatch({ type: 'SET_SKILL_QUEUE_ORDER', order })
+        }
+        gameReplayMode={gameReplayMode}
+        onToggleGameReplayMode={() => setGameReplayMode(v => !v)}
+        currentQueueState={currentQueueState}
+        editMode={editMode}
+        onToggleEditMode={() => setEditMode(v => !v)}
+        pendingSlotIndex={pendingSlotIndex}
+        onSetPendingSlotIndex={setPendingSlotIndex}
       />
-      <Timeline state={state} dispatch={dispatch} arrowMode={arrowMode} />
+      <Timeline
+        state={state}
+        dispatch={dispatch}
+        arrowMode={arrowMode}
+        pendingSlotIndex={pendingSlotIndex}
+        onClearPendingSlot={() => setPendingSlotIndex(null)}
+      />
       {showSaveLoad && (
         <SaveLoadModal
           initialMode={saveLoadMode}
@@ -225,5 +293,6 @@ export default function App() {
         />
       )}
     </div>
+    </LanguageContext.Provider>
   );
 }

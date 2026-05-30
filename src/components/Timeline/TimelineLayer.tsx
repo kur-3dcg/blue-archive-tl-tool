@@ -36,6 +36,7 @@ interface Props {
   etcIcons?: EtcIcon[];
   slotCostConfigs: SlotCostConfig[];
   locked?: boolean;
+  queueErrorIds?: Set<string>;
 }
 
 interface ItemLayout {
@@ -74,6 +75,7 @@ export function TimelineLayer({
   etcIcons,
   slotCostConfigs,
   locked,
+  queueErrorIds,
 }: Props) {
   const [dragOver, setDragOver] = useState(false);
 
@@ -216,6 +218,7 @@ export function TimelineLayer({
             costOverrun={itemCostMap?.get(item.id)?.isOverrun}
             costOvercost={itemCostMap?.get(item.id)?.isOvercost}
             onCostAdjust={onCostAdjust}
+            isQueueError={queueErrorIds?.has(item.id)}
             onSetTarget={onSetTarget}
             onSetTargetEtc={onSetTargetEtc}
             onToggleTimeDisplay={onToggleTimeDisplay}

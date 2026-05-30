@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import type { TimelineState, TimelineAction } from '../../types';
+import { useT } from '../../i18n';
 import './SaveLoadModal.css';
 
 const SAVES_KEY = 'ba-tl-saves';
@@ -76,6 +77,7 @@ interface Props {
 }
 
 export function SaveLoadModal({ initialMode, state, dispatch, onClose, onSaved }: Props) {
+  const t = useT();
   const [slots, setSlots] = useState<SlotArray>(loadSlots);
   const [mode, setMode] = useState<'save' | 'load'>(initialMode);
   const [overlay, setOverlay] = useState<OverlayState>(null);
@@ -173,13 +175,13 @@ export function SaveLoadModal({ initialMode, state, dispatch, onClose, onSaved }
               className={`sl-tab${mode === 'save' ? ' active' : ''}`}
               onClick={() => { setMode('save'); setOverlay(null); }}
             >
-              セーブ
+              {t('セーブ')}
             </button>
             <button
               className={`sl-tab${mode === 'load' ? ' active' : ''}`}
               onClick={() => { setMode('load'); setOverlay(null); }}
             >
-              ロード
+              {t('ロード')}
             </button>
           </div>
           <button className="sl-close-btn" onClick={onClose}>✕</button>
@@ -222,7 +224,7 @@ export function SaveLoadModal({ initialMode, state, dispatch, onClose, onSaved }
                 </>
               ) : (
                 <div className="sl-slot-empty-label">
-                  {mode === 'save' ? '空きスロット' : 'データなし'}
+                  {mode === 'save' ? t('空きスロット') : t('データなし')}
                 </div>
               )}
             </div>
@@ -243,8 +245,8 @@ export function SaveLoadModal({ initialMode, state, dispatch, onClose, onSaved }
                   <div className="sl-dialog-btns">
                     <button className="sl-dialog-btn ok" onClick={() =>
                       setOverlay({ type: 'save-name', slotIdx: overlay.slotIdx, defaultName: slots[overlay.slotIdx]?.name ?? defaultSaveName() })
-                    }>上書き</button>
-                    <button className="sl-dialog-btn cancel" onClick={() => setOverlay(null)}>キャンセル</button>
+                    }>{t('上書き')}</button>
+                    <button className="sl-dialog-btn cancel" onClick={() => setOverlay(null)}>{t('キャンセル')}</button>
                   </div>
                 </>
               )}
@@ -263,11 +265,11 @@ export function SaveLoadModal({ initialMode, state, dispatch, onClose, onSaved }
                       if (e.key === 'Escape') setOverlay(null);
                     }}
                     maxLength={20}
-                    placeholder="セーブ名..."
+                    placeholder={t('セーブ名...')}
                   />
                   <div className="sl-dialog-btns">
-                    <button className="sl-dialog-btn ok" onClick={() => doSave(overlay.slotIdx, nameInput)}>セーブ</button>
-                    <button className="sl-dialog-btn cancel" onClick={() => setOverlay(null)}>キャンセル</button>
+                    <button className="sl-dialog-btn ok" onClick={() => doSave(overlay.slotIdx, nameInput)}>{t('セーブ')}</button>
+                    <button className="sl-dialog-btn cancel" onClick={() => setOverlay(null)}>{t('キャンセル')}</button>
                   </div>
                 </>
               )}
@@ -280,8 +282,8 @@ export function SaveLoadModal({ initialMode, state, dispatch, onClose, onSaved }
                     現在の状態は失われます。
                   </div>
                   <div className="sl-dialog-btns">
-                    <button className="sl-dialog-btn ok" onClick={() => doLoad(overlay.slotIdx)}>ロード</button>
-                    <button className="sl-dialog-btn cancel" onClick={() => setOverlay(null)}>キャンセル</button>
+                    <button className="sl-dialog-btn ok" onClick={() => doLoad(overlay.slotIdx)}>{t('ロード')}</button>
+                    <button className="sl-dialog-btn cancel" onClick={() => setOverlay(null)}>{t('キャンセル')}</button>
                   </div>
                 </>
               )}
@@ -293,8 +295,8 @@ export function SaveLoadModal({ initialMode, state, dispatch, onClose, onSaved }
                     スロット {overlay.slotIdx + 1}「{slots[overlay.slotIdx]?.name}」を削除します。
                   </div>
                   <div className="sl-dialog-btns">
-                    <button className="sl-dialog-btn danger" onClick={() => doDelete(overlay.slotIdx)}>削除</button>
-                    <button className="sl-dialog-btn cancel" onClick={() => setOverlay(null)}>キャンセル</button>
+                    <button className="sl-dialog-btn danger" onClick={() => doDelete(overlay.slotIdx)}>{t('削除')}</button>
+                    <button className="sl-dialog-btn cancel" onClick={() => setOverlay(null)}>{t('キャンセル')}</button>
                   </div>
                 </>
               )}

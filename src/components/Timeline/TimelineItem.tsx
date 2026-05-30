@@ -4,6 +4,7 @@ import { ITEM_WIDTH, LAYER_HEIGHT, TIMELINE_PAD_LEFT, TIMELINE_PAD_RIGHT } from 
 import { msToDisplay, costToDisplay } from '../../utils/timeFormat';
 import { snapTime, snapToNearestItem } from '../../utils/snap';
 import type { SnapMode } from '../../types';
+import { useCharName } from '../../i18n';
 
 const DOUBLE_CLICK_MS = 250; // ダブルクリック判定時間
 
@@ -33,6 +34,7 @@ interface Props {
   costOverrun?: boolean;
   costOvercost?: boolean;
   onCostAdjust?: (itemId: string, delta: number) => void;
+  isQueueError?: boolean;
   onSetTarget?: (itemId: string, targetSlotIndex: number | undefined) => void;
   onSetTargetEtc?: (itemId: string, targetEtcIcon: string | undefined) => void;
   onToggleTimeDisplay?: (itemId: string) => void;
@@ -73,7 +75,9 @@ export function TimelineItem({
   allSlots,
   etcIcons,
   locked,
+  isQueueError,
 }: Props) {
+  const charName = useCharName();
   const dragRef = useRef<{
     layerTop: number;
     moved: boolean;
@@ -245,7 +249,7 @@ export function TimelineItem({
       onClick={handleClick}
       onDoubleClick={(e) => e.stopPropagation()}
       onContextMenu={handleContextMenu}
-      title={`${character.name} - ${msToDisplay(item.timeMs)}${costValue !== undefined ? ` (コスト: ${costToDisplay(costValue)})` : ''}${isInstant ? '（即）' : ''}（クリックで表示切替 / ダブルクリックでコメント / 右クリックで削除 / Shift+クリックで対象指定）`}
+      title={`${charName(character)} - ${msToDisplay(item.timeMs)}${costValue !== undefined ? ` (コスト: ${costToDisplay(costValue)})` : ''}${isInstant ? '（即）' : ''}（クリックで表示切替 / ダブルクリックでコメント / 右クリックで削除 / Shift+クリックで対象指定）`}
     >
       {adj !== 0 && (
         <div className={`timeline-item-adj-badge${adj > 0 ? ' positive' : ' negative'}`}>
@@ -253,6 +257,7 @@ export function TimelineItem({
         </div>
       )}
       <img src={character.image} alt={character.name} width={48} height={48} />
+      {isQueueError && <div className="timeline-item-queue-error" title="スキル順エラー: このタイミングではこのキャラのスキルはアクティブスロットにありません" />}
       <div className={`timeline-item-time${showCost ? ' cost-mode' : ''}${costOverrun ? ' overrun' : ''}${costOvercost ? ' overcost' : ''}`}>{timeLabel}</div>
       {item.comment && <div className="timeline-item-comment-dot" />}
       {targetEtcIconData && (
@@ -272,7 +277,7 @@ export function TimelineItem({
           alt={targetChar.name}
           width={24}
           height={24}
-          title={`対象: ${targetChar.name}`}
+          title={`対象: ${charName(targetChar)}`}
         />
       )}
       {onCostAdjust && (
@@ -330,7 +335,7 @@ export function TimelineItem({
                 onClick={(e) => { e.stopPropagation(); onSetTarget(item.id, idx); }}
               >
                 <img src={s.character.image} alt={s.character.name} width={20} height={20} />
-                {s.character.name}
+                {charName(s.character)}
               </button>
             ) : null
           )}

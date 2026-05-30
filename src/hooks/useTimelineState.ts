@@ -53,6 +53,7 @@ const initialState: TimelineState = {
   targetTimeMs: undefined,
   standaloneComments: [],
   stageGimmicks: [],
+  skillQueueOrder: undefined,
 };
 
 function reducer(state: TimelineState, action: TimelineAction): TimelineState {
@@ -315,6 +316,9 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         stageGimmicks: action.state.stageGimmicks ?? [],
       };
     }
+
+    case 'SET_SKILL_QUEUE_ORDER':
+      return { ...state, skillQueueOrder: action.order };
 
     case 'RESET_ALL':
       return initialState;

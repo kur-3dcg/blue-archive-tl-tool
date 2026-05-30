@@ -149,6 +149,10 @@
   position: relative;
 }
 
+.timeline-scroll.pending-placement {
+  cursor: crosshair;
+}
+
 .timeline-content {
   position: relative;
 }
@@ -677,6 +681,16 @@
 
 .cost-adjust-btn:hover {
   background: var(--bg-control-hover);
+}
+
+/* Queue error overlay */
+.timeline-item-queue-error {
+  position: absolute;
+  inset: 0;
+  background: rgba(220, 38, 38, 0.45);
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 9;
 }
 
 /* Target icon (right top: character slot) */

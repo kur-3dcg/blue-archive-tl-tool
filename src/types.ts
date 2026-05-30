@@ -15,6 +15,10 @@ export interface Character {
   cost?: number;
   exDuration?: number | null;
   hasDurationBuff?: boolean; // 固有2↑でバフ効果持続力×1.19
+  nameEn?: string;
+  nameKr?: string;
+  nameTw?: string;
+  nameCn?: string;
 }
 
 export type SlotType = 'striker' | 'special';
@@ -65,6 +69,7 @@ export interface TimelineState {
   targetTimeMs?: number; // 目標時間（赤い線で表示）
   standaloneComments: StandaloneComment[];
   stageGimmicks: StageGimmick[];
+  skillQueueOrder?: number[]; // スキル使用順（slotIndexの配列）。undefinedはスロット番号順
 }
 
 export interface StandaloneComment {
@@ -112,4 +117,5 @@ export type TimelineAction =
   | { type: 'SET_STAGE_GIMMICKS'; gimmicks: StageGimmick[] }
   | { type: 'LOAD_STATE'; state: Pick<TimelineState, 'slots' | 'items' | 'arrows' | 'layers' | 'totalTimeMs'> & { mode?: GameMode; slotCostConfigs?: SlotCostConfig[]; targetTimeMs?: number; heavyArmorCount?: number; redWinterCount?: number; standaloneComments?: StandaloneComment[]; stageGimmicks?: StageGimmick[] } }
   | { type: 'SET_MODE'; mode: GameMode }
+  | { type: 'SET_SKILL_QUEUE_ORDER'; order: number[] | undefined }
   | { type: 'RESET_ALL' };

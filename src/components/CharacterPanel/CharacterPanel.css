@@ -295,6 +295,175 @@
   background: var(--slot-clear-hover);
 }
 
+.slot-queue-badge-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+}
+
+.slot-queue-badge {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #6b7280;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid rgba(0,0,0,0.3);
+  transition: filter 0.15s;
+  user-select: none;
+}
+
+.slot-queue-badge:hover {
+  filter: brightness(1.2);
+}
+
+.slot-queue-picker {
+  position: absolute;
+  top: 24px;
+  left: 0;
+  background: var(--bg-modal);
+  border: 1px solid var(--border-secondary);
+  border-radius: 6px;
+  padding: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  max-width: 120px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  z-index: 20;
+}
+
+.slot-queue-picker-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--border-tertiary);
+  background: var(--bg-control);
+  color: var(--text-primary);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.1s;
+}
+
+.slot-queue-picker-btn:hover {
+  background: var(--bg-control-hover);
+}
+
+.slot-queue-picker-btn.current {
+  background: var(--bg-active);
+  border-color: var(--bg-active-border);
+  color: var(--text-active);
+}
+
+/* ゲーム再現：スキルスロット表示 */
+.skill-queue-display {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-self: flex-start;
+}
+
+.skill-queue-display-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-label);
+  text-transform: uppercase;
+}
+
+.skill-queue-slots {
+  display: flex;
+  gap: 12px;
+}
+
+.skill-queue-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: grab;
+  user-select: none;
+}
+
+.skill-queue-slot:active {
+  cursor: grabbing;
+}
+
+.skill-queue-slot img {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  border: 2px solid var(--border-secondary);
+  object-fit: cover;
+}
+
+.skill-queue-slot-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.skill-queue-slot-name {
+  font-size: 11px;
+  color: var(--text-secondary);
+  max-width: 68px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* pending（選択中）スロットのハイライト */
+.skill-queue-slot.pending {
+  border-radius: 10px;
+  outline: 2px solid #4ade80;
+  outline-offset: 2px;
+}
+
+.skill-queue-slot.pending img {
+  border-color: #4ade80;
+}
+
+.skill-queue-slot.pending .skill-queue-slot-label {
+  color: #4ade80;
+}
+
+/* ゲーム再現ボタン */
+.game-replay-btn {
+  padding: 6px 10px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 5px;
+  background: var(--bg-control);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.game-replay-btn:hover {
+  background: var(--bg-control-hover);
+  color: var(--text-primary);
+}
+
+.game-replay-btn.active {
+  background: #7c3aed;
+  border-color: #6d28d9;
+  color: #fff;
+}
+
 /* Search overlay */
 .character-search-overlay {
   position: fixed;

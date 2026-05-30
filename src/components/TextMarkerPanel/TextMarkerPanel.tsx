@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { StandaloneComment } from '../../types';
+import { useT } from '../../i18n';
 import './TextMarkerPanel.css';
 
 interface Props {
@@ -41,6 +42,7 @@ function textToComments(text: string, existing: StandaloneComment[]): Standalone
 }
 
 export function TextMarkerPanel({ standaloneComments, onSetComments }: Props) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [localText, setLocalText] = useState('');
   const panelRef = useRef<HTMLDivElement>(null);
@@ -84,7 +86,7 @@ export function TextMarkerPanel({ standaloneComments, onSetComments }: Props) {
         onClick={() => setOpen((v) => !v)}
         title="テキストマーカーパネル"
       >
-        テキスト
+        {t('テキスト')}
       </button>
       {open && (
         <div className="text-marker-panel">

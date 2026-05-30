@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import type { StageGimmick, CharacterSlot } from '../../types';
 import { STAGE_GIMMICK_PRESETS } from '../../constants';
+import { useT } from '../../i18n';
 import './StageGimmickPanel.css';
 
 interface Props {
@@ -35,6 +36,7 @@ function secToDisplay(ms: number): string {
 const CUSTOM_KEY = '__custom__';
 
 export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, onRemove }: Props) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [preset, setPreset] = useState('0');
   const [timeInput, setTimeInput] = useState('');
@@ -107,14 +109,14 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
         onClick={() => setOpen((v) => !v)}
         title="ステージギミックパネル"
       >
-        ギミック
+        {t('ギミック')}
       </button>
       {open && (
         <div className="stage-gimmick-panel">
-          <div className="stage-gimmick-header">ステージギミック</div>
+          <div className="stage-gimmick-header">{t('ステージギミック')}</div>
           <div className="stage-gimmick-form">
             <div className="stage-gimmick-row">
-              <label className="stage-gimmick-label">プリセット</label>
+              <label className="stage-gimmick-label">{t('プリセット')}</label>
               <select
                 className="stage-gimmick-select"
                 value={preset}
@@ -123,7 +125,7 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
                 {STAGE_GIMMICK_PRESETS.map((p, i) => (
                   <option key={i} value={String(i)}>{p.label}</option>
                 ))}
-                <option value={CUSTOM_KEY}>カスタム</option>
+                <option value={CUSTOM_KEY}>{t('カスタム')}</option>
               </select>
             </div>
             {!isCustom && presetData && 'recoveryPerStriker' in presetData && (
@@ -134,7 +136,7 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
             {isCustom && (
               <>
                 <div className="stage-gimmick-row">
-                  <label className="stage-gimmick-label">名前</label>
+                  <label className="stage-gimmick-label">{t('名前')}</label>
                   <input
                     className="stage-gimmick-input"
                     type="text"
@@ -144,7 +146,7 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
                   />
                 </div>
                 <div className="stage-gimmick-row">
-                  <label className="stage-gimmick-label">回復力+</label>
+                  <label className="stage-gimmick-label">{t('回復力+')}</label>
                   <input
                     className="stage-gimmick-input stage-gimmick-input--short"
                     type="number"
@@ -155,7 +157,7 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
                   />
                 </div>
                 <div className="stage-gimmick-row">
-                  <label className="stage-gimmick-label">効果時間(秒)</label>
+                  <label className="stage-gimmick-label">{t('効果時間(秒)')}</label>
                   <input
                     className="stage-gimmick-input stage-gimmick-input--short"
                     type="number"
@@ -169,7 +171,7 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
               </>
             )}
             <div className="stage-gimmick-row">
-              <label className="stage-gimmick-label">発動時間</label>
+              <label className="stage-gimmick-label">{t('発動時間')}</label>
               <input
                 className="stage-gimmick-input stage-gimmick-input--short"
                 type="text"
@@ -178,7 +180,7 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
                 onKeyDown={(e) => { if (e.key === 'Enter') handleAdd(); }}
                 placeholder="1:30"
               />
-              <button className="stage-gimmick-add-btn" onClick={handleAdd}>追加</button>
+              <button className="stage-gimmick-add-btn" onClick={handleAdd}>{t('追加')}</button>
             </div>
           </div>
           {stageGimmicks.length > 0 && (

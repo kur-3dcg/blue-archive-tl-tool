@@ -70,6 +70,10 @@ function rowToEntry(row, existingImage) {
   // スプシのimage列を優先、なければ既存JSONのURLを引き継ぎ
   const image = (row['image'] ?? '').trim() || existingImage || '';
   const hasDurationBuff = row['バフ時間増加'] === 'TRUE' || row['バフ時間増加'] === 'true' || row['バフ時間増加'] === '1' ? true : undefined;
+  const nameEn = (row['English'] ?? '').trim() || undefined;
+  const nameKr = (row['한국어'] ?? '').trim() || undefined;
+  const nameTw = (row['中文(繁)'] ?? '').trim() || undefined;
+  const nameCn = (row['中文(简)'] ?? '').trim() || undefined;
   return {
     name: row['名前'],
     image,
@@ -80,6 +84,10 @@ function rowToEntry(row, existingImage) {
     cost: isNaN(cost) ? 3 : cost,
     exDuration,
     ...(hasDurationBuff && { hasDurationBuff }),
+    ...(nameEn && { nameEn }),
+    ...(nameKr && { nameKr }),
+    ...(nameTw && { nameTw }),
+    ...(nameCn && { nameCn }),
   };
 }
 

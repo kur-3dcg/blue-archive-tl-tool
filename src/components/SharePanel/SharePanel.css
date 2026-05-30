@@ -56,6 +56,26 @@
   background: var(--bg-control-hover);
 }
 
+.share-rows-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.share-rows-input {
+  width: 44px;
+  padding: 2px 4px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 3px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 11px;
+  text-align: center;
+}
+
 .share-panel-error {
   color: var(--error-text);
   font-size: 11px;
