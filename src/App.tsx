@@ -31,8 +31,9 @@ export default function App() {
   // ゲーム再現モード用：現在のキュー状態（順序付き slotIndex 配列）
   const currentQueueState = useMemo(() => {
     const filledSlotIndices = state.slots.map((s, i) => s.character ? i : -1).filter(i => i >= 0);
-    return computeCurrentQueueState(state.items, state.skillQueueOrder, filledSlotIndices);
-  }, [state.slots, state.items, state.skillQueueOrder]);
+    const activeSlots = state.mode === 'extended' ? EXTENDED_ACTIVE_SLOTS : ACTIVE_SLOTS;
+    return computeCurrentQueueState(state.items, state.skillQueueOrder, filledSlotIndices, activeSlots);
+  }, [state.slots, state.items, state.skillQueueOrder, state.mode]);
   // ゲーム再現モードのキーボードショートカット（Z/X/C/V/B）
   useEffect(() => {
     if (!gameReplayMode || editMode) { setPendingSlotIndex(null); return; }

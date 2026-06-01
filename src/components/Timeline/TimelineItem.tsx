@@ -249,7 +249,7 @@ export function TimelineItem({
       onClick={handleClick}
       onDoubleClick={(e) => e.stopPropagation()}
       onContextMenu={handleContextMenu}
-      title={`${charName(character)} - ${msToDisplay(item.timeMs)}${costValue !== undefined ? ` (コスト: ${costToDisplay(costValue)})` : ''}${isInstant ? '（即）' : ''}（クリックで表示切替 / ダブルクリックでコメント / 右クリックで削除 / Shift+クリックで対象指定）`}
+      title={`${charName(character)} - ${msToDisplay(item.timeMs)}${costValue !== undefined ? ` (コスト: ${costToDisplay(costValue)})` : ''}${isInstant ? '（即）' : ''}（クリックで表示切替 / Ctrl+クリックでコメント / 右クリックで削除 / Shift+クリックで対象指定）`}
     >
       {adj !== 0 && (
         <div className={`timeline-item-adj-badge${adj > 0 ? ' positive' : ' negative'}`}>

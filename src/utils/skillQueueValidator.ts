@@ -26,20 +26,41 @@ function sortItems(items: TimelineItem[], filledSlotIndices: number[]) {
 }
 
 /**
+ * スキル使用後のキュー状態を更新する（ゲーム正確な挙動）。
+ * 使用されたスロット位置に次の待機キャラが入り、他のアクティブスロットは変化しない。
+ */
+function applySkillUse(queue: number[], pos: number, usedSlot: number, activeSlots: number): void {
+  if (pos < activeSlots && queue.length > activeSlots) {
+    // 使用されたスロットを取り除く
+    queue.splice(pos, 1);
+    // 最初の待機キャラ（activeSlots-1番目）を取り出す
+    const nextWaiting = queue[activeSlots - 1];
+    queue.splice(activeSlots - 1, 1);
+    // 使用されたスロットの位置に待機キャラを挿入
+    queue.splice(pos, 0, nextWaiting);
+    // 使用されたスロットを末尾に追加
+    queue.push(usedSlot);
+  } else {
+    queue.splice(pos, 1);
+    queue.push(usedSlot);
+  }
+}
+
+/**
  * 全TLアイテムを処理した後の現在のキュー状態を返す。
  * 先頭 activeSlots 個がアクティブスロット（呼び出し側でスライス）。
  */
 export function computeCurrentQueueState(
   items: TimelineItem[],
   queueOrder: number[] | undefined,
-  filledSlotIndices: number[]
+  filledSlotIndices: number[],
+  activeSlots: number = ACTIVE_SLOTS
 ): number[] {
   const queue = buildInitialQueue(queueOrder, filledSlotIndices);
   for (const { item } of sortItems(items, filledSlotIndices)) {
     const pos = queue.indexOf(item.slotIndex);
     if (pos === -1) continue;
-    queue.splice(pos, 1);
-    queue.push(item.slotIndex);
+    applySkillUse(queue, pos, item.slotIndex, activeSlots);
   }
   return queue;
 }
@@ -75,8 +96,7 @@ export function validateSkillQueue(
       errorIds.add(item.id);
     }
 
-    queue.splice(pos, 1);
-    queue.push(item.slotIndex);
+    applySkillUse(queue, pos, item.slotIndex, activeSlots);
   }
 
   return errorIds;
