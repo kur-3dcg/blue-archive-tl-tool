@@ -75,6 +75,7 @@ export function buildLoadState(
     targetTimeMs: data.targetTimeMs,
     standaloneComments,
     stageGimmicks,
+    skillQueueOrder: data.skillQueueOrder,
   };
 }
 
@@ -97,7 +98,7 @@ export function SharePanel({ state, onCoreAction, onImport }: Props) {
     return encode(
       state.slots, state.items, state.layers, state.totalTimeMs,
       state.arrows, state.slotCostConfigs, state.targetTimeMs,
-      state.standaloneComments, state.stageGimmicks,
+      state.standaloneComments, state.stageGimmicks, state.skillQueueOrder,
     );
   };
 

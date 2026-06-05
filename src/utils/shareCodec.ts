@@ -34,6 +34,7 @@ interface CompactData {
   W?: number;                                              // redWinterCount
   N?: { t: number; x: string }[];                         // standaloneComments: timeMs, text
   K?: { t: number; d: number; r: number; l?: string }[];  // stageGimmicks: timeMs, durationMs, recoveryDelta, label
+  Q?: number[];                                            // skillQueueOrder
 }
 
 // Decoded result (unified)
@@ -49,6 +50,7 @@ export interface ShareData {
   redWinterCount?: number;
   standaloneComments?: { timeMs: number; text: string }[];
   stageGimmicks?: { timeMs: number; durationMs: number; recoveryDelta: number; label?: string }[];
+  skillQueueOrder?: number[];
 }
 
 // --- Compression helpers using DecompressionStream/CompressionStream ---
@@ -129,6 +131,7 @@ export async function encode(
   targetTimeMs?: number,
   standaloneComments?: StandaloneComment[],
   stageGimmicks?: StageGimmick[],
+  skillQueueOrder?: number[],
 ): Promise<string> {
   const itemIdToIndex = new Map(items.map((item, idx) => [item.id, idx]));
 
@@ -170,6 +173,7 @@ export async function encode(
     ...(stageGimmicks && stageGimmicks.length > 0
       ? { K: stageGimmicks.map((g) => ({ t: g.timeMs, d: g.durationMs, r: g.recoveryDelta, ...(g.label ? { l: g.label } : {}) })) }
       : {}),
+    ...(skillQueueOrder && skillQueueOrder.length > 0 ? { Q: skillQueueOrder } : {}),
   };
 
   const jsonStr = JSON.stringify(compact);
@@ -233,5 +237,6 @@ function compactToShareData(c: CompactData): ShareData {
     redWinterCount: c.W,
     standaloneComments: c.N?.map((n) => ({ timeMs: n.t, text: n.x })),
     stageGimmicks: c.K?.map((k) => ({ timeMs: k.t, durationMs: k.d, recoveryDelta: k.r, label: k.l })),
+    skillQueueOrder: c.Q,
   };
 }
