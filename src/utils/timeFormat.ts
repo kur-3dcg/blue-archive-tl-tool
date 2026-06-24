@@ -1,9 +1,10 @@
 /** ms → "M:SS.mmm" */
 export function msToDisplay(ms: number): string {
-  const totalSeconds = Math.floor(ms / 1000);
+  const rounded = Math.round(ms);
+  const totalSeconds = Math.floor(rounded / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
-  const millis = ms % 1000;
+  const millis = rounded % 1000;
   return `${minutes}:${String(seconds).padStart(2, '0')}.${String(millis).padStart(3, '0')}`;
 }
 

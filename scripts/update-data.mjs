@@ -32,7 +32,7 @@ function loadEnv() {
 // ---- CSV パース（シンプル実装） ----
 function parseCSV(text) {
   const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim().split('\n');
-  const headers = splitCSVLine(lines[0]);
+  const headers = splitCSVLine(lines[0]).map(h => h.trim());
   return lines.slice(1)
     .filter(l => l.trim())
     .map(line => {
@@ -67,6 +67,9 @@ function rowToEntry(row, existingImage) {
   const cost = parseInt(row['コスト'], 10);
   const exRaw = row['EX時間（秒）'];
   const exDuration = exRaw !== '' && !isNaN(parseFloat(exRaw)) ? parseFloat(exRaw) : null;
+  const exDelayRaw = row['EXディレイ時間'];
+  const exDelayVal = exDelayRaw !== '' && !isNaN(parseFloat(exDelayRaw)) ? parseFloat(exDelayRaw) : 0;
+  const exDelay = exDelayVal > 0 ? exDelayVal : undefined;
   // スプシのimage列を優先、なければ既存JSONのURLを引き継ぎ
   const image = (row['image'] ?? '').trim() || existingImage || '';
   const hasDurationBuff = row['バフ時間増加'] === 'TRUE' || row['バフ時間増加'] === 'true' || row['バフ時間増加'] === '1' ? true : undefined;
@@ -83,6 +86,7 @@ function rowToEntry(row, existingImage) {
     armorType: row['防御'],
     cost: isNaN(cost) ? 3 : cost,
     exDuration,
+    ...(exDelay !== undefined && { exDelay }),
     ...(hasDurationBuff && { hasDurationBuff }),
     ...(nameEn && { nameEn }),
     ...(nameKr && { nameKr }),

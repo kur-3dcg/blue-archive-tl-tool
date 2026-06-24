@@ -45,7 +45,8 @@ export function BuffBarLayer({ items, slots, slotCostConfigs, layoutMap, zoomLev
       const dur = (char.hasDurationBuff && hasUnique2)
         ? baseDur * BUFF_DURATION_MULTIPLIER
         : baseDur;
-      const startX = totalWidth - TIMELINE_PAD_RIGHT - (item.timeMs / 1000) * zoomLevel;
+      const delayS = slotCostConfigs[item.slotIndex]?.exDelay ?? char.exDelay ?? 0;
+      const startX = totalWidth - TIMELINE_PAD_RIGHT - ((item.timeMs / 1000) - delayS) * zoomLevel;
       const width = dur * zoomLevel;
       result.push({
         id: item.id,

@@ -3,7 +3,7 @@ import { ITEM_WIDTH, TIMELINE_PAD_RIGHT } from '../constants';
 
 /** Snap ms to the nearest grid unit */
 export function snapTime(ms: number, mode: SnapMode): number {
-  const grid = mode === '1s' ? 1000 : 100;
+  const grid = mode === '1F' ? 1000 / 30 : 100;
   return Math.round(ms / grid) * grid;
 }
 

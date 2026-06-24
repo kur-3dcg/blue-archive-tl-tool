@@ -11,7 +11,7 @@ import { ArrowLayer } from './ArrowLayer';
 import { CostRuler, COST_RULER_HEIGHT } from './CostRuler';
 import { snapTime, snapToNearestItem } from '../../utils/snap';
 import { calculateItemCosts, computeArmorCounts } from '../../utils/costCalc';
-import { costToDisplay } from '../../utils/timeFormat';
+import { msToDisplay, costToDisplay } from '../../utils/timeFormat';
 import { validateSkillQueue, ACTIVE_SLOTS, EXTENDED_ACTIVE_SLOTS } from '../../utils/skillQueueValidator';
 import { useT } from '../../i18n';
 import './Timeline.css';
@@ -456,10 +456,10 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
         <span className="timeline-control">
           {t('スナップ')}:
           <button
-            className={`preset-btn${snapMode === '1s' ? ' active' : ''}`}
-            onClick={() => dispatch({ type: 'SET_SNAP_MODE', snapMode: snapMode === '1s' ? '0.1s' : '1s' })}
+            className={`preset-btn${snapMode === '1F' ? ' active' : ''}`}
+            onClick={() => dispatch({ type: 'SET_SNAP_MODE', snapMode: snapMode === '0.1s' ? '1F' : '0.1s' })}
           >
-            {snapMode === '1s' ? t('1秒') : t('0.1秒')}
+            {snapMode === '1F' ? '1F' : t('0.1秒')}
           </button>
         </span>
         <span className="timeline-control">
@@ -696,9 +696,7 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
       {dragInfo !== null && (
         <div className="timeline-drag-time">
           <div className="timeline-drag-time-main">
-            {Math.floor(dragInfo.timeMs / 60000)}:
-            {String(Math.floor((dragInfo.timeMs % 60000) / 1000)).padStart(2, '0')}.
-            {String(dragInfo.timeMs % 1000).padStart(3, '0')}
+            {msToDisplay(dragInfo.timeMs)}
           </div>
           {dragCostValue !== undefined && (
             <div className="timeline-drag-time-cost">

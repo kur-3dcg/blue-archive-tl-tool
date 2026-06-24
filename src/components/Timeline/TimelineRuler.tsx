@@ -43,7 +43,7 @@ export function TimelineRuler({ zoomLevel, snapMode, totalTimeS }: Props) {
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, canvasWidth, RULER_HEIGHT);
 
-    const gridSeconds = snapMode === '1s' ? 1 : 0.1;
+    const gridSeconds = 0.1;
     const totalSteps = Math.floor(totalTimeS / gridSeconds);
 
     for (let i = 0; i <= totalSteps; i++) {

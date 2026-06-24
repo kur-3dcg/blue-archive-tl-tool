@@ -1,6 +1,6 @@
 import type { TimelineState } from '../types';
 import { calculateItemCosts, computeArmorCounts } from './costCalc';
-import { costToDisplay } from './timeFormat';
+import { msToDisplay, costToDisplay } from './timeFormat';
 import etcData from '../../data/etc.json';
 
 // ---------------------------------------------------------------------------
@@ -95,10 +95,6 @@ async function loadImage(url: string): Promise<HTMLImageElement | null> {
   });
 }
 
-function msToMSS(ms: number): string {
-  const s = Math.round(ms / 1000);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-}
 
 function roundedRectPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   ctx.beginPath();
@@ -135,10 +131,10 @@ function canvasToPngBytes(canvas: HTMLCanvasElement): Promise<Uint8Array> {
 // ---------------------------------------------------------------------------
 
 function buildEntries(state: TimelineState) {
-  const { slots, items, slotCostConfigs, totalTimeMs, targetTimeMs, standaloneComments } = state;
+  const { slots, items, slotCostConfigs, totalTimeMs, targetTimeMs, standaloneComments, stageGimmicks } = state;
 
   const { heavyArmorCount, redWinterCount } = computeArmorCounts(slots);
-  const costMap = calculateItemCosts(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount);
+  const costMap = calculateItemCosts(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks);
 
   const filteredItems = items.filter(
     (item) => slots[item.slotIndex]?.character && (targetTimeMs === undefined || item.timeMs >= targetTimeMs)
@@ -286,7 +282,7 @@ export async function generateTlImagePaged(
       ctx.font = `${FONT_MAIN}px sans-serif`;
       ctx.textBaseline = 'middle';
       ctx.textAlign = 'left';
-      ctx.fillText(msToMSS(entry.timeMs), PAD_H, midY);
+      ctx.fillText(msToDisplay(entry.timeMs), PAD_H, midY);
 
       if (entry.kind === 'skill') {
         const [parent] = entry.group;

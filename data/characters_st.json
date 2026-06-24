@@ -1368,6 +1368,21 @@
     "nameCn": "南草"
   },
   {
+    "name": "ナグサ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/nagusa_swimsuit.png",
+    "reading": "なぐさ（みずぎ）",
+    "school": "百鬼夜行",
+    "attackType": "爆発",
+    "armorType": "重装甲",
+    "cost": 3,
+    "exDuration": 20,
+    "hasDurationBuff": true,
+    "nameEn": "Nagusa(Swimsuit)",
+    "nameKr": "나구사(수영복)",
+    "nameTw": "名草(泳裝)",
+    "nameCn": "南草（泳装）"
+  },
+  {
     "name": "ナツ",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/natsu.png",
     "reading": "なつ",

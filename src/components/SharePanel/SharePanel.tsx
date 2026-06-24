@@ -5,6 +5,8 @@ import type { ShareData } from '../../utils/shareCodec';
 import { generateTlText } from '../../utils/tlExport';
 import { generateTlImage } from '../../utils/tlImageExport';
 import { generateTlImagePaged } from '../../utils/tlImageExportPaged';
+import { parseTlText } from '../../utils/tlTextImport';
+import type { TlImportResult } from '../../utils/tlTextImport';
 import { useT } from '../../i18n';
 import './SharePanel.css';
 
@@ -12,6 +14,7 @@ interface Props {
   state: TimelineState;
   onCoreAction?: () => void;
   onImport?: (data: ShareData) => void;
+  onImportText?: (result: TlImportResult) => void;
 }
 
 /**
@@ -79,7 +82,7 @@ export function buildLoadState(
   };
 }
 
-export function SharePanel({ state, onCoreAction, onImport }: Props) {
+export function SharePanel({ state, onCoreAction, onImport, onImportText }: Props) {
   const t = useT();
   const [toast, setToast] = useState<{ id: number; message: string } | null>(null);
   const [error, setError] = useState('');
@@ -87,6 +90,9 @@ export function SharePanel({ state, onCoreAction, onImport }: Props) {
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showTlImportModal, setShowTlImportModal] = useState(false);
+  const [tlImportText, setTlImportText] = useState('');
+  const [tlImportResult, setTlImportResult] = useState<TlImportResult | null>(null);
 
   const fireToast = (message: string) => {
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -183,6 +189,30 @@ export function SharePanel({ state, onCoreAction, onImport }: Props) {
     }
   };
 
+  const handleOpenTlImportModal = () => {
+    setTlImportText('');
+    setTlImportResult(null);
+    setShowTlImportModal(true);
+  };
+
+  const handleTlImportTextChange = (text: string) => {
+    setTlImportText(text);
+    if (text.trim()) {
+      setTlImportResult(parseTlText(text));
+    } else {
+      setTlImportResult(null);
+    }
+  };
+
+  const handleConfirmTlImport = () => {
+    if (!tlImportResult) return;
+    onImportText?.(tlImportResult);
+    setShowTlImportModal(false);
+    setTlImportText('');
+    setTlImportResult(null);
+    fireToast('TLテキストをインポートしました');
+  };
+
   const handleImportJsonFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -251,11 +281,67 @@ export function SharePanel({ state, onCoreAction, onImport }: Props) {
           style={{ display: 'none' }}
           onChange={handleImportJsonFile}
         />
+        <button className="share-btn import-json" onClick={handleOpenTlImportModal} title="TLテキスト（TSV形式）からインポート">
+          {t('テキストからインポート')}
+        </button>
       </div>
       {error && <div className="share-panel-error">{error}</div>}
       {toast && (
         <div key={toast.id} className="toast-popup">
           {toast.message}
+        </div>
+      )}
+      {showTlImportModal && (
+        <div className="tl-import-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowTlImportModal(false); }}>
+          <div className="tl-import-modal">
+            <h3>テキストからTLをインポート</h3>
+            <textarea
+              className="tl-import-textarea"
+              placeholder={'TLテキスト（TSV形式）を貼り付けてください\n例:\n4:50\t0\tホシノ\t\n4:45\t3\tチェリノ（ホシノ）\t\n3:30\t\t\t撃破'}
+              value={tlImportText}
+              onChange={(e) => handleTlImportTextChange(e.target.value)}
+              autoFocus
+            />
+            {tlImportResult && (
+              <div className="tl-import-result">
+                {(tlImportResult.detectedSt.length > 0 || tlImportResult.detectedSp.length > 0) && (
+                  <>
+                    <div>検出キャラ（{tlImportResult.items.length} スキル）:</div>
+                    <div className="tl-import-chars">
+                      {tlImportResult.detectedSt.map((name) => (
+                        <span key={name} className="tl-import-char-badge st">{name}</span>
+                      ))}
+                      {tlImportResult.detectedSp.map((name) => (
+                        <span key={name} className="tl-import-char-badge sp">{name}</span>
+                      ))}
+                    </div>
+                  </>
+                )}
+                {tlImportResult.warnings.length > 0 && (
+                  <div className="tl-import-warnings">
+                    {tlImportResult.warnings.map((w, i) => (
+                      <div key={i} className="tl-import-warning">⚠ {w}</div>
+                    ))}
+                  </div>
+                )}
+                {tlImportResult.detectedSt.length === 0 && tlImportResult.detectedSp.length === 0 && (
+                  <div style={{ color: 'var(--error-text)' }}>キャラが検出できませんでした。形式を確認してください。</div>
+                )}
+              </div>
+            )}
+            <div className="tl-import-actions">
+              <button className="tl-import-btn cancel" onClick={() => setShowTlImportModal(false)}>
+                キャンセル
+              </button>
+              <button
+                className="tl-import-btn confirm"
+                onClick={handleConfirmTlImport}
+                disabled={!tlImportResult || (tlImportResult.detectedSt.length === 0 && tlImportResult.detectedSp.length === 0)}
+              >
+                インポート
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

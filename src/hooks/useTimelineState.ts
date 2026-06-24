@@ -47,7 +47,7 @@ const initialState: TimelineState = {
   items: [],
   arrows: [],
   layers: 2,
-  snapMode: '1s',
+  snapMode: '0.1s',
   totalTimeMs: DEFAULT_TOTAL_TIME_MS,
   slotCostConfigs: createInitialCostConfigs(),
   targetTimeMs: undefined,
@@ -76,10 +76,11 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
           ),
         };
       }
-      // キャラ設定時、キャラのコストデータがあれば skillCost を自動設定（なければ 3）
+      // キャラ設定時、キャラのコスト・ディレイデータから自動設定
       const autoSkillCost = action.character.cost ?? 3;
+      const autoExDelay = action.character.exDelay ?? 0;
       const newCostConfigs = state.slotCostConfigs.map((c, i) =>
-        i === action.slotIndex ? { ...c, skillCost: autoSkillCost } : c
+        i === action.slotIndex ? { ...c, skillCost: autoSkillCost, exDelay: autoExDelay } : c
       );
       return { ...state, slots: newSlots, slotCostConfigs: newCostConfigs };
     }
@@ -181,6 +182,14 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         ...state,
         slotCostConfigs: state.slotCostConfigs.map((c, i) =>
           i === action.slotIndex ? { ...c, skillCost: action.skillCost } : c
+        ),
+      };
+
+    case 'SET_SLOT_DELAY':
+      return {
+        ...state,
+        slotCostConfigs: state.slotCostConfigs.map((c, i) =>
+          i === action.slotIndex ? { ...c, exDelay: action.exDelay } : c
         ),
       };
 
@@ -307,10 +316,14 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         arrows: action.state.arrows ?? [],
         layers: action.state.layers,
         totalTimeMs: action.state.totalTimeMs ?? state.totalTimeMs,
-        slotCostConfigs: (action.state.slotCostConfigs ?? createInitialCostConfigs(loadedMode)).map((c) => ({
-          ...c,
-          hasUniqueWeapon2: c.hasUniqueWeapon2 ?? true,
-        })),
+        slotCostConfigs: (action.state.slotCostConfigs ?? createInitialCostConfigs(loadedMode)).map((c, i) => {
+          const char = action.state.slots[i]?.character;
+          return {
+            ...c,
+            hasUniqueWeapon2: c.hasUniqueWeapon2 ?? true,
+            exDelay: c.exDelay ?? (char?.exDelay ?? 0),
+          };
+        }),
         targetTimeMs: action.state.targetTimeMs,
         standaloneComments: action.state.standaloneComments ?? [],
         stageGimmicks: action.state.stageGimmicks ?? [],
@@ -357,12 +370,16 @@ function loadFromStorage(base: TimelineState): TimelineState {
       items: parsed.items ?? base.items,
       arrows: parsed.arrows ?? base.arrows,
       layers: parsed.layers ?? base.layers,
-      snapMode: parsed.snapMode ?? base.snapMode,
+      snapMode: parsed.snapMode === '1F' ? '1F' : '0.1s',
       totalTimeMs: parsed.totalTimeMs ?? base.totalTimeMs,
-      slotCostConfigs: (parsed.slotCostConfigs ?? createInitialCostConfigs(savedMode)).map((c) => ({
-        ...c,
-        hasUniqueWeapon2: c.hasUniqueWeapon2 ?? true,
-      })),
+      slotCostConfigs: (parsed.slotCostConfigs ?? createInitialCostConfigs(savedMode)).map((c, i) => {
+        const char = slots[i]?.character;
+        return {
+          ...c,
+          hasUniqueWeapon2: c.hasUniqueWeapon2 ?? true,
+          exDelay: c.exDelay ?? (char?.exDelay ?? 0),
+        };
+      }),
       targetTimeMs: parsed.targetTimeMs,
       standaloneComments: parsed.standaloneComments ?? base.standaloneComments,
       stageGimmicks: (parsed.stageGimmicks as StageGimmick[] | undefined) ?? base.stageGimmicks,

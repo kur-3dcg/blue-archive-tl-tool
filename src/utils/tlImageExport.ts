@@ -1,14 +1,7 @@
 import type { TimelineState } from '../types';
 import { calculateItemCosts, computeArmorCounts } from './costCalc';
-import { costToDisplay } from './timeFormat';
+import { msToDisplay, costToDisplay } from './timeFormat';
 import etcData from '../../data/etc.json';
-
-function msToMSS(ms: number): string {
-  const totalSec = Math.round(ms / 1000);
-  const m = Math.floor(totalSec / 60);
-  const s = totalSec % 60;
-  return `${m}:${String(s).padStart(2, '0')}`;
-}
 
 async function loadImage(url: string): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
@@ -57,11 +50,11 @@ function drawTextClipped(
 
 export async function generateTlImage(state: TimelineState, options: { transparent?: boolean } = {}): Promise<Blob> {
   const transparent = options.transparent ?? true;
-  const { slots, items, slotCostConfigs, totalTimeMs, targetTimeMs, standaloneComments } = state;
+  const { slots, items, slotCostConfigs, totalTimeMs, targetTimeMs, standaloneComments, stageGimmicks } = state;
 
   const { heavyArmorCount, redWinterCount } = computeArmorCounts(slots);
   const costMap = calculateItemCosts(
-    slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount
+    slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks
   );
 
   const filteredItems = items.filter(
@@ -207,7 +200,7 @@ export async function generateTlImage(state: TimelineState, options: { transpare
     ctx.font = `12px sans-serif`;
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'left';
-    ctx.fillText(msToMSS(entry.timeMs), PAD_H, midY);
+    ctx.fillText(msToDisplay(entry.timeMs), PAD_H, midY);
 
     if (entry.kind === 'skill') {
       const [parent] = entry.group;

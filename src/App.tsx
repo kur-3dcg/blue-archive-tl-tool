@@ -170,6 +170,20 @@ export default function App() {
               type: 'LOAD_STATE',
               state: buildLoadState(data, state.slots, state.totalTimeMs),
             })}
+            onImportText={(result) => dispatch({
+              type: 'LOAD_STATE',
+              state: {
+                slots: result.slots,
+                items: result.items,
+                arrows: [],
+                layers: result.layers,
+                totalTimeMs: result.totalTimeMs,
+                mode: result.mode,
+                slotCostConfigs: result.slotCostConfigs,
+                standaloneComments: result.standaloneComments,
+                stageGimmicks: [],
+              },
+            })}
           />
           <div className="theme-selector">
             <label>{t('テーマ')}:</label>
@@ -245,6 +259,9 @@ export default function App() {
         slotCostConfigs={state.slotCostConfigs}
         onSetSlotCost={(slotIndex, skillCost) =>
           dispatch({ type: 'SET_SLOT_COST', slotIndex, skillCost })
+        }
+        onSetSlotDelay={(slotIndex, exDelay) =>
+          dispatch({ type: 'SET_SLOT_DELAY', slotIndex, exDelay })
         }
         onSetUniqueWeapon4={(slotIndex, value) =>
           dispatch({ type: 'SET_UNIQUE_WEAPON4', slotIndex, value })

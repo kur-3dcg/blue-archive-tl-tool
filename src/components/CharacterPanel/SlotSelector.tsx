@@ -12,6 +12,7 @@ interface Props {
   onSelect: (character: Character | null) => void;
   costConfig: SlotCostConfig;
   onSetCost: (cost: number) => void;
+  onSetDelay: (delay: number) => void;
   onSetUniqueWeapon4: (value: boolean) => void;
   onSetUniqueWeapon2: (value: boolean) => void;
   queuePosition?: number; // 1-based。undefined = キュー順非表示
@@ -29,6 +30,7 @@ export function SlotSelector({
   onSelect,
   costConfig,
   onSetCost,
+  onSetDelay,
   onSetUniqueWeapon4,
   onSetUniqueWeapon2,
   queuePosition,
@@ -152,6 +154,24 @@ export function SlotSelector({
                 onClick={(e) => e.stopPropagation()}
               />
             </label>
+            {character.exDuration && (
+              <label className="slot-cost-label">
+                {'ディレイ'}:
+                <input
+                  className="slot-cost-input"
+                  type="number"
+                  min={0}
+                  max={10}
+                  step={0.01}
+                  value={costConfig.exDelay ?? 0}
+                  onChange={(e) => {
+                    const v = parseFloat(e.target.value);
+                    if (!isNaN(v) && v >= 0) onSetDelay(v);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </label>
+            )}
             {slotType === 'special' && (
               <label className="slot-unique-weapon" title="固有武器4（コスト上限+0.5）">
                 <input

@@ -14,6 +14,7 @@ export interface Character {
   armorType?: string;
   cost?: number;
   exDuration?: number | null;
+  exDelay?: number; // EXスキル発動から効果着弾までのディレイ（秒）。省略は0扱い
   hasDurationBuff?: boolean; // 固有2↑でバフ効果持続力×1.19
   nameEn?: string;
   nameKr?: string;
@@ -33,6 +34,7 @@ export interface SlotCostConfig {
   skillCost: number;       // スキルコスト（デフォルト3）
   hasUniqueWeapon4: boolean; // 固有4（SPのみ、コスト上限+0.5）
   hasUniqueWeapon2: boolean; // 固有2↑（バフ効果持続力×1.19）
+  exDelay?: number;        // EXスキル発動→効果着弾ディレイ（秒、省略は0扱い）
 }
 
 export interface TimelineItem {
@@ -47,7 +49,7 @@ export interface TimelineItem {
   useTimeDisplay?: boolean;  // true=時間表示（デフォルトはコスト表示）
 }
 
-export type SnapMode = '1s' | '0.1s';
+export type SnapMode = '0.1s' | '1F';
 
 export type GameMode = 'normal' | 'extended';
 
@@ -101,6 +103,7 @@ export type TimelineAction =
   | { type: 'SET_LAYERS'; layers: number }
   | { type: 'SET_TOTAL_TIME'; totalTimeMs: number }
   | { type: 'SET_SLOT_COST'; slotIndex: number; skillCost: number }
+  | { type: 'SET_SLOT_DELAY'; slotIndex: number; exDelay: number }
   | { type: 'SET_UNIQUE_WEAPON4'; slotIndex: number; value: boolean }
   | { type: 'SET_UNIQUE_WEAPON2'; slotIndex: number; value: boolean }
   | { type: 'SET_COST_ADJUSTMENT'; itemId: string; adjustment: number }

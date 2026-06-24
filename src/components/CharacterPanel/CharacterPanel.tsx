@@ -19,6 +19,7 @@ interface Props {
   onToggleArrowMode: () => void;
   slotCostConfigs: SlotCostConfig[];
   onSetSlotCost: (slotIndex: number, skillCost: number) => void;
+  onSetSlotDelay: (slotIndex: number, exDelay: number) => void;
   onSetUniqueWeapon4: (slotIndex: number, value: boolean) => void;
   onSetUniqueWeapon2: (slotIndex: number, value: boolean) => void;
   onResetAll: () => void;
@@ -50,6 +51,7 @@ export function CharacterPanel({
   onToggleArrowMode,
   slotCostConfigs,
   onSetSlotCost,
+  onSetSlotDelay,
   onSetUniqueWeapon4,
   onSetUniqueWeapon2,
   onResetAll,
@@ -171,6 +173,7 @@ export function CharacterPanel({
                       onSelect={(c) => onSetCharacter(i, c)}
                       costConfig={slotCostConfigs[i]}
                       onSetCost={(cost) => onSetSlotCost(i, cost)}
+                      onSetDelay={(delay) => onSetSlotDelay(i, delay)}
                       onSetUniqueWeapon4={(v) => onSetUniqueWeapon4(i, v)}
                       onSetUniqueWeapon2={(v) => onSetUniqueWeapon2(i, v)}
                       queuePosition={qPos}
@@ -199,6 +202,7 @@ export function CharacterPanel({
                       onSelect={(c) => onSetCharacter(si, c)}
                       costConfig={slotCostConfigs[si]}
                       onSetCost={(cost) => onSetSlotCost(si, cost)}
+                      onSetDelay={(delay) => onSetSlotDelay(si, delay)}
                       onSetUniqueWeapon4={(v) => onSetUniqueWeapon4(si, v)}
                       onSetUniqueWeapon2={(v) => onSetUniqueWeapon2(si, v)}
                       queuePosition={qPos}
