@@ -154,7 +154,7 @@ export function SlotSelector({
                 onClick={(e) => e.stopPropagation()}
               />
             </label>
-            {character.exDuration && (
+            {(
               <label className="slot-cost-label">
                 {'ディレイ'}:
                 <input

@@ -450,7 +450,7 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
                 setCustomTimeInput('');
               }
             }}
-            title="自由入力（例: 4:30 / 4:30.000）Enterで確定（最大5:00）"
+            title="自由入力（例: 4:30 / 10:00）Enterで確定（最大10:00）"
           />
         </span>
         <span className="timeline-control">

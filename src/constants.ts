@@ -1,5 +1,5 @@
 export const DEFAULT_TOTAL_TIME_MS = 240_000; // 4 minutes
-export const MAX_TOTAL_TIME_MS = 300_000; // 5:00
+export const MAX_TOTAL_TIME_MS = 600_000; // 10:00
 
 export const TIME_PRESETS: { label: string; ms: number }[] = [
   { label: '3:00', ms: 180_000 },

@@ -120,11 +120,27 @@ function parseRows(
   const rows: ParsedRow[] = [];
   const parseWarnings: string[] = [];
 
+  // カラムフォーマット検出（旧: 時間/コスト/EX/コメント → 新: 時間/EX/コメント）
+  let exCol = 1;
+  let commentCol = 2;
+  for (const line of lines) {
+    const firstCols = line.split('\t');
+    const first = firstCols[0]?.trim();
+    if (first === '時間' || first === 'Time' || first === '시간' || first === '时间') {
+      const second = firstCols[1]?.trim();
+      if (second === 'コスト' || second === 'Cost') {
+        exCol = 2;
+        commentCol = 3;
+      }
+      break;
+    }
+  }
+
   for (const line of lines) {
     const cols = line.split('\t');
     const timeStr = cols[0]?.trim() ?? '';
-    const exStr = cols[2]?.trim() ?? '';
-    const commentStr = cols[3]?.trim() ?? '';
+    const exStr = cols[exCol]?.trim() ?? '';
+    const commentStr = cols[commentCol]?.trim() ?? '';
 
     // ヘッダー行スキップ
     if (timeStr === '時間' || timeStr === 'Time' || timeStr === '시간' || timeStr === '时间' || timeStr === '時間') continue;

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { TimelineState, CharacterSlot } from '../../types';
 import { encode, decode } from '../../utils/shareCodec';
 import type { ShareData } from '../../utils/shareCodec';
@@ -93,6 +93,17 @@ export function SharePanel({ state, onCoreAction, onImport, onImportText }: Prop
   const [showTlImportModal, setShowTlImportModal] = useState(false);
   const [tlImportText, setTlImportText] = useState('');
   const [tlImportResult, setTlImportResult] = useState<TlImportResult | null>(null);
+  const tlImportTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const pendingCursorRef = useRef<number | null>(null);
+
+  // Tab挿入後にカーソル位置を復元
+  useEffect(() => {
+    if (pendingCursorRef.current !== null && tlImportTextareaRef.current) {
+      tlImportTextareaRef.current.selectionStart = pendingCursorRef.current;
+      tlImportTextareaRef.current.selectionEnd = pendingCursorRef.current;
+      pendingCursorRef.current = null;
+    }
+  }, [tlImportText]);
 
   const fireToast = (message: string) => {
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -204,6 +215,18 @@ export function SharePanel({ state, onCoreAction, onImport, onImportText }: Prop
     }
   };
 
+  const handleTlImportKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const el = e.currentTarget;
+      const start = el.selectionStart;
+      const end = el.selectionEnd;
+      const newValue = el.value.substring(0, start) + '\t' + el.value.substring(end);
+      pendingCursorRef.current = start + 1;
+      handleTlImportTextChange(newValue);
+    }
+  };
+
   const handleConfirmTlImport = () => {
     if (!tlImportResult) return;
     onImportText?.(tlImportResult);
@@ -296,10 +319,12 @@ export function SharePanel({ state, onCoreAction, onImport, onImportText }: Prop
           <div className="tl-import-modal">
             <h3>テキストからTLをインポート</h3>
             <textarea
+              ref={tlImportTextareaRef}
               className="tl-import-textarea"
-              placeholder={'TLテキスト（TSV形式）を貼り付けてください\n例:\n4:50\t0\tホシノ\t\n4:45\t3\tチェリノ（ホシノ）\t\n3:30\t\t\t撃破'}
+              placeholder={'TLテキスト（TSV形式）を貼り付けてください\n例:\n4:50\tホシノ\t\n4:45\tチェリノ（ホシノ）\t\n3:30\t\t撃破'}
               value={tlImportText}
               onChange={(e) => handleTlImportTextChange(e.target.value)}
+              onKeyDown={handleTlImportKeyDown}
               autoFocus
             />
             {tlImportResult && (

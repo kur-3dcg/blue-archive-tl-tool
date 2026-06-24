@@ -82,23 +82,21 @@ export function generateTlText(state: TimelineState): string {
   });
 
   // ヘッダー行
-  const rows: string[][] = [['時間', 'コスト', 'EX', 'コメント']];
+  const rows: string[][] = [['時間', 'EX', 'コメント']];
 
   for (const entry of entries) {
     if (entry.kind === 'comment') {
-      rows.push([msToMSS(entry.timeMs), '', '', entry.text]);
+      rows.push([msToMSS(entry.timeMs), '', entry.text]);
     } else {
       const [parent, ...children] = entry.group;
-      const costInfo = costMap.get(parent.id);
-      const costStr = costInfo !== undefined ? costToDisplay(costInfo.usedCost) : '';
       const exStr = [parent, ...children].map((item) => formatEntry(item, slots)).join('→');
-      rows.push([msToMSS(parent.timeMs), costStr, exStr, parent.comment ?? '']);
+      rows.push([msToMSS(parent.timeMs), exStr, parent.comment ?? '']);
     }
   }
 
   // 目標時間（撃破）行
   if (targetTimeMs !== undefined) {
-    rows.push([msToMSS(targetTimeMs), '', '', '撃破']);
+    rows.push([msToMSS(targetTimeMs), '', '撃破']);
   }
 
   return rows.map((r) => r.join('\t')).join('\n');
