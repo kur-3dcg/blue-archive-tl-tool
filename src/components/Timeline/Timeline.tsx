@@ -164,6 +164,7 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
   const handleDrop = useCallback(
     (slotIndex: number, timeMs: number, layerIndex: number) => {
       if (!slots[slotIndex]?.character) return;
+      const activeSkillIndex = slotCostConfigs[slotIndex]?.activeSkillIndex ?? 0;
       dispatch({
         type: 'ADD_ITEM',
         item: {
@@ -171,10 +172,11 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
           slotIndex,
           timeMs,
           layerIndex,
+          ...(activeSkillIndex > 0 ? { skillIndex: activeSkillIndex } : {}),
         },
       });
     },
-    [slots, dispatch]
+    [slots, slotCostConfigs, dispatch]
   );
 
   const handleMoveItem = useCallback(

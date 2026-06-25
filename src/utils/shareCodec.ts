@@ -24,11 +24,11 @@ interface ShareDataLegacy {
 // --- Compact format (short keys, no image URLs) ---
 interface CompactData {
   s: { n: string; t: string; i: number }[];              // slots: name, type, index
-  m: { s: number; t: number; l: number; c?: string; a?: number; g?: number; e?: string; d?: boolean }[]; // items
+  m: { s: number; t: number; l: number; c?: string; a?: number; g?: number; e?: string; d?: boolean; sk?: number }[]; // items
   r?: { f: number; o: number }[];                         // arrows: from, to
   l: number;                                               // layers
   T?: number;                                              // totalTimeMs
-  C?: { k: number; u: boolean; w?: boolean }[];             // slotCostConfigs: skillCost, uniqueWeapon4, uniqueWeapon2
+  C?: { k: number; u: boolean; w?: boolean; j?: number; sc?: number[] }[]; // slotCostConfigs: skillCost, uniqueWeapon4, uniqueWeapon2, activeSkillIndex, skillCosts
   G?: number;                                              // targetTimeMs
   H?: number;                                              // heavyArmorCount
   W?: number;                                              // redWinterCount
@@ -40,11 +40,11 @@ interface CompactData {
 // Decoded result (unified)
 export interface ShareData {
   slots: { name: string; image: string; type: string; index: number }[];
-  items: { slotIndex: number; timeMs: number; layerIndex: number; comment?: string; costAdjustment?: number; targetSlotIndex?: number; targetEtcIcon?: string; useTimeDisplay?: boolean }[];
+  items: { slotIndex: number; timeMs: number; layerIndex: number; comment?: string; costAdjustment?: number; targetSlotIndex?: number; targetEtcIcon?: string; useTimeDisplay?: boolean; skillIndex?: number }[];
   arrows?: { fromIndex: number; toIndex: number }[];
   layers: number;
   totalTimeMs?: number;
-  slotCostConfigs?: { skillCost: number; hasUniqueWeapon4: boolean; hasUniqueWeapon2: boolean }[];
+  slotCostConfigs?: { skillCost: number; hasUniqueWeapon4: boolean; hasUniqueWeapon2: boolean; activeSkillIndex?: number; skillCosts?: number[] }[];
   targetTimeMs?: number;
   heavyArmorCount?: number;
   redWinterCount?: number;
@@ -152,6 +152,7 @@ export async function encode(
       ...(i.targetSlotIndex !== undefined ? { g: i.targetSlotIndex } : {}),
       ...(i.targetEtcIcon ? { e: i.targetEtcIcon } : {}),
       ...(i.useTimeDisplay ? { d: true } : {}),
+      ...(i.skillIndex ? { sk: i.skillIndex } : {}),
     })),
     ...(arrows.length > 0
       ? {
@@ -165,7 +166,7 @@ export async function encode(
       : {}),
     l: layers,
     T: totalTimeMs,
-    ...(slotCostConfigs ? { C: slotCostConfigs.map((c) => ({ k: c.skillCost, u: c.hasUniqueWeapon4, ...(!c.hasUniqueWeapon2 ? { w: false } : {}) })) } : {}),
+    ...(slotCostConfigs ? { C: slotCostConfigs.map((c) => ({ k: c.skillCost, u: c.hasUniqueWeapon4, ...(!c.hasUniqueWeapon2 ? { w: false } : {}), ...(c.activeSkillIndex ? { j: c.activeSkillIndex } : {}), ...(c.skillCosts ? { sc: c.skillCosts } : {}) })) } : {}),
     ...(targetTimeMs !== undefined ? { G: targetTimeMs } : {}),
     ...(standaloneComments && standaloneComments.length > 0
       ? { N: standaloneComments.map((sc) => ({ t: sc.timeMs, x: sc.text })) }
@@ -227,11 +228,12 @@ function compactToShareData(c: CompactData): ShareData {
       ...(m.g !== undefined ? { targetSlotIndex: m.g } : {}),
       ...(m.e ? { targetEtcIcon: m.e } : {}),
       ...(m.d ? { useTimeDisplay: true } : {}),
+      ...(m.sk ? { skillIndex: m.sk } : {}),
     })),
     ...(c.r ? { arrows: c.r.map((a) => ({ fromIndex: a.f, toIndex: a.o })) } : {}),
     layers: c.l,
     totalTimeMs: c.T,
-    slotCostConfigs: c.C?.map((cc) => ({ skillCost: cc.k, hasUniqueWeapon4: cc.u, hasUniqueWeapon2: cc.w !== false })),
+    slotCostConfigs: c.C?.map((cc) => ({ skillCost: cc.k, hasUniqueWeapon4: cc.u, hasUniqueWeapon2: cc.w !== false, ...(cc.j ? { activeSkillIndex: cc.j } : {}), ...(cc.sc ? { skillCosts: cc.sc } : {}) })),
     targetTimeMs: c.G,
     heavyArmorCount: c.H,
     redWinterCount: c.W,

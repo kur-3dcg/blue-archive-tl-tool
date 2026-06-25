@@ -31,6 +31,7 @@ interface Props {
   onRemoveStageGimmick: (id: string) => void;
   skillQueueOrder?: number[];
   onSetSkillQueueOrder: (order: number[]) => void;
+  onSetSkillIndex: (slotIndex: number, skillIndex: number) => void;
   gameReplayMode: boolean;
   onToggleGameReplayMode: () => void;
   currentQueueState: number[]; // 順序付き slotIndex 配列（先頭3がアクティブ）
@@ -63,6 +64,7 @@ export function CharacterPanel({
   onRemoveStageGimmick,
   skillQueueOrder,
   onSetSkillQueueOrder,
+  onSetSkillIndex,
   gameReplayMode,
   onToggleGameReplayMode,
   currentQueueState,
@@ -180,6 +182,7 @@ export function CharacterPanel({
                       queueBadgeColor={qPos !== undefined ? QUEUE_BADGE_COLORS[qPos - 1] : undefined}
                       totalFilledSlots={totalFilledSlots}
                       onSetQueuePosition={(pos) => handleSetQueuePosition(i, pos)}
+                      onSetSkillIndex={(idx) => onSetSkillIndex(i, idx)}
                     />
                   );
                 })}
@@ -209,6 +212,7 @@ export function CharacterPanel({
                       queueBadgeColor={qPos !== undefined ? QUEUE_BADGE_COLORS[qPos - 1] : undefined}
                       totalFilledSlots={totalFilledSlots}
                       onSetQueuePosition={(pos) => handleSetQueuePosition(si, pos)}
+                      onSetSkillIndex={(idx) => onSetSkillIndex(si, idx)}
                     />
                   );
                 })}

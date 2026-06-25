@@ -76,11 +76,17 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
           ),
         };
       }
-      // キャラ設定時、キャラのコスト・ディレイデータから自動設定
-      const autoSkillCost = action.character.cost ?? 3;
-      const autoExDelay = action.character.exDelay ?? 0;
+      // キャラ設定時、スキル0番（EX1）のデータから自動設定 + activeSkillIndexをリセット
+      const skill0 = action.character.skills?.[0];
+      const autoSkillCost = (skill0?.cost ?? action.character.cost) ?? 3;
+      const autoExDelay = (skill0?.exDelay ?? action.character.exDelay) ?? 0;
+      // 複数EX持ちのキャラはスキルごとの個別コストを初期化
+      const charForSkills = action.character;
+      const skillCosts = charForSkills.skills && charForSkills.skills.length > 1
+        ? charForSkills.skills.map((s) => s.cost ?? charForSkills.cost ?? 3)
+        : undefined;
       const newCostConfigs = state.slotCostConfigs.map((c, i) =>
-        i === action.slotIndex ? { ...c, skillCost: autoSkillCost, exDelay: autoExDelay } : c
+        i === action.slotIndex ? { ...c, skillCost: autoSkillCost, exDelay: autoExDelay, activeSkillIndex: 0, skillCosts } : c
       );
       return { ...state, slots: newSlots, slotCostConfigs: newCostConfigs };
     }
@@ -177,13 +183,19 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
       };
     }
 
-    case 'SET_SLOT_COST':
+    case 'SET_SLOT_COST': {
       return {
         ...state,
-        slotCostConfigs: state.slotCostConfigs.map((c, i) =>
-          i === action.slotIndex ? { ...c, skillCost: action.skillCost } : c
-        ),
+        slotCostConfigs: state.slotCostConfigs.map((c, i) => {
+          if (i !== action.slotIndex) return c;
+          const activeIdx = c.activeSkillIndex ?? 0;
+          const newSkillCosts = c.skillCosts
+            ? c.skillCosts.map((cost, idx) => idx === activeIdx ? action.skillCost : cost)
+            : undefined;
+          return { ...c, skillCost: action.skillCost, skillCosts: newSkillCosts };
+        }),
       };
+    }
 
     case 'SET_SLOT_DELAY':
       return {
@@ -318,16 +330,41 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         totalTimeMs: action.state.totalTimeMs ?? state.totalTimeMs,
         slotCostConfigs: (action.state.slotCostConfigs ?? createInitialCostConfigs(loadedMode)).map((c, i) => {
           const char = action.state.slots[i]?.character;
+          const skillCosts = c.skillCosts ?? (
+            char?.skills && char.skills.length > 1
+              ? char.skills.map((s) => s.cost ?? char.cost ?? 3)
+              : undefined
+          );
           return {
             ...c,
             hasUniqueWeapon2: c.hasUniqueWeapon2 ?? true,
             exDelay: c.exDelay ?? (char?.exDelay ?? 0),
+            skillCosts,
           };
         }),
         targetTimeMs: action.state.targetTimeMs,
         standaloneComments: action.state.standaloneComments ?? [],
         stageGimmicks: action.state.stageGimmicks ?? [],
         skillQueueOrder: action.state.skillQueueOrder,
+      };
+    }
+
+    case 'SET_SLOT_SKILL_INDEX': {
+      const char = state.slots[action.slotIndex]?.character;
+      const skill = char?.skills?.[action.skillIndex];
+      return {
+        ...state,
+        slotCostConfigs: state.slotCostConfigs.map((c, i) => {
+          if (i !== action.slotIndex) return c;
+          // 保存済みの個別コストがあればそれを使用、なければスキルデフォルト
+          const restoredCost = c.skillCosts?.[action.skillIndex] ?? skill?.cost ?? c.skillCost;
+          return {
+            ...c,
+            activeSkillIndex: action.skillIndex,
+            skillCost: restoredCost,
+            ...(skill?.exDelay !== undefined ? { exDelay: skill.exDelay } : {}),
+          };
+        }),
       };
     }
 
@@ -374,10 +411,16 @@ function loadFromStorage(base: TimelineState): TimelineState {
       totalTimeMs: parsed.totalTimeMs ?? base.totalTimeMs,
       slotCostConfigs: (parsed.slotCostConfigs ?? createInitialCostConfigs(savedMode)).map((c, i) => {
         const char = slots[i]?.character;
+        const skillCosts = c.skillCosts ?? (
+          char?.skills && char.skills.length > 1
+            ? char.skills.map((s) => s.cost ?? char.cost ?? 3)
+            : undefined
+        );
         return {
           ...c,
           hasUniqueWeapon2: c.hasUniqueWeapon2 ?? true,
           exDelay: c.exDelay ?? (char?.exDelay ?? 0),
+          skillCosts,
         };
       }),
       targetTimeMs: parsed.targetTimeMs,

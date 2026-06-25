@@ -38,7 +38,11 @@ export function BuffBarLayer({ items, slots, slotCostConfigs, layoutMap, zoomLev
     const result: BarInfo[] = [];
     for (const item of items) {
       const char = slots[item.slotIndex]?.character;
-      const baseDur = char?.exDuration;
+      if (!char) continue;
+      const activeSkill = item.skillIndex !== undefined && item.skillIndex > 0
+        ? char.skills?.[item.skillIndex]
+        : undefined;
+      const baseDur = activeSkill !== undefined ? activeSkill.exDuration : char.exDuration;
       if (!baseDur) continue;
       const config = slotCostConfigs[item.slotIndex];
       const hasUnique2 = (config?.hasUniqueWeapon2 || config?.hasUniqueWeapon4) ?? false;

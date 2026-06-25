@@ -272,6 +272,35 @@
   white-space: nowrap;
 }
 
+.slot-skill-tabs {
+  display: flex;
+  gap: 2px;
+  margin: 2px 0;
+}
+
+.slot-skill-tab {
+  font-size: 10px;
+  padding: 2px 6px;
+  border: 1px solid var(--border-secondary);
+  border-radius: 3px;
+  background: var(--bg-control);
+  color: var(--text-secondary);
+  cursor: pointer;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.slot-skill-tab.active {
+  background: var(--bg-active);
+  border-color: var(--bg-active-border);
+  color: var(--text-active);
+  font-weight: 700;
+}
+
+.slot-skill-tab:hover:not(.active) {
+  background: var(--bg-control-hover);
+}
+
 .slot-clear {
   position: absolute;
   top: -4px;

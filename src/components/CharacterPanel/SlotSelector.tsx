@@ -19,6 +19,7 @@ interface Props {
   queueBadgeColor?: string;
   totalFilledSlots?: number;
   onSetQueuePosition?: (pos: number) => void; // 1-based
+  onSetSkillIndex?: (skillIndex: number) => void;
 }
 
 export function SlotSelector({
@@ -37,6 +38,7 @@ export function SlotSelector({
   queueBadgeColor,
   totalFilledSlots,
   onSetQueuePosition,
+  onSetSkillIndex,
 }: Props) {
   const t = useT();
   const charName = useCharName();
@@ -55,6 +57,10 @@ export function SlotSelector({
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, [showPicker]);
+
+  const activeSkillIndex = costConfig.activeSkillIndex ?? 0;
+  const activeSkill = character?.skills?.[activeSkillIndex];
+  const faceImage = activeSkill?.image ?? character?.image;
 
   const handleDragStart = (e: React.DragEvent) => {
     if (!character || editMode) {
@@ -87,7 +93,7 @@ export function SlotSelector({
           }
         >
           {character ? (
-            <img src={character.image} alt={character.name} width={60} height={60} />
+            <img src={faceImage ?? character.image} alt={character.name} width={60} height={60} />
           ) : (
             editMode && <div className="slot-empty">+</div>
           )}
@@ -123,6 +129,20 @@ export function SlotSelector({
         )}
         {character && (
           <div className="slot-name">{charName(character)}</div>
+        )}
+        {character && character.skills && character.skills.length > 1 && (
+          <div className="slot-skill-tabs">
+            {character.skills.map((skill, idx) => (
+              <button
+                key={idx}
+                className={`slot-skill-tab${activeSkillIndex === idx ? ' active' : ''}`}
+                onClick={(e) => { e.stopPropagation(); onSetSkillIndex?.(idx); }}
+                title={skill.label}
+              >
+                {skill.label}
+              </button>
+            ))}
+          </div>
         )}
         {character && editMode && (
           <button

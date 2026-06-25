@@ -286,6 +286,9 @@ export default function App() {
         onSetSkillQueueOrder={(order) =>
           dispatch({ type: 'SET_SKILL_QUEUE_ORDER', order })
         }
+        onSetSkillIndex={(slotIndex, skillIndex) =>
+          dispatch({ type: 'SET_SLOT_SKILL_INDEX', slotIndex, skillIndex })
+        }
         gameReplayMode={gameReplayMode}
         onToggleGameReplayMode={() => setGameReplayMode(v => !v)}
         currentQueueState={currentQueueState}

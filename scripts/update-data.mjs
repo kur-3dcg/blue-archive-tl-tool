@@ -95,6 +95,23 @@ function rowToEntry(row, existingImage) {
   };
 }
 
+// ---- スキルバリアント行 → skills[]エントリ変換 ----
+// スキルラベル列がある行から { label, image, cost?, exDuration?, exDelay? } を生成
+function rowToSkillEntry(row) {
+  const skill = {
+    label: (row['スキルラベル'] ?? '').trim() || 'EX1',
+    image: (row['image'] ?? '').trim(),
+  };
+  const cost = parseInt(row['コスト'], 10);
+  if (!isNaN(cost)) skill.cost = cost;
+  const exRaw = row['EX時間（秒）'];
+  if (exRaw !== '' && !isNaN(parseFloat(exRaw))) skill.exDuration = parseFloat(exRaw);
+  const exDelayRaw = row['EXディレイ時間'];
+  const exDelayVal = exDelayRaw !== '' && !isNaN(parseFloat(exDelayRaw)) ? parseFloat(exDelayRaw) : 0;
+  if (exDelayVal > 0) skill.exDelay = exDelayVal;
+  return skill;
+}
+
 // ---- CSV フェッチ ----
 async function fetchCSV(sheetId, gid) {
   const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
@@ -129,15 +146,35 @@ async function main() {
     // "未選択" エントリを先頭に保持
     const placeholder = existing.find(e => e.name === '未選択');
 
-    const newEntries = rows
-      .filter(row => row['名前'] && row['名前'] !== '未選択')
-      .map(row => {
-        const entry = rowToEntry(row, imageMap.get(row['名前']));
-        if (!entry.image) {
-          console.warn(`  ⚠️  image未設定: ${entry.name}`);
-        }
-        return entry;
-      });
+    // スキルラベル対応: 同一名の行をグループ化（スプシの行順を維持）
+    const rowGroups = new Map(); // name -> rows[]
+    for (const row of rows) {
+      const name = row['名前'];
+      if (!name || name === '未選択') continue;
+      if (!rowGroups.has(name)) rowGroups.set(name, []);
+      rowGroups.get(name).push(row);
+    }
+
+    const newEntries = [];
+    for (const [name, charRows] of rowGroups) {
+      const hasMultiSkill = charRows.some(r => (r['スキルラベル'] ?? '').trim() !== '');
+
+      if (!hasMultiSkill || charRows.length === 1) {
+        // 単一スキルキャラ（既存動作）
+        const entry = rowToEntry(charRows[0], imageMap.get(name));
+        if (!entry.image) console.warn(`  ⚠️  image未設定: ${entry.name}`);
+        newEntries.push(entry);
+      } else {
+        // 複数スキルキャラ: 最初の行をベースにして skills[] を追加
+        const entry = rowToEntry(charRows[0], imageMap.get(name));
+        entry.skills = charRows.map(r => {
+          const skill = rowToSkillEntry(r);
+          if (!skill.image) console.warn(`  ⚠️  image未設定: ${name} ${skill.label}`);
+          return skill;
+        });
+        newEntries.push(entry);
+      }
+    }
 
     // 名前でソート（アイウエオ順）
     newEntries.sort((a, b) => a.reading.localeCompare(b.reading, 'ja'));

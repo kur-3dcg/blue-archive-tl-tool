@@ -184,7 +184,8 @@ export async function generateTlImagePaged(
   for (const entry of entries) {
     if (entry.kind !== 'skill') continue;
     for (const item of entry.group) {
-      const img = slots[item.slotIndex]?.character?.image;
+      const char = slots[item.slotIndex]?.character;
+      const img = (item.skillIndex ? char?.skills?.[item.skillIndex]?.image : undefined) ?? char?.image;
       if (img) imageUrls.add(img);
       if (item.targetSlotIndex !== undefined) {
         const tImg = slots[item.targetSlotIndex]?.character?.image;
@@ -313,7 +314,9 @@ export async function generateTlImagePaged(
             iconX += ARROW_W;
           }
           const item = entry.group[j];
-          const imgEl = imageCache.get(slots[item.slotIndex]?.character?.image ?? '');
+          const pagedChar = slots[item.slotIndex]?.character;
+          const pagedImgUrl = (item.skillIndex ? pagedChar?.skills?.[item.skillIndex]?.image : undefined) ?? pagedChar?.image ?? '';
+          const imgEl = imageCache.get(pagedImgUrl);
 
           ctx.save();
           roundedRectPath(ctx, iconX, iconY, ICON_SIZE, ICON_SIZE, radius);

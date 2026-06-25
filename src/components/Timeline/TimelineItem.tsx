@@ -85,6 +85,9 @@ export function TimelineItem({
   const didDragRef = useRef(false);
   const character = slot.character;
   if (!character) return null;
+  const skillImage = item.skillIndex !== undefined && item.skillIndex > 0
+    ? (character.skills?.[item.skillIndex]?.image ?? character.image)
+    : character.image;
 
   const baseX = totalWidth - TIMELINE_PAD_RIGHT - (item.timeMs / 1000) * zoomLevel - ITEM_WIDTH / 2;
   const x = baseX + xOffset;
@@ -256,7 +259,7 @@ export function TimelineItem({
           {adj > 0 ? `+${adj}` : adj}
         </div>
       )}
-      <img src={character.image} alt={character.name} width={48} height={48} />
+      <img src={skillImage} alt={character.name} width={48} height={48} />
       {isQueueError && <div className="timeline-item-queue-error" title="スキル順エラー: このタイミングではこのキャラのスキルはアクティブスロットにありません" />}
       <div className={`timeline-item-time${showCost ? ' cost-mode' : ''}${costOverrun ? ' overrun' : ''}${costOvercost ? ' overcost' : ''}`}>{timeLabel}</div>
       {item.comment && <div className="timeline-item-comment-dot" />}

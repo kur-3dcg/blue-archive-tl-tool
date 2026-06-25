@@ -5,6 +5,14 @@ export interface EtcIcon {
   textPrefix?: string;
 }
 
+export interface CharacterSkill {
+  label: string;           // "EX1" | "EX2"
+  image: string;           // スキル使用時の顔アイコン
+  cost?: number;
+  exDuration?: number | null;
+  exDelay?: number;
+}
+
 export interface Character {
   name: string;
   image: string;
@@ -16,6 +24,7 @@ export interface Character {
   exDuration?: number | null;
   exDelay?: number; // EXスキル発動から効果着弾までのディレイ（秒）。省略は0扱い
   hasDurationBuff?: boolean; // 固有2↑でバフ効果持続力×1.19
+  skills?: CharacterSkill[]; // 複数EXスキルを持つ場合
   nameEn?: string;
   nameKr?: string;
   nameTw?: string;
@@ -31,10 +40,12 @@ export interface CharacterSlot {
 }
 
 export interface SlotCostConfig {
-  skillCost: number;       // スキルコスト（デフォルト3）
+  skillCost: number;       // 現在アクティブなスキルのコスト（UI表示用）
   hasUniqueWeapon4: boolean; // 固有4（SPのみ、コスト上限+0.5）
   hasUniqueWeapon2: boolean; // 固有2↑（バフ効果持続力×1.19）
   exDelay?: number;        // EXスキル発動→効果着弾ディレイ（秒、省略は0扱い）
+  activeSkillIndex?: number; // 選択中スキルバリアント（0 = EX1 / デフォルト）
+  skillCosts?: number[];   // スキルバリアントごとの個別コスト（複数EX持ちのみ）
 }
 
 export interface TimelineItem {
@@ -47,6 +58,7 @@ export interface TimelineItem {
   targetSlotIndex?: number;  // EX対象スロット
   targetEtcIcon?: string;    // etc対象アイコン名
   useTimeDisplay?: boolean;  // true=時間表示（デフォルトはコスト表示）
+  skillIndex?: number;       // 使用スキルバリアント（0 = EX1 / デフォルト）
 }
 
 export type SnapMode = '0.1s' | '1F';
@@ -120,5 +132,6 @@ export type TimelineAction =
   | { type: 'SET_STAGE_GIMMICKS'; gimmicks: StageGimmick[] }
   | { type: 'LOAD_STATE'; state: Pick<TimelineState, 'slots' | 'items' | 'arrows' | 'layers' | 'totalTimeMs'> & { mode?: GameMode; slotCostConfigs?: SlotCostConfig[]; targetTimeMs?: number; heavyArmorCount?: number; redWinterCount?: number; standaloneComments?: StandaloneComment[]; stageGimmicks?: StageGimmick[]; skillQueueOrder?: number[] } }
   | { type: 'SET_MODE'; mode: GameMode }
+  | { type: 'SET_SLOT_SKILL_INDEX'; slotIndex: number; skillIndex: number }
   | { type: 'SET_SKILL_QUEUE_ORDER'; order: number[] | undefined }
   | { type: 'RESET_ALL' };

@@ -37,13 +37,18 @@ const OVERCOST_FLOOR = -5;
 // シュンNS: 戦闘開始時にコスト+3.8
 const SHUN_NAME = 'シュン';
 
+// シュエリン（水着）NS: 戦闘開始時にコスト+0.71×編成人数（最大6人）。シュン同時編成時は不発
+const SHUELIN_SWIMSUIT = 'シュエリン（水着）';
+
+// キサキ（水着）EXバフ: EX1=+1625, EX2=+2500（5秒、EX毎回）
+const KISAKI_SWIMSUIT = 'キサキ（水着）';
+
 // EXバフキャラ
 const HOSHINO_SWIMSUIT = 'ホシノ（水着）';  // +684, 50秒
 const HIFUMI = 'ヒフミ';                    // +1861, 5秒
 const SEIA = 'セイア';                      // +718, 15秒
 const KURUMI = 'クルミ';                    // SS: +183常時, EX: +854, 10秒
 const SUZUMI_MAGICAL = 'スズミ（マジカル）'; // SS: +690, 35秒（EX起点）
-const NOA_PAJAMA = 'ノア（パジャマ）';      // NS: +803, 30秒（EX2回→5回→8回...起点）
 const YUKARI_SWIMSUIT = 'ユカリ（水着）';   // SS: +1259, 10秒（EX2回ごと）
 const REIJO = 'レイジョ';                   // SS: +1861, 5秒（EX毎回）
 
@@ -168,7 +173,7 @@ interface ExBuffInfo {
 // バフ効果持続力倍率（固有2↑）
 const BUFF_DURATION_MULTIPLIER = 1.19;
 
-function getExBuffParams(charName: string, hasUniqueWeapon2: boolean, hasDurationBuff: boolean): ExBuffInfo | null {
+function getExBuffParams(charName: string, hasUniqueWeapon2: boolean, hasDurationBuff: boolean, skillIndex?: number): ExBuffInfo | null {
   const applyDuration = (ms: number) =>
     hasDurationBuff && hasUniqueWeapon2
       ? Math.round(ms * BUFF_DURATION_MULTIPLIER)
@@ -179,12 +184,16 @@ function getExBuffParams(charName: string, hasUniqueWeapon2: boolean, hasDuratio
   if (charName === SEIA) return { recoveryDelta: 718, durationMs: applyDuration(15000) };
   if (charName === KURUMI) return { recoveryDelta: 854, durationMs: 10000 };
   if (charName === SUZUMI_MAGICAL) return { recoveryDelta: 690, durationMs: applyDuration(35000) };
-  // ノア���パジャマ）: 初回2回目、以降3回ごと（2→5→8→...）
-  if (charName === NOA_PAJAMA) return { recoveryDelta: 803, durationMs: 30000, countTrigger: 3, firstTrigger: 2 };
   // ユカリ（水着）: 2回ごと（2,4,6,...）
   if (charName === YUKARI_SWIMSUIT) return { recoveryDelta: 1259, durationMs: 10000, countTrigger: 2 };
   // レイジョ: 毎回
   if (charName === REIJO) return { recoveryDelta: 1861, durationMs: 5000 };
+  // キサキ（水着）: EX1=+1625, EX2=+2500（5秒、毎回）
+  if (charName === KISAKI_SWIMSUIT) {
+    return skillIndex === 1
+      ? { recoveryDelta: 2500, durationMs: 5000 }
+      : { recoveryDelta: 1625, durationMs: 5000 };
+  }
   return null;
 }
 
@@ -224,7 +233,7 @@ function buildAllBuffEvents(
     if (!slot?.character) continue;
 
     const hasUnique2 = (config?.hasUniqueWeapon2 || config?.hasUniqueWeapon4) ?? true;
-    const buffParams = getExBuffParams(slot.character.name, hasUnique2, slot.character.hasDurationBuff ?? false);
+    const buffParams = getExBuffParams(slot.character.name, hasUnique2, slot.character.hasDurationBuff ?? false, item.skillIndex);
     if (!buffParams) continue;
     if (!checkBuffTrigger(buffParams, item, slotItemsSorted)) continue;
 
@@ -312,8 +321,14 @@ export function calculateItemCosts(
   // イベントリストを構築
   const events: CostEvent[] = [];
 
-  // シュンNS: 戦闘開始2.033秒後にコスト+3.8
+  // 戦闘開始時コスト獲得（シュンNS: +3.8 / シュエリン（水着）NS: +0.71×編成人数、両立不可）
   const hasShun = slots.some((s) => s.character && s.character.name === SHUN_NAME);
+  const hasShuelin = !hasShun && slots.some((s) => s.character && s.character.name === SHUELIN_SWIMSUIT);
+  const filledSlotsCount = slots.filter((s) => s.character !== null).length;
+  const startupCostBonus = hasShun ? 3.8
+    : hasShuelin ? 0.71 * Math.min(6, filledSlotsCount)
+    : 0;
+  let startupBonusApplied = false;
 
   // スロットごとのEX使用回数をトラッキング（countTrigger用）
   const slotItemsSorted = new Map<number, TimelineItem[]>();
@@ -331,11 +346,14 @@ export function calculateItemCosts(
     const config = slotCostConfigs[item.slotIndex];
     if (!slot?.character) continue;
 
+    // アイテムのスキルインデックスに対応するコストを取得（個別コストがなければ共通コスト）
+    const itemSkillIdx = item.skillIndex ?? 0;
+    const itemSkillCost = config?.skillCosts?.[itemSkillIdx] ?? config?.skillCost ?? 3;
     events.push({
       timeMs: item.timeMs,
       type: 'skill_use',
       itemId: item.id,
-      skillCost: config?.skillCost ?? 3,
+      skillCost: itemSkillCost,
       costAdjustment: item.costAdjustment ?? 0,
     });
 
@@ -362,13 +380,12 @@ export function calculateItemCosts(
   let currentTimeMs = totalTimeMs; // 戦闘開始位置
   let activeBuffDelta = 0; // 現在のバフによる追加回復力
   const recoveryStartMs = totalTimeMs - RECOVERY_DELAY_MS; // 回復開始タイムライン時間
-  let shunApplied = false;
 
   for (const event of events) {
-    // シュンNS: 回復開始地点（recoveryStartMs）を通過したらコスト+3.8（回復前に適用）
-    if (hasShun && !shunApplied && currentTimeMs >= recoveryStartMs && event.timeMs <= recoveryStartMs) {
-      currentCost = Math.min(costCap, currentCost + 3.8);
-      shunApplied = true;
+    // 戦闘開始コスト獲得: 回復開始地点（recoveryStartMs）を通過したら適用（回復前）
+    if (startupCostBonus > 0 && !startupBonusApplied && currentTimeMs >= recoveryStartMs && event.timeMs <= recoveryStartMs) {
+      currentCost = Math.min(costCap, currentCost + startupCostBonus);
+      startupBonusApplied = true;
     }
     // このイベントまでの経過時間でコスト回復（遅延考慮）
     const effectiveMs = getEffectiveRecoveryMs(currentTimeMs, event.timeMs, recoveryStartMs);
@@ -431,7 +448,14 @@ export function calculateCostTimeline(
   const { baseSum, multiplier } = getBaseRecovery(slots, heavyArmorCount, redWinterCount);
   const keypoints: CostKeypoint[] = [];
 
+  // 戦闘開始時コスト獲得（シュンNS: +3.8 / シュエリン（水着）NS: +0.71×編成人数、両立不可）
   const hasShun = slots.some((s) => s.character && s.character.name === SHUN_NAME);
+  const hasShuelin2 = !hasShun && slots.some((s) => s.character && s.character.name === SHUELIN_SWIMSUIT);
+  const filledSlotsCount2 = slots.filter((s) => s.character !== null).length;
+  const startupCostBonus2 = hasShun ? 3.8
+    : hasShuelin2 ? 0.71 * Math.min(6, filledSlotsCount2)
+    : 0;
+  let startupBonusApplied2 = false;
 
   // イベントリストを構築
   const events: CostEvent[] = [];
@@ -451,11 +475,13 @@ export function calculateCostTimeline(
     const config = slotCostConfigs[item.slotIndex];
     if (!slot?.character) continue;
 
+    const itemSkillIdx2 = item.skillIndex ?? 0;
+    const itemSkillCost2 = config?.skillCosts?.[itemSkillIdx2] ?? config?.skillCost ?? 3;
     events.push({
       timeMs: item.timeMs,
       type: 'skill_use',
       itemId: item.id,
-      skillCost: config?.skillCost ?? 3,
+      skillCost: itemSkillCost2,
       costAdjustment: item.costAdjustment ?? 0,
     });
 
@@ -480,7 +506,6 @@ export function calculateCostTimeline(
   let currentTimeMs = totalTimeMs;
   let activeBuffDelta = 0;
   const recoveryStartMs = totalTimeMs - RECOVERY_DELAY_MS;
-  let shunApplied = false;
   let isOvercostZone = false;
 
   // 開始点
@@ -496,14 +521,14 @@ export function calculateCostTimeline(
   }
 
   for (const event of events) {
-    // シュンNS: 回復開始地点（recoveryStartMs）を通過したらコスト+3.8（回復前に適用）
-    let shunJustApplied = false;
-    if (hasShun && !shunApplied && currentTimeMs >= recoveryStartMs && event.timeMs <= recoveryStartMs) {
+    // 戦闘開始コスト獲得: 回復開始地点（recoveryStartMs）を通過したら適用（回復前）
+    let startupBonusJustApplied = false;
+    if (startupCostBonus2 > 0 && !startupBonusApplied2 && currentTimeMs >= recoveryStartMs && event.timeMs <= recoveryStartMs) {
       keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
-      currentCost = Math.min(costCap, currentCost + 3.8);
+      currentCost = Math.min(costCap, currentCost + startupCostBonus2);
       keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
-      shunApplied = true;
-      shunJustApplied = true;
+      startupBonusApplied2 = true;
+      startupBonusJustApplied = true;
     }
 
     const effectiveMs = getEffectiveRecoveryMs(currentTimeMs, event.timeMs, recoveryStartMs);
@@ -513,7 +538,7 @@ export function calculateCostTimeline(
       const newCost = Math.min(costCap, currentCost + recovered);
 
       // 回復開始地点のキーポイント（遅延→回復の境界、シュンで追加済みならスキップ）
-      if (!shunJustApplied && currentTimeMs > recoveryStartMs && event.timeMs < recoveryStartMs) {
+      if (!startupBonusJustApplied && currentTimeMs > recoveryStartMs && event.timeMs < recoveryStartMs) {
         keypoints.push({ timeMs: recoveryStartMs, cost: currentCost, isOvercost: isOvercostZone || undefined });
       }
 
@@ -543,7 +568,7 @@ export function calculateCostTimeline(
       if (currentCost >= 0) isOvercostZone = false;
     } else {
       // 回復なし区間でも境界ポイントは記録
-      if (!shunJustApplied && currentTimeMs > recoveryStartMs && event.timeMs <= recoveryStartMs) {
+      if (!startupBonusJustApplied && currentTimeMs > recoveryStartMs && event.timeMs <= recoveryStartMs) {
         keypoints.push({ timeMs: recoveryStartMs, cost: currentCost, isOvercost: isOvercostZone || undefined });
       }
     }
@@ -573,12 +598,12 @@ export function calculateCostTimeline(
     }
   }
 
-  // シュンNS: ループ後に回復開始地点を通過していない場合
-  if (hasShun && !shunApplied && currentTimeMs >= recoveryStartMs && recoveryStartMs > 0) {
+  // 戦闘開始コスト獲得: ループ後に回復開始地点を通過していない場合
+  if (startupCostBonus2 > 0 && !startupBonusApplied2 && currentTimeMs >= recoveryStartMs && recoveryStartMs > 0) {
     keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
-    currentCost = Math.min(costCap, currentCost + 3.8);
+    currentCost = Math.min(costCap, currentCost + startupCostBonus2);
     keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
-    shunApplied = true;
+    startupBonusApplied2 = true;
   }
 
   // 最後のイベントから0:00まで回復（遅延考慮）
