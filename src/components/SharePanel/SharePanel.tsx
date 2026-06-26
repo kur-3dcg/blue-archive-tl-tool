@@ -44,6 +44,7 @@ export function buildLoadState(
     ...(di.targetSlotIndex !== undefined ? { targetSlotIndex: di.targetSlotIndex } : {}),
     ...(di.targetEtcIcon ? { targetEtcIcon: di.targetEtcIcon } : {}),
     ...(di.useTimeDisplay ? { useTimeDisplay: true } : {}),
+    ...(di.skillIndex ? { skillIndex: di.skillIndex } : {}),
   }));
 
   const arrows = (data.arrows ?? [])
@@ -74,6 +75,7 @@ export function buildLoadState(
     arrows,
     layers: data.layers,
     totalTimeMs: data.totalTimeMs ?? currentTotalTimeMs,
+    mode: (data.mode as 'normal' | 'extended' | undefined) ?? 'normal',
     slotCostConfigs: data.slotCostConfigs,
     targetTimeMs: data.targetTimeMs,
     standaloneComments,
@@ -116,6 +118,7 @@ export function SharePanel({ state, onCoreAction, onImport, onImportText }: Prop
       state.slots, state.items, state.layers, state.totalTimeMs,
       state.arrows, state.slotCostConfigs, state.targetTimeMs,
       state.standaloneComments, state.stageGimmicks, state.skillQueueOrder,
+      state.mode,
     );
   };
 

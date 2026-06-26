@@ -11,7 +11,11 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 5,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Airi",
+    "nameKr": "아이리",
+    "nameTw": "愛莉",
+    "nameCn": "爱理"
   },
   {
     "name": "アカネ（制服）",
@@ -21,7 +25,11 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Akane （School Uniform）",
+    "nameKr": "아카네（교복）",
+    "nameTw": "朱音（制服）",
+    "nameCn": "茜（制服）"
   },
   {
     "name": "アカネ（バニーガール）",
@@ -31,7 +39,11 @@
     "attackType": "神秘",
     "armorType": "重装甲",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Akane （Bunny）",
+    "nameKr": "아카네（바니걸）",
+    "nameTw": "朱音（兔女郎）",
+    "nameCn": "茜（兔女郎）"
   },
   {
     "name": "アカリ（正月）",
@@ -41,7 +53,11 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 5,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Akari （New Year）",
+    "nameKr": "아카리（새해）",
+    "nameTw": "亞伽里（正月）",
+    "nameCn": "明里（正月）"
   },
   {
     "name": "アコ",
@@ -51,7 +67,11 @@
     "attackType": "神秘",
     "armorType": "重装甲",
     "cost": 3,
-    "exDuration": 16
+    "exDuration": 16,
+    "nameEn": "Ako",
+    "nameKr": "아코",
+    "nameTw": "亞子",
+    "nameCn": "亚子"
   },
   {
     "name": "アツコ（水着）",
@@ -61,7 +81,11 @@
     "attackType": "振動",
     "armorType": "特殊装甲",
     "cost": 2,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Atsuko （Swimsuit）",
+    "nameKr": "아츠코（수영복）",
+    "nameTw": "敦子（泳裝）",
+    "nameCn": "亚津子（泳装）"
   },
   {
     "name": "アヤネ",
@@ -71,7 +95,11 @@
     "attackType": "貫通",
     "armorType": "軽装備",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Ayane",
+    "nameKr": "아야네",
+    "nameTw": "綾音",
+    "nameCn": "绫音"
   },
   {
     "name": "アヤネ（水着）",
@@ -81,7 +109,11 @@
     "attackType": "貫通",
     "armorType": "軽装備",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Ayane （Swimsuit）",
+    "nameKr": "아야네（수영복）",
+    "nameTw": "綾音（泳裝）",
+    "nameCn": "绫音（泳装）"
   },
   {
     "name": "イズミ（正月）",
@@ -91,7 +123,11 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 5,
-    "exDuration": 30
+    "exDuration": 30,
+    "nameEn": "Izumi （New Year）",
+    "nameKr": "이즈미（새해）",
+    "nameTw": "泉（正月）",
+    "nameCn": "泉（正月）"
   },
   {
     "name": "イチカ（水着）",
@@ -101,7 +137,11 @@
     "attackType": "振動",
     "armorType": "特殊装甲",
     "cost": 2,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Ichika （Swimsuit）",
+    "nameKr": "이치카（수영복）",
+    "nameTw": "一花（泳裝）",
+    "nameCn": "一花（泳装）"
   },
   {
     "name": "イロハ",
@@ -111,7 +151,11 @@
     "attackType": "神秘",
     "armorType": "重装甲",
     "cost": 6,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Iroha",
+    "nameKr": "이로하",
+    "nameTw": "伊呂波",
+    "nameCn": "伊吕波"
   },
   {
     "name": "ウタハ",
@@ -121,7 +165,11 @@
     "attackType": "貫通",
     "armorType": "重装甲",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Utaha",
+    "nameKr": "우타하",
+    "nameTw": "詠葉",
+    "nameCn": "歌原"
   },
   {
     "name": "エイミ（水着）",
@@ -132,7 +180,11 @@
     "armorType": "特殊装甲",
     "cost": 4,
     "exDuration": 30,
-    "hasDurationBuff": true
+    "hasDurationBuff": true,
+    "nameEn": "Eimi （Swimsuit）",
+    "nameKr": "에이미（수영복）",
+    "nameTw": "英美（泳裝）",
+    "nameCn": "艾米（泳装）"
   },
   {
     "name": "エリカ",
@@ -142,7 +194,11 @@
     "attackType": "振動",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Erika",
+    "nameKr": "에리카",
+    "nameTw": "艾丽卡",
+    "nameCn": "艾麗卡"
   },
   {
     "name": "カエデ",
@@ -152,7 +208,11 @@
     "attackType": "爆発",
     "armorType": "特殊装甲",
     "cost": 4,
-    "exDuration": 16
+    "exDuration": 16,
+    "nameEn": "Kaede",
+    "nameKr": "카에데",
+    "nameTw": "楓",
+    "nameCn": "枫"
   },
   {
     "name": "カリン",
@@ -162,7 +222,11 @@
     "attackType": "貫通",
     "armorType": "重装甲",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Karin",
+    "nameKr": "카린",
+    "nameTw": "花凛",
+    "nameCn": "花凛"
   },
   {
     "name": "カリン（制服）",
@@ -172,7 +236,11 @@
     "attackType": "爆発",
     "armorType": "重装甲",
     "cost": 7,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Karin （School Uniform）",
+    "nameKr": "카린（교복）",
+    "nameTw": "花凛（制服）",
+    "nameCn": "花凛（制服）"
   },
   {
     "name": "カンナ",
@@ -182,7 +250,11 @@
     "attackType": "貫通",
     "armorType": "重装甲",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Kanna",
+    "nameKr": "칸나",
+    "nameTw": "環奈",
+    "nameCn": "叶渚"
   },
   {
     "name": "キキョウ（水着）",
@@ -192,7 +264,11 @@
     "attackType": "振動",
     "armorType": "重装甲",
     "cost": 4,
-    "exDuration": 30
+    "exDuration": 30,
+    "nameEn": "Kikyou （Swimsuit）",
+    "nameKr": "키쿄（수영복）",
+    "nameTw": "桔梗（泳裝）",
+    "nameCn": "桔梗（泳装）"
   },
   {
     "name": "キサキ",
@@ -204,7 +280,11 @@
     "cost": 3,
     "exDuration": 15,
     "exDelay": 1.63,
-    "hasDurationBuff": true
+    "hasDurationBuff": true,
+    "nameEn": "Kisaki",
+    "nameKr": "키사키",
+    "nameTw": "妃姬",
+    "nameCn": "木崎"
   },
   {
     "name": "キリノ（水着）",
@@ -214,7 +294,11 @@
     "attackType": "神秘",
     "armorType": "重装甲",
     "cost": 5,
-    "exDuration": 45
+    "exDuration": 45,
+    "nameEn": "Kirino （Swimsuit）",
+    "nameKr": "키리노（수영복）",
+    "nameTw": "桐乃（泳裝）",
+    "nameCn": "桐乃（泳装）"
   },
   {
     "name": "コタマ",
@@ -224,7 +308,11 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": 30
+    "exDuration": 30,
+    "nameEn": "Kotama",
+    "nameKr": "코타마",
+    "nameTw": "小玉",
+    "nameCn": "小玉"
   },
   {
     "name": "コユキ（パジャマ）",
@@ -234,7 +322,11 @@
     "attackType": "神秘",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": 30
+    "exDuration": 30,
+    "nameEn": "Koyuki （Pajama）",
+    "nameKr": "코유키（파자마）",
+    "nameTw": "小雪（睡衣）",
+    "nameCn": "小雪（睡衣）"
   },
   {
     "name": "サキ",
@@ -244,7 +336,11 @@
     "attackType": "貫通",
     "armorType": "特殊装甲",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Saki",
+    "nameKr": "사키",
+    "nameTw": "咲希",
+    "nameCn": "咲"
   },
   {
     "name": "サツキ",
@@ -254,7 +350,11 @@
     "attackType": "爆発",
     "armorType": "重装甲",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Satsuki",
+    "nameKr": "사츠키",
+    "nameTw": "皋月",
+    "nameCn": "小月"
   },
   {
     "name": "佐天涙子",
@@ -264,7 +364,11 @@
     "attackType": "貫通",
     "armorType": "特殊装甲",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Saten Ruiko",
+    "nameKr": "사텐 루이코",
+    "nameTw": "佐天涙子",
+    "nameCn": "佐天泪子"
   },
   {
     "name": "サヤ",
@@ -274,7 +378,11 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": 8
+    "exDuration": 8,
+    "nameEn": "Saya",
+    "nameKr": "사야",
+    "nameTw": "沙耶",
+    "nameCn": "纱绫"
   },
   {
     "name": "サヤ（私服）",
@@ -284,7 +392,11 @@
     "attackType": "貫通",
     "armorType": "特殊装甲",
     "cost": 6,
-    "exDuration": 20
+    "exDuration": 20,
+    "nameEn": "Saya （Casual）",
+    "nameKr": "사야（사복）",
+    "nameTw": "沙耶（私服）",
+    "nameCn": "纱绫（便服）"
   },
   {
     "name": "シグレ（温泉）",
@@ -294,7 +406,11 @@
     "attackType": "貫通",
     "armorType": "特殊装甲",
     "cost": 5,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Shigure （Hot Spring）",
+    "nameKr": "시구레（온천）",
+    "nameTw": "時雨（溫泉）",
+    "nameCn": "时雨（温泉）"
   },
   {
     "name": "シズコ",
@@ -304,7 +420,11 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 3,
-    "exDuration": 30
+    "exDuration": 30,
+    "nameEn": "Shizuko",
+    "nameKr": "시즈코",
+    "nameTw": "靜子",
+    "nameCn": "静子"
   },
   {
     "name": "シズコ（水着）",
@@ -314,7 +434,11 @@
     "attackType": "神秘",
     "armorType": "重装甲",
     "cost": 3,
-    "exDuration": 30
+    "exDuration": 30,
+    "nameEn": "Shizuko （Swimsuit）",
+    "nameKr": "시즈코（수영복）",
+    "nameTw": "靜子（泳裝）",
+    "nameCn": "静子（泳装）"
   },
   {
     "name": "シミコ",
@@ -324,7 +448,11 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": 30
+    "exDuration": 30,
+    "nameEn": "Shimiko",
+    "nameKr": "시미코",
+    "nameTw": "志美子",
+    "nameCn": "志美子"
   },
   {
     "name": "ジュリ",
@@ -334,7 +462,11 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Juri",
+    "nameKr": "주리",
+    "nameTw": "茱莉",
+    "nameCn": "朱莉"
   },
   {
     "name": "シロコ（水着）",
@@ -344,7 +476,11 @@
     "attackType": "神秘",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Shiroko （Swimsuit）",
+    "nameKr": "시로코（수영복）",
+    "nameTw": "白子（泳裝）",
+    "nameCn": "白子（泳装）"
   },
   {
     "name": "スミレ（アルバイト）",
@@ -354,7 +490,11 @@
     "attackType": "貫通",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Sumire （Part-Time）",
+    "nameKr": "스미레（아르바이트）",
+    "nameTw": "堇（打工）",
+    "nameCn": "堇（打工）"
   },
   {
     "name": "セナ",
@@ -364,7 +504,11 @@
     "attackType": "神秘",
     "armorType": "軽装備",
     "cost": 5,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Sena",
+    "nameKr": "세나",
+    "nameTw": "瀨奈",
+    "nameCn": "濑名"
   },
   {
     "name": "セリカ（正月）",
@@ -374,7 +518,11 @@
     "attackType": "貫通",
     "armorType": "特殊装甲",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Serika （New Year）",
+    "nameKr": "세리카（새해）",
+    "nameTw": "茜香（正月）",
+    "nameCn": "芹香（新年）"
   },
   {
     "name": "セリカ（水着）",
@@ -384,7 +532,11 @@
     "attackType": "神秘",
     "armorType": "重装甲",
     "cost": 6,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Serika （Swimsuit）",
+    "nameKr": "세리카（수영복）",
+    "nameTw": "茜香（泳裝）",
+    "nameCn": "芹香（泳装）"
   },
   {
     "name": "セリナ",
@@ -394,7 +546,11 @@
     "attackType": "神秘",
     "armorType": "軽装備",
     "cost": 2,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Serina",
+    "nameKr": "세리나",
+    "nameTw": "芹奈",
+    "nameCn": "芹娜"
   },
   {
     "name": "チェリノ（温泉）",
@@ -404,7 +560,11 @@
     "attackType": "爆発",
     "armorType": "重装甲",
     "cost": 6,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Cherino （Hot Spring）",
+    "nameKr": "체리노（온천）",
+    "nameTw": "潔莉諾（溫泉）",
+    "nameCn": "切里诺（温泉）"
   },
   {
     "name": "チナツ",
@@ -414,7 +574,11 @@
     "attackType": "貫通",
     "armorType": "軽装備",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Chinatsu",
+    "nameKr": "치나츠",
+    "nameTw": "千夏",
+    "nameCn": "千夏"
   },
   {
     "name": "チヒロ",
@@ -424,7 +588,11 @@
     "attackType": "貫通",
     "armorType": "重装甲",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Chihiro",
+    "nameKr": "치히로",
+    "nameTw": "千尋",
+    "nameCn": "千寻"
   },
   {
     "name": "ツバキ（ガイド）",
@@ -434,7 +602,11 @@
     "attackType": "貫通",
     "armorType": "重装甲",
     "cost": 6,
-    "exDuration": 45
+    "exDuration": 45,
+    "nameEn": "Tsubaki （Guide）",
+    "nameKr": "츠바키（가이드）",
+    "nameTw": "椿（導覽員）",
+    "nameCn": "椿（导游）"
   },
   {
     "name": "トモエ（チーパオ）",
@@ -444,7 +616,11 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 3,
-    "exDuration": 25
+    "exDuration": 25,
+    "nameEn": "Tomoe （Cheongsam）",
+    "nameKr": "토모에（치파오）",
+    "nameTw": "智惠（旗袍）",
+    "nameCn": "巴（旗袍）"
   },
   {
     "name": "ナギサ",
@@ -454,7 +630,11 @@
     "attackType": "爆発",
     "armorType": "重装甲",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Nagisa",
+    "nameKr": "나기사",
+    "nameTw": "渚",
+    "nameCn": "渚"
   },
   {
     "name": "ナギサ（水着）",
@@ -466,7 +646,11 @@
     "cost": 3,
     "exDuration": 26,
     "exDelay": 2.7,
-    "hasDurationBuff": true
+    "hasDurationBuff": true,
+    "nameEn": "Nagisa （Swimsuit）",
+    "nameKr": "나기사（수영복）",
+    "nameTw": "渚（泳裝）",
+    "nameCn": "渚（泳装）"
   },
   {
     "name": "ニヤ",
@@ -476,7 +660,11 @@
     "attackType": "振動",
     "armorType": "重装甲",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Niya",
+    "nameKr": "니야",
+    "nameTw": "妮娅",
+    "nameCn": "妮亞"
   },
   {
     "name": "ノドカ",
@@ -486,7 +674,11 @@
     "attackType": "爆発",
     "armorType": "重装甲",
     "cost": 3,
-    "exDuration": 30
+    "exDuration": 30,
+    "nameEn": "Nodoka",
+    "nameKr": "노도카",
+    "nameTw": "和香",
+    "nameCn": "和香"
   },
   {
     "name": "ノドカ（温泉）",
@@ -496,7 +688,11 @@
     "attackType": "爆発",
     "armorType": "特殊装甲",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Nodoka （Hot Spring）",
+    "nameKr": "노도카（온천）",
+    "nameTw": "和香（溫泉）",
+    "nameCn": "和香（温泉）"
   },
   {
     "name": "初音ミク",
@@ -506,7 +702,11 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 5,
-    "exDuration": 26
+    "exDuration": 26,
+    "nameEn": "Hatsune Miku",
+    "nameKr": "하츠네 미쿠",
+    "nameTw": "初音未來",
+    "nameCn": "初音未来"
   },
   {
     "name": "ハナエ",
@@ -516,7 +716,11 @@
     "attackType": "爆発",
     "armorType": "重装甲",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Hanae",
+    "nameKr": "하나에",
+    "nameTw": "花繪",
+    "nameCn": "花江"
   },
   {
     "name": "ハナエ（クリスマス）",
@@ -526,7 +730,11 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 5,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Hanae （Christmas）",
+    "nameKr": "하나에（크리스마스）",
+    "nameTw": "花繪（聖誕節）",
+    "nameCn": "花江（圣诞节）"
   },
   {
     "name": "ハナコ",
@@ -536,7 +744,11 @@
     "attackType": "貫通",
     "armorType": "特殊装甲",
     "cost": 5,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Hanako",
+    "nameKr": "하나코",
+    "nameTw": "花子",
+    "nameCn": "花子"
   },
   {
     "name": "ハルカ（正月）",
@@ -546,7 +758,11 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Haruka （New Year）",
+    "nameKr": "하루카（새해）",
+    "nameTw": "遙香（正月）",
+    "nameCn": "春香（正月）"
   },
   {
     "name": "ハルナ（体操服）",
@@ -556,7 +772,11 @@
     "attackType": "振動",
     "armorType": "重装甲",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Haruna （Track）",
+    "nameKr": "하루나（체육복）",
+    "nameTw": "羽留奈（體育服）",
+    "nameCn": "晴奈（运动服）"
   },
   {
     "name": "ハレ",
@@ -566,7 +786,11 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Hare",
+    "nameKr": "하레",
+    "nameTw": "晴",
+    "nameCn": "晴"
   },
   {
     "name": "ヒナタ（水着）",
@@ -576,7 +800,11 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 6,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Hinata （Swimsuit）",
+    "nameKr": "히나타（수영복）",
+    "nameTw": "日向（泳裝）",
+    "nameCn": "日向（泳装）"
   },
   {
     "name": "ヒビキ",
@@ -586,7 +814,11 @@
     "attackType": "爆発",
     "armorType": "重装甲",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Hibiki",
+    "nameKr": "히비키",
+    "nameTw": "響",
+    "nameCn": "响"
   },
   {
     "name": "ヒフミ（水着）",
@@ -596,7 +828,11 @@
     "attackType": "貫通",
     "armorType": "重装甲",
     "cost": 10,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Hifumi （Swimsuit）",
+    "nameKr": "히후미（수영복）",
+    "nameTw": "日步美（泳裝）",
+    "nameCn": "日富美（泳装）"
   },
   {
     "name": "ヒマリ",
@@ -607,7 +843,11 @@
     "armorType": "軽装備",
     "cost": 3,
     "exDuration": 13,
-    "hasDurationBuff": true
+    "hasDurationBuff": true,
+    "nameEn": "Himari",
+    "nameKr": "히마리",
+    "nameTw": "陽葵",
+    "nameCn": "日鞠"
   },
   {
     "name": "ヒマリ（臨戦）",
@@ -617,7 +857,11 @@
     "attackType": "貫通",
     "armorType": "弾力装甲",
     "cost": 3,
-    "exDuration": 30
+    "exDuration": 30,
+    "nameEn": "Himari （Battle）",
+    "nameKr": "히마리（전투）",
+    "nameTw": "陽葵（臨戰）",
+    "nameCn": "日鞠（临战）"
   },
   {
     "name": "ヒヨリ",
@@ -627,7 +871,11 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Hiyori",
+    "nameKr": "히요리",
+    "nameTw": "日和",
+    "nameCn": "日和"
   },
   {
     "name": "フィーナ（ガイド）",
@@ -637,7 +885,11 @@
     "attackType": "爆発",
     "armorType": "重装甲",
     "cost": 6,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Pina （Guide）",
+    "nameKr": "피나（가이드）",
+    "nameTw": "菲娜（嚮導）",
+    "nameCn": "菲娜（向导）"
   },
   {
     "name": "フウカ",
@@ -647,7 +899,11 @@
     "attackType": "爆発",
     "armorType": "重装甲",
     "cost": 5,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Fuuka",
+    "nameKr": "후우카",
+    "nameTw": "風華",
+    "nameCn": "风香"
   },
   {
     "name": "フウカ（正月）",
@@ -657,7 +913,11 @@
     "attackType": "貫通",
     "armorType": "特殊装甲",
     "cost": 2,
-    "exDuration": 35
+    "exDuration": 35,
+    "nameEn": "Fuuka （New Year）",
+    "nameKr": "후우카（새해）",
+    "nameTw": "風華（正月）",
+    "nameCn": "风香（正月）"
   },
   {
     "name": "フブキ（水着）",
@@ -667,7 +927,11 @@
     "attackType": "爆発",
     "armorType": "重装甲",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Fubuki （Swimsuit）",
+    "nameKr": "후부키（수영복）",
+    "nameTw": "吹雪（泳裝）",
+    "nameCn": "吹雪（泳装）"
   },
   {
     "name": "マキ（キャンプ）",
@@ -677,7 +941,11 @@
     "attackType": "爆発",
     "armorType": "重装甲",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Maki （Camp）",
+    "nameKr": "마키（캠핑）",
+    "nameTw": "真紀（露營）",
+    "nameCn": "真纪（露营）"
   },
   {
     "name": "マコト",
@@ -687,7 +955,11 @@
     "attackType": "貫通",
     "armorType": "特殊装甲",
     "cost": 6,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Makoto",
+    "nameKr": "마코토",
+    "nameTw": "真琴",
+    "nameCn": "真琴"
   },
   {
     "name": "マシロ",
@@ -697,7 +969,11 @@
     "attackType": "爆発",
     "armorType": "重装甲",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Mashiro",
+    "nameKr": "마시로",
+    "nameTw": "麻白",
+    "nameCn": "真白"
   },
   {
     "name": "マシロ（水着）",
@@ -707,7 +983,11 @@
     "attackType": "神秘",
     "armorType": "軽装備",
     "cost": 3,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Mashiro （Swimsuit）",
+    "nameKr": "마시로（수영복）",
+    "nameTw": "麻白（泳裝）",
+    "nameCn": "真白（泳装）"
   },
   {
     "name": "マリー",
@@ -717,7 +997,11 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 2,
-    "exDuration": 20
+    "exDuration": 20,
+    "nameEn": "Mari",
+    "nameKr": "마리",
+    "nameTw": "瑪麗",
+    "nameCn": "玛丽"
   },
   {
     "name": "ミサキ（水着）",
@@ -727,7 +1011,11 @@
     "attackType": "爆発",
     "armorType": "特殊装甲",
     "cost": 6,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Misaki （Swimsuit）",
+    "nameKr": "미사키（수영복）",
+    "nameTw": "美咲（泳裝）",
+    "nameCn": "美咲（泳装）"
   },
   {
     "name": "ミチル（ドレス）",
@@ -737,7 +1025,11 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 2,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Michiru （Dress）",
+    "nameKr": "미치루（드레스）",
+    "nameTw": "三千留（禮服）",
+    "nameCn": "满（礼服）"
   },
   {
     "name": "ミノリ",
@@ -747,7 +1039,11 @@
     "attackType": "爆発",
     "armorType": "特殊装甲",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Minori",
+    "nameKr": "미노리",
+    "nameTw": "實里",
+    "nameCn": "实里"
   },
   {
     "name": "ミモリ（水着）",
@@ -757,7 +1053,11 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 3,
-    "exDuration": 20
+    "exDuration": 20,
+    "nameEn": "Mimori （Swimsuit）",
+    "nameKr": "미모리（수영복）",
+    "nameTw": "三森（泳裝）",
+    "nameCn": "三森（泳装）"
   },
   {
     "name": "ミユ（水着）",
@@ -767,7 +1067,11 @@
     "attackType": "爆発",
     "armorType": "軽装備",
     "cost": 5,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Miyu （Swimsuit）",
+    "nameKr": "미유（수영복）",
+    "nameTw": "美優（泳裝）",
+    "nameCn": "美游（泳装）"
   },
   {
     "name": "ムツキ（ドレス）",
@@ -777,7 +1081,11 @@
     "attackType": "神秘",
     "armorType": "重装甲",
     "cost": 6,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Mutsuki （Dress）",
+    "nameKr": "무츠키（드레스）",
+    "nameTw": "無月（禮服）",
+    "nameCn": "睦月（礼服）"
   },
   {
     "name": "モエ",
@@ -787,7 +1095,11 @@
     "attackType": "貫通",
     "armorType": "軽装備",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Moe",
+    "nameKr": "모에",
+    "nameTw": "萌",
+    "nameCn": "萌绘"
   },
   {
     "name": "ヤクモ",
@@ -798,7 +1110,11 @@
     "armorType": "軽装備",
     "cost": 4,
     "exDuration": null,
-    "hasDurationBuff": true
+    "hasDurationBuff": true,
+    "nameEn": "Yakumo",
+    "nameKr": "야쿠모",
+    "nameTw": "八雲",
+    "nameCn": "八云"
   },
   {
     "name": "ユズ（メイド）",
@@ -808,7 +1124,11 @@
     "attackType": "爆発",
     "armorType": "弾力装甲",
     "cost": 5,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Yuzu （Maid）",
+    "nameKr": "유즈（메이드）",
+    "nameTw": "柚子（女僕）",
+    "nameCn": "柚子（女仆）"
   },
   {
     "name": "ユズ（臨戦）",
@@ -818,7 +1138,11 @@
     "attackType": "神秘",
     "armorType": "特殊装甲",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Yuzu （Battle）",
+    "nameKr": "유즈（전투）",
+    "nameTw": "柚子（臨戰）",
+    "nameCn": "柚子（临战）"
   },
   {
     "name": "ヨシミ",
@@ -828,7 +1152,11 @@
     "attackType": "貫通",
     "armorType": "重装甲",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Yoshimi",
+    "nameKr": "요시미",
+    "nameTw": "喜美",
+    "nameCn": "好美"
   },
   {
     "name": "リオ",
@@ -839,7 +1167,11 @@
     "armorType": "弾力装甲",
     "cost": 2,
     "exDuration": 20,
-    "hasDurationBuff": true
+    "hasDurationBuff": true,
+    "nameEn": "Rio",
+    "nameKr": "리오",
+    "nameTw": "莉央",
+    "nameCn": "莉央"
   },
   {
     "name": "リツ",
@@ -850,7 +1182,11 @@
     "armorType": "特殊装甲",
     "cost": 3,
     "exDuration": 24,
-    "hasDurationBuff": true
+    "hasDurationBuff": true,
+    "nameEn": "Ritsu",
+    "nameKr": "리츠",
+    "nameTw": "律",
+    "nameCn": "律"
   },
   {
     "name": "レイサ（マジカル）",
@@ -860,6 +1196,10 @@
     "attackType": "振動",
     "armorType": "特殊装甲",
     "cost": 4,
-    "exDuration": null
+    "exDuration": null,
+    "nameEn": "Reisa （Magical）",
+    "nameKr": "레이사（매지컬）",
+    "nameTw": "澪紗（魔法）",
+    "nameCn": "玲纱（魔法）"
   }
 ]

@@ -1,5 +1,6 @@
 import type { TimelineItem as TItem, CharacterSlot } from '../../types';
 import { ITEM_WIDTH, LAYER_HEIGHT, RULER_HEIGHT, TIMELINE_PAD_RIGHT, STANDALONE_COMMENT_HEIGHT } from '../../constants';
+import { useCharName } from '../../i18n';
 
 interface Props {
   items: TItem[];
@@ -21,6 +22,7 @@ interface BubblePos {
 }
 
 export function BubbleLayer({ items, slots, zoomLevel, totalWidth, onRemoveComment }: Props) {
+  const charName = useCharName();
   const commented = items.filter((it) => it.comment);
   if (commented.length === 0) return null;
 
@@ -99,7 +101,7 @@ export function BubbleLayer({ items, slots, zoomLevel, totalWidth, onRemoveComme
               e.preventDefault();
               onRemoveComment(b.item.id);
             }}
-            title={`${character?.name ?? ''}: ${b.item.comment}（右クリックで削除）`}
+            title={`${charName(character ?? null)}: ${b.item.comment}（右クリックで削除）`}
           >
             <span className="bubble-text">{b.item.comment}</span>
             <div className="bubble-arrow" />
