@@ -50,11 +50,20 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
 
   // 現在のストライカー数（キャラが設定されているスロットのみ）
   const strikerCount = slots.filter((s) => s.type === 'striker' && s.character !== null).length;
+  // 全生徒数（ST+SP、キャラが設定されているスロットのみ）
+  const studentCount = slots.filter((s) => s.character !== null).length;
 
-  // プリセットの実効回復力（ストライカー数×per striker）
-  const presetRecoveryDelta = presetData && 'recoveryPerStriker' in presetData
-    ? presetData.recoveryPerStriker * strikerCount
+  // プリセットの実効回復力
+  const presetRecoveryDelta = presetData
+    ? 'recoveryPerStriker' in presetData
+      ? presetData.recoveryPerStriker * strikerCount
+      : 'recoveryPerStudent' in presetData
+        ? presetData.recoveryPerStudent * studentCount
+        : 0
     : 0;
+
+  // 固定発動時間を持つプリセット（グレゴリオ等）
+  const isFixedTimePreset = presetData && 'fixedTimes' in presetData;
 
   // パネル外クリックで閉じる
   useEffect(() => {
@@ -69,37 +78,42 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
   }, [open]);
 
   const handleAdd = () => {
-    const timeMs = parseTimeInput(timeInput);
-    if (timeMs === null || timeMs <= 0 || timeMs > totalTimeMs) return;
-
     let label: string;
     let recoveryDelta: number;
     let durationMs: number;
 
     if (isCustom) {
+      const timeMs = parseTimeInput(timeInput);
+      if (timeMs === null || timeMs <= 0 || timeMs > totalTimeMs) return;
       label = customLabel.trim() || 'カスタム';
       recoveryDelta = parseInt(customRecovery);
       durationMs = Math.round(parseFloat(customDuration) * 1000);
       if (!isFinite(recoveryDelta) || recoveryDelta <= 0) return;
       if (!isFinite(durationMs) || durationMs <= 0) return;
-    } else if (presetData) {
+      onAdd({ id: crypto.randomUUID(), timeMs, durationMs, recoveryDelta, label });
+      setTimeInput('');
+    } else if (isFixedTimePreset && presetData && 'fixedTimes' in presetData) {
+      if (presetRecoveryDelta <= 0) return; // 生徒0人では追加しない
       label = presetData.label;
       recoveryDelta = presetRecoveryDelta;
       durationMs = presetData.durationMs;
-      if (recoveryDelta <= 0) return; // ストライカー0人では追加しない
+      for (const timeMs of presetData.fixedTimes) {
+        if (timeMs <= totalTimeMs) {
+          onAdd({ id: crypto.randomUUID(), timeMs, durationMs, recoveryDelta, label });
+        }
+      }
+    } else if (presetData) {
+      const timeMs = parseTimeInput(timeInput);
+      if (timeMs === null || timeMs <= 0 || timeMs > totalTimeMs) return;
+      label = presetData.label;
+      recoveryDelta = presetRecoveryDelta;
+      durationMs = presetData.durationMs;
+      if (recoveryDelta <= 0) return;
+      onAdd({ id: crypto.randomUUID(), timeMs, durationMs, recoveryDelta, label });
+      setTimeInput('');
     } else {
       return;
     }
-
-    onAdd({
-      id: crypto.randomUUID(),
-      timeMs,
-      durationMs,
-      recoveryDelta,
-      label,
-    });
-
-    setTimeInput('');
   };
 
   return (
@@ -131,6 +145,11 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
             {!isCustom && presetData && 'recoveryPerStriker' in presetData && (
               <div className="stage-gimmick-note">
                 回復力 +{presetData.recoveryPerStriker} × ST{strikerCount}人 = <strong>+{presetRecoveryDelta}</strong>
+              </div>
+            )}
+            {!isCustom && presetData && 'recoveryPerStudent' in presetData && (
+              <div className="stage-gimmick-note">
+                回復力 +{presetData.recoveryPerStudent} × {studentCount}人 = <strong>+{presetRecoveryDelta}</strong>（×6回 一括登録）
               </div>
             )}
             {isCustom && (
@@ -170,18 +189,25 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
                 </div>
               </>
             )}
-            <div className="stage-gimmick-row">
-              <label className="stage-gimmick-label">{t('発動時間')}</label>
-              <input
-                className="stage-gimmick-input stage-gimmick-input--short"
-                type="text"
-                value={timeInput}
-                onChange={(e) => setTimeInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleAdd(); }}
-                placeholder="1:30"
-              />
-              <button className="stage-gimmick-add-btn" onClick={handleAdd}>{t('追加')}</button>
-            </div>
+            {isFixedTimePreset ? (
+              <div className="stage-gimmick-row">
+                <span className="stage-gimmick-note">1:00〜0:10（10秒間隔×6回）</span>
+                <button className="stage-gimmick-add-btn" onClick={handleAdd}>{t('追加')}</button>
+              </div>
+            ) : (
+              <div className="stage-gimmick-row">
+                <label className="stage-gimmick-label">{t('発動時間')}</label>
+                <input
+                  className="stage-gimmick-input stage-gimmick-input--short"
+                  type="text"
+                  value={timeInput}
+                  onChange={(e) => setTimeInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleAdd(); }}
+                  placeholder="1:30"
+                />
+                <button className="stage-gimmick-add-btn" onClick={handleAdd}>{t('追加')}</button>
+              </div>
+            )}
           </div>
           {stageGimmicks.length > 0 && (
             <div className="stage-gimmick-list">

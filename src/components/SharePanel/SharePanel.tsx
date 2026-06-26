@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import type { TimelineState, CharacterSlot } from '../../types';
+import type { TimelineState, CharacterSlot, Character } from '../../types';
+import { STRIKER_COUNT, SPECIAL_COUNT, EXTENDED_STRIKER_COUNT, EXTENDED_SPECIAL_COUNT } from '../../constants';
 import { encode, decode } from '../../utils/shareCodec';
 import type { ShareData } from '../../utils/shareCodec';
 import { generateTlText } from '../../utils/tlExport';
@@ -22,16 +23,19 @@ interface Props {
  */
 export function buildLoadState(
   data: ShareData,
-  currentSlots: CharacterSlot[],
+  _currentSlots: CharacterSlot[],
   currentTotalTimeMs: number
 ) {
-  const slots = currentSlots.map((s) => {
-    const found = data.slots.find(
-      (ds) => ds.type === s.type && ds.index === s.index
-    );
-    return found
-      ? { ...s, character: { name: found.name, image: found.image } }
-      : { ...s, character: null };
+  const loadedMode = (data.mode as 'normal' | 'extended' | undefined) ?? 'normal';
+  const stCount = loadedMode === 'extended' ? EXTENDED_STRIKER_COUNT : STRIKER_COUNT;
+  const spCount = loadedMode === 'extended' ? EXTENDED_SPECIAL_COUNT : SPECIAL_COUNT;
+  const baseSlots: CharacterSlot[] = [
+    ...Array.from({ length: stCount }, (_, i) => ({ type: 'striker' as const, index: i, character: null as Character | null })),
+    ...Array.from({ length: spCount }, (_, i) => ({ type: 'special' as const, index: i, character: null as Character | null })),
+  ];
+  const slots = baseSlots.map((s) => {
+    const found = data.slots.find((ds) => ds.type === s.type && ds.index === s.index);
+    return found ? { ...s, character: { name: found.name, image: found.image } } : s;
   });
 
   const items = data.items.map((di, i) => ({

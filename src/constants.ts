@@ -28,6 +28,8 @@ export const EXTENDED_SPECIAL_COUNT = 4;
 export const STAGE_GIMMICK_PRESETS = [
   // recoveryPerStriker: 発動時のストライカー数 × この値が回復力増加量
   { label: 'コクマー バリスタ', recoveryPerStriker: 1000, durationMs: 22000 },
+  // recoveryPerStudent: 全生徒数 × この値が回復力増加量, fixedTimes: 一括登録する発動時間(ms)
+  { label: 'グレゴリオ', recoveryPerStudent: 300, durationMs: 60000, fixedTimes: [60000, 50000, 40000, 30000, 20000, 10000] as number[] },
 ] as const;
 
 // スロットごとのバフバー色（将来10スロット対応想定）
