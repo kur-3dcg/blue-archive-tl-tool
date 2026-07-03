@@ -216,7 +216,7 @@ export async function generateTlImagePaged(
   for (const entry of entries) {
     if (entry.kind === 'skill') maxGroupSize = Math.max(maxGroupSize, entry.group.length);
   }
-  const COL_TIME = Math.round(PAGE_W * 0.068);
+  const COL_TIME = Math.round(FONT_MAIN * 7.5 + PAD_H);
   const COL_COST = Math.round(PAGE_W * 0.058);
   const COL_EX = maxGroupSize * ICON_SIZE + Math.max(0, maxGroupSize - 1) * ARROW_W + PAD_H * 2;
   const COL_COMMENT = PAGE_W - COL_TIME - COL_COST - COL_EX;

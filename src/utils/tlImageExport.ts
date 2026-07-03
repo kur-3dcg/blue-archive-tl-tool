@@ -134,7 +134,7 @@ export async function generateTlImage(state: TimelineState, options: { transpare
   const ROW_H = 40;
   const HEADER_H = 28;
   const PAD_H = 10;
-  const COL_TIME = 58;
+  const COL_TIME = 78;
   const COL_COST = 52;
   const COL_COMMENT = 220;
 
