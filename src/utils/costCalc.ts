@@ -238,7 +238,10 @@ function buildAllBuffEvents(
     if (!checkBuffTrigger(buffParams, item, slotItemsSorted)) continue;
 
     const arr = slotTriggered.get(item.slotIndex) ?? [];
-    arr.push({ timeMs: item.timeMs, recoveryDelta: buffParams.recoveryDelta, durationMs: buffParams.durationMs });
+    const delayMs = (config?.exDelay ?? slot.character.exDelay ?? 0) * 1000;
+    const buffStartMs = item.timeMs - delayMs;
+    const effectiveDurationMs = Math.max(0, buffParams.durationMs - delayMs);
+    arr.push({ timeMs: buffStartMs, recoveryDelta: buffParams.recoveryDelta, durationMs: effectiveDurationMs });
     slotTriggered.set(item.slotIndex, arr);
   }
 
