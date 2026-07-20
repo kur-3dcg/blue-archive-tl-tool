@@ -240,8 +240,7 @@ function buildAllBuffEvents(
     const arr = slotTriggered.get(item.slotIndex) ?? [];
     const delayMs = (config?.exDelay ?? slot.character.exDelay ?? 0) * 1000;
     const buffStartMs = item.timeMs - delayMs;
-    const effectiveDurationMs = Math.max(0, buffParams.durationMs - delayMs);
-    arr.push({ timeMs: buffStartMs, recoveryDelta: buffParams.recoveryDelta, durationMs: effectiveDurationMs });
+    arr.push({ timeMs: buffStartMs, recoveryDelta: buffParams.recoveryDelta, durationMs: buffParams.durationMs });
     slotTriggered.set(item.slotIndex, arr);
   }
 

@@ -23,6 +23,11 @@ interface BarInfo {
   color: string;
 }
 
+interface MergedInterval {
+  startX: number;
+  endX: number;
+}
+
 interface Props {
   items: TimelineItem[];
   slots: CharacterSlot[];
@@ -51,8 +56,7 @@ export function BuffBarLayer({ items, slots, slotCostConfigs, layoutMap, zoomLev
         : baseDur;
       const delayS = slotCostConfigs[item.slotIndex]?.exDelay ?? char.exDelay ?? 0;
       const startX = totalWidth - TIMELINE_PAD_RIGHT - ((item.timeMs / 1000) - delayS) * zoomLevel;
-      const effectiveDur = Math.max(0, dur - delayS);
-      const width = effectiveDur * zoomLevel;
+      const width = dur * zoomLevel;
       result.push({
         id: item.id,
         slotIdx: item.slotIndex,
@@ -62,34 +66,73 @@ export function BuffBarLayer({ items, slots, slotCostConfigs, layoutMap, zoomLev
       });
     }
     return result;
-  }, [items, slots, zoomLevel, totalWidth]);
+  }, [items, slots, slotCostConfigs, zoomLevel, totalWidth]);
 
-  // 重なるバーを別の行に割り当てる（区間スケジューリング）
-  // 行が多いほど下端ストリップが上にずれて重なりを視覚的に区別できる
-  const rowMap = useMemo<Map<string, number>>(() => {
-    const map = new Map<string, number>();
-    if (bars.length === 0) return map;
-    const sorted = [...bars].sort((a, b) => a.startX - b.startX);
-    const rowEndX: number[] = []; // 各行の最終 endX
+  // スロットごとにバーをマージ（同スロットの重なりを1区間に統合）
+  // フィル・ストリップ両方の描画に使用
+  const mergedBySlot = useMemo(() => {
+    const bySlot = new Map<number, { intervals: MergedInterval[]; color: string }>();
+    for (const bar of bars) {
+      if (!bySlot.has(bar.slotIdx)) {
+        bySlot.set(bar.slotIdx, { intervals: [], color: bar.color });
+      }
+      bySlot.get(bar.slotIdx)!.intervals.push({ startX: bar.startX, endX: bar.endX });
+    }
+    const result = new Map<number, { merged: MergedInterval[]; color: string }>();
+    for (const [slotIdx, { intervals, color }] of bySlot) {
+      const sorted = [...intervals].sort((a, b) => a.startX - b.startX);
+      const merged: MergedInterval[] = [];
+      for (const iv of sorted) {
+        if (merged.length === 0 || iv.startX > merged[merged.length - 1].endX) {
+          merged.push({ ...iv });
+        } else {
+          merged[merged.length - 1].endX = Math.max(merged[merged.length - 1].endX, iv.endX);
+        }
+      }
+      result.set(slotIdx, { merged, color });
+    }
+    return result;
+  }, [bars]);
 
-    for (const bar of sorted) {
-      let assigned = false;
-      for (let row = 0; row < rowEndX.length; row++) {
-        if (bar.startX >= rowEndX[row]) {
-          map.set(bar.id, row);
-          rowEndX[row] = bar.endX;
-          assigned = true;
+  // スロット単位の行割り当て（異スロット間の重なりのみ判定）
+  // 同スロットのバーは常に同じ行 → ストリップが伸びるだけで積み重ならない
+  const slotRowMap = useMemo(() => {
+    const map = new Map<number, number>();
+    const slotEntries = [...mergedBySlot.entries()].sort((a, b) => {
+      const aMin = a[1].merged[0]?.startX ?? 0;
+      const bMin = b[1].merged[0]?.startX ?? 0;
+      return aMin - bMin;
+    });
+    const rowIntervals: MergedInterval[][] = [];
+
+    const overlapsRow = (row: number, intervals: MergedInterval[]) => {
+      for (const iv of intervals) {
+        for (const riv of rowIntervals[row]) {
+          if (iv.startX < riv.endX && iv.endX > riv.startX) return true;
+        }
+      }
+      return false;
+    };
+
+    for (const [slotIdx, { merged }] of slotEntries) {
+      let assignedRow = -1;
+      for (let row = 0; row < rowIntervals.length; row++) {
+        if (!overlapsRow(row, merged)) {
+          assignedRow = row;
           break;
         }
       }
-      if (!assigned) {
-        const row = rowEndX.length;
-        map.set(bar.id, row);
-        rowEndX.push(bar.endX);
+      if (assignedRow === -1) {
+        assignedRow = rowIntervals.length;
+        rowIntervals.push([]);
+      }
+      map.set(slotIdx, assignedRow);
+      for (const iv of merged) {
+        rowIntervals[assignedRow].push(iv);
       }
     }
     return map;
-  }, [bars]);
+  }, [mergedBySlot]);
 
   if (bars.length === 0) return null;
 
@@ -105,35 +148,36 @@ export function BuffBarLayer({ items, slots, slotCostConfigs, layoutMap, zoomLev
         zIndex: 1,
       }}
     >
-      {bars.map((bar) => {
-        const row = rowMap.get(bar.id) ?? 0;
-        const width = Math.max(0, bar.endX - bar.startX);
-        // 下端ストリップは行ごとに上方向にずらして重なりを区別
+      {/* 半透明フィル: 同スロットはマージ済みで色の重複なし、別スロットは重なりあり */}
+      {[...mergedBySlot.entries()].flatMap(([slotIdx, { merged, color }]) =>
+        merged.map((m, i) => (
+          <rect
+            key={`fill-${slotIdx}-${i}`}
+            x={m.startX}
+            y={BAR_Y}
+            width={Math.max(0, m.endX - m.startX)}
+            height={BAR_HEIGHT}
+            fill={color}
+            fillOpacity={FILL_OPACITY}
+            rx={2}
+          />
+        ))
+      )}
+      {/* 下端ストリップ: スロット単位でマージ済み区間を描画（同スロットは伸びるだけ、異スロットは行ずれ） */}
+      {[...mergedBySlot.entries()].flatMap(([slotIdx, { merged, color }]) => {
+        const row = slotRowMap.get(slotIdx) ?? 0;
         const stripY = LAYER_HEIGHT - STRIP_HEIGHT - row * STRIP_HEIGHT;
-
-        return (
-          <g key={bar.id}>
-            {/* 半透明フィル */}
-            <rect
-              x={bar.startX}
-              y={BAR_Y}
-              width={width}
-              height={BAR_HEIGHT}
-              fill={bar.color}
-              fillOpacity={FILL_OPACITY}
-              rx={2}
-            />
-            {/* 不透明な下端ストリップ（重なり識別用、行ごとに上方向にずれる） */}
-            <rect
-              x={bar.startX}
-              y={stripY}
-              width={width}
-              height={STRIP_HEIGHT}
-              fill={bar.color}
-              fillOpacity={STRIP_OPACITY}
-            />
-          </g>
-        );
+        return merged.map((m, i) => (
+          <rect
+            key={`strip-${slotIdx}-${i}`}
+            x={m.startX}
+            y={stripY}
+            width={Math.max(0, m.endX - m.startX)}
+            height={STRIP_HEIGHT}
+            fill={color}
+            fillOpacity={STRIP_OPACITY}
+          />
+        ));
       })}
     </svg>
   );

@@ -1167,6 +1167,7 @@
     "armorType": "弾力装甲",
     "cost": 2,
     "exDuration": 20,
+    "exDelay": 3.77,
     "hasDurationBuff": true,
     "nameEn": "Rio",
     "nameKr": "리오",

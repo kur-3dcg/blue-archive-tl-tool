@@ -1,6 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import type { TimelineState, CharacterSlot, Character } from '../../types';
 import { STRIKER_COUNT, SPECIAL_COUNT, EXTENDED_STRIKER_COUNT, EXTENDED_SPECIAL_COUNT } from '../../constants';
+import stCharacters from '../../../data/characters_st.json';
+import spCharacters from '../../../data/characters_sp.json';
+
+// 名前 → 完全キャラデータのルックアップ（exDuration等を含む）
+const nameToFullChar = new Map<string, Character>();
+for (const c of [...stCharacters, ...spCharacters] as Character[]) {
+  if (c.name) nameToFullChar.set(c.name, c);
+}
 import { encode, decode } from '../../utils/shareCodec';
 import type { ShareData } from '../../utils/shareCodec';
 import { generateTlText } from '../../utils/tlExport';
@@ -35,7 +43,12 @@ export function buildLoadState(
   ];
   const slots = baseSlots.map((s) => {
     const found = data.slots.find((ds) => ds.type === s.type && ds.index === s.index);
-    return found ? { ...s, character: { name: found.name, image: found.image } } : s;
+    if (!found) return s;
+    const fullChar = nameToFullChar.get(found.name);
+    const character: Character = fullChar
+      ? { ...fullChar, image: found.image }
+      : { name: found.name, image: found.image };
+    return { ...s, character };
   });
 
   const items = data.items.map((di, i) => ({
