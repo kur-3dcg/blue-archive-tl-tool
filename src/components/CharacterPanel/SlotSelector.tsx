@@ -20,6 +20,7 @@ interface Props {
   totalFilledSlots?: number;
   onSetQueuePosition?: (pos: number) => void; // 1-based
   onSetSkillIndex?: (skillIndex: number) => void;
+  compact?: boolean; // true=顔アイコン+バッジ+名前のみ（コスト・ディレイ・チェックボックス非表示）
 }
 
 export function SlotSelector({
@@ -39,6 +40,7 @@ export function SlotSelector({
   totalFilledSlots,
   onSetQueuePosition,
   onSetSkillIndex,
+  compact = false,
 }: Props) {
   const t = useT();
   const charName = useCharName();
@@ -130,7 +132,7 @@ export function SlotSelector({
         {character && (
           <div className="slot-name">{charName(character)}</div>
         )}
-        {character && character.skills && character.skills.length > 1 && (
+        {character && character.skills && character.skills.length > 1 && !compact && (
           <div className="slot-skill-tabs">
             {character.skills.map((skill, idx) => (
               <button
@@ -156,7 +158,7 @@ export function SlotSelector({
             ×
           </button>
         )}
-        {character && (
+        {character && !compact && (
           <div className="slot-cost-area">
             <label className="slot-cost-label">
               {t('コスト')}:

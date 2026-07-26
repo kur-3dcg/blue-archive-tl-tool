@@ -1,22 +1,218 @@
 .character-panel {
-  padding: 12px 16px;
   background: var(--bg-secondary);
   border-bottom: 2px solid var(--separator-color);
 }
 
-.panel-main-row {
+/* ─── ツールバー行 ─── */
+.panel-toolbar-row {
   display: flex;
-  gap: 24px;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 0;
+}
+
+.panel-toolbar-top {
+  order: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px 4px;
   flex-wrap: wrap;
 }
 
-.panel-btn-group {
-  align-self: flex-start;
-  margin-top: 20px;
+.panel-toolbar-bottom {
+  order: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 4px 16px 8px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border-primary);
+  position: relative; /* 浮動パネルの位置基準 */
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.toolbar-separator {
+  width: 1px;
+  height: 20px;
+  background: var(--border-primary);
+  margin: 0 2px;
+}
+
+.panel-slots-area {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0;
+}
+
+.slot-group-compact {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
+}
+
+.slot-group-label-sm {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-label);
+  text-transform: uppercase;
+}
+
+.panel-mode-select {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.panel-mode-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ─── 編成設定展開エリア（アイコン行と同一グリッドで表示） ─── */
+.slots-with-settings-grid {
+  display: inline-grid;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 6px 0 4px;
+}
+
+.settings-row-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-align: right;
+  padding-right: 2px;
+}
+
+.settings-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ─── スロット入れ替えドラッグ ─── */
+.slot-icon-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border-radius: 8px;
+  padding: 2px;
+  transition: background 0.1s, outline 0.1s;
+}
+
+.slot-icon-cell.drag-over {
+  outline: 2px solid var(--bg-active-border);
+  background: rgba(96, 165, 250, 0.12);
+}
+
+.slot-reorder-handle {
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: grab;
+  user-select: none;
+  line-height: 1;
+  opacity: 0.5;
+  padding: 0 2px;
+}
+
+.slot-reorder-handle:hover {
+  opacity: 1;
+  color: var(--text-primary);
+}
+
+.slot-reorder-handle:active {
+  cursor: grabbing;
+}
+
+/* ─── TL設定展開エリア ─── */
+.panel-tl-settings-expand {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 8px 16px;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-primary);
+  flex-wrap: wrap;
+}
+
+.tl-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.tl-control select {
+  background: var(--bg-control);
+  color: var(--text-primary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
+/* ─── 共有ボタンスタイル（Timeline.cssから移動） ─── */
+.preset-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 5px;
+  background: var(--bg-control);
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.preset-btn:hover {
+  background: var(--bg-control-hover);
+}
+
+.preset-btn.active {
+  background: var(--bg-active);
+  border-color: var(--bg-active-border);
+  color: var(--text-active);
+}
+
+.custom-time-input {
+  width: 60px;
+  padding: 5px 8px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 5px;
+  background: var(--bg-control);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: monospace;
+  text-align: center;
+}
+
+.custom-time-input::placeholder {
+  color: var(--text-dim);
+}
+
+/* 旧スタイル（後方互換のため残す） */
+.panel-btn-group {
+  display: none;
 }
 
 .panel-action-row {
@@ -29,12 +225,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.panel-mode-label {
-  font-size: 12px;
-  color: var(--text-secondary);
-  white-space: nowrap;
 }
 
 .game-mode-btn {
@@ -126,31 +316,30 @@
   color: #fff;
 }
 
-/* Comment area (drag button + text marker panel) */
+/* Comment area（ツールバー内では不要だが残す） */
 .comment-area {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
   align-self: flex-start;
-  margin-left: 16px;
-  margin-top: 20px;
 }
 
-/* Comment drag button */
+/* Comment drag button（ツールバー内：小型横並び） */
 .comment-drag-btn {
-  align-self: stretch;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   gap: 4px;
   cursor: grab;
   user-select: none;
-  padding: 4px;
-  border-radius: 8px;
-  border: 2px solid rgba(76, 175, 80, 0.5);
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(76, 175, 80, 0.5);
   background: rgba(76, 175, 80, 0.1);
   transition: background 0.15s, border-color 0.15s;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 .comment-drag-btn:hover:not(.disabled) {
@@ -168,16 +357,17 @@
 }
 
 .comment-drag-icon {
-  width: 48px;
-  height: 48px;
+  width: 16px;
+  height: 16px;
   color: #4caf50;
+  flex-shrink: 0;
 }
 
 .comment-drag-label {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   color: #4caf50;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .slot-group {

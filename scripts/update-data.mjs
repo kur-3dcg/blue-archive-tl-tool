@@ -77,6 +77,15 @@ function rowToEntry(row, existingImage) {
   const nameKr = (row['한국어'] ?? '').trim() || undefined;
   const nameTw = (row['中文（繁）'] ?? '').trim() || undefined;
   const nameCn = (row['中文（简）'] ?? '').trim() || undefined;
+  // NS関連
+  const nsIntervalRaw = row['NS間隔（秒）'];
+  const nsInterval = nsIntervalRaw !== '' && !isNaN(parseFloat(nsIntervalRaw)) ? parseFloat(nsIntervalRaw) : undefined;
+  const nsDurationRaw = row['NS持続（秒）'];
+  const nsDuration = nsDurationRaw !== '' && !isNaN(parseFloat(nsDurationRaw)) ? parseFloat(nsDurationRaw) : undefined;
+  const nsConditional = row['NS条件発動'] === 'TRUE' || row['NS条件発動'] === 'true' || row['NS条件発動'] === '1' ? true : undefined;
+  const nsDelayRaw = row['NSディレイ（秒）'];
+  const nsDelayVal = nsDelayRaw !== '' && !isNaN(parseFloat(nsDelayRaw)) ? parseFloat(nsDelayRaw) : 0;
+  const nsDelay = nsDelayVal > 0 ? nsDelayVal : undefined;
   return {
     name: row['名前'],
     image,
@@ -88,6 +97,10 @@ function rowToEntry(row, existingImage) {
     exDuration,
     ...(exDelay !== undefined && { exDelay }),
     ...(hasDurationBuff && { hasDurationBuff }),
+    ...(nsInterval !== undefined && { nsInterval }),
+    ...(nsDuration !== undefined && { nsDuration }),
+    ...(nsConditional && { nsConditional }),
+    ...(nsDelay !== undefined && { nsDelay }),
     ...(nameEn && { nameEn }),
     ...(nameKr && { nameKr }),
     ...(nameTw && { nameTw }),

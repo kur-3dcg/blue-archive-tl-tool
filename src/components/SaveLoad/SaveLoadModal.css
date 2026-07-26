@@ -15,7 +15,7 @@
   background: var(--bg-modal);
   border: 1px solid var(--border-secondary);
   border-radius: 12px;
-  width: 820px;
+  width: 1040px;
   max-width: 96vw;
   max-height: 90vh;
   display: flex;
@@ -304,4 +304,71 @@
 
 .sl-dialog-btn.cancel:hover {
   background: var(--bg-control-hover);
+}
+
+/* === ページナビゲーション（フッター） === */
+.sl-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border-secondary);
+  flex-shrink: 0;
+}
+
+.sl-page-btn {
+  background: var(--bg-control);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  line-height: 0;
+}
+
+.sl-page-btn:hover {
+  background: var(--bg-control-hover);
+  color: var(--text-primary);
+}
+
+.sl-page-btn.active {
+  background: var(--btn-export-bg);
+  color: var(--btn-export-text);
+  border-color: transparent;
+}
+
+.sl-page-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 5px;
+  object-fit: cover;
+  display: block;
+}
+
+.sl-page-free-num {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 44px;
+  display: block;
+  width: 44px;
+  text-align: center;
+}
+
+.sl-page-separator {
+  width: 1px;
+  min-height: 44px;
+  background: var(--border-secondary);
+  align-self: center;
+  margin: 0 4px;
+}
+
+/* flex折り返し強制 */
+.sl-row-break {
+  flex-basis: 100%;
+  height: 0;
 }

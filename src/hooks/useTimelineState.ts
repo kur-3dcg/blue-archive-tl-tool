@@ -54,6 +54,7 @@ const initialState: TimelineState = {
   standaloneComments: [],
   stageGimmicks: [],
   skillQueueOrder: undefined,
+  nsBarOffsets: {},
 };
 
 function reducer(state: TimelineState, action: TimelineAction): TimelineState {
@@ -370,6 +371,54 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
 
     case 'SET_SKILL_QUEUE_ORDER':
       return { ...state, skillQueueOrder: action.order };
+
+    case 'SWAP_SLOTS': {
+      const { slotA, slotB } = action;
+      const newSlots = state.slots.map((s, i) => {
+        if (i === slotA) return { ...s, character: state.slots[slotB].character };
+        if (i === slotB) return { ...s, character: state.slots[slotA].character };
+        return s;
+      });
+      const newConfigs = state.slotCostConfigs.map((c, i) => {
+        if (i === slotA) return state.slotCostConfigs[slotB];
+        if (i === slotB) return state.slotCostConfigs[slotA];
+        return c;
+      });
+      const newItems = state.items.map((item) => {
+        if (item.slotIndex === slotA) return { ...item, slotIndex: slotB };
+        if (item.slotIndex === slotB) return { ...item, slotIndex: slotA };
+        return item;
+      });
+      const newOrder = state.skillQueueOrder?.map((idx) => {
+        if (idx === slotA) return slotB;
+        if (idx === slotB) return slotA;
+        return idx;
+      });
+      return {
+        ...state,
+        slots: newSlots,
+        slotCostConfigs: newConfigs,
+        items: newItems,
+        skillQueueOrder: newOrder,
+      };
+    }
+
+    case 'ADJUST_NS_BAR': {
+      const { slotIndex, barIndex, deltaMs } = action;
+      const current = state.nsBarOffsets ?? {};
+      const slotAdj = [...(current[slotIndex] ?? [])];
+      while (slotAdj.length <= barIndex) slotAdj.push(0);
+      slotAdj[barIndex] = (slotAdj[barIndex] ?? 0) + deltaMs;
+      return { ...state, nsBarOffsets: { ...current, [slotIndex]: slotAdj } };
+    }
+
+    case 'RESET_NS_BAR': {
+      const { slotIndex, fromBarIndex } = action;
+      const current = state.nsBarOffsets ?? {};
+      const slotAdj = [...(current[slotIndex] ?? [])];
+      for (let i = fromBarIndex; i < slotAdj.length; i++) slotAdj[i] = 0;
+      return { ...state, nsBarOffsets: { ...current, [slotIndex]: slotAdj } };
+    }
 
     case 'RESET_ALL':
       return initialState;

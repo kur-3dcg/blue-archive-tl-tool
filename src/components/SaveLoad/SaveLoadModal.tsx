@@ -1,14 +1,19 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import type { TimelineState, TimelineAction } from '../../types';
 import { useT } from '../../i18n';
+import bossData from '../../../data/bosses.json';
 import './SaveLoadModal.css';
 
 const SAVES_KEY = 'ba-tl-saves';
-const SLOT_COUNT = 30;
+const SLOTS_PER_PAGE = 30;
+const FREE_PAGE_COUNT = 4;
+const BOSS_PAGE_COUNT = bossData.length;
+const MAX_PAGES = BOSS_PAGE_COUNT + FREE_PAGE_COUNT;
+const SLOT_COUNT = SLOTS_PER_PAGE * MAX_PAGES;
 
 interface SaveSlotData {
   name: string;
-  savedAt: number; // ms timestamp
+  savedAt: number;
   state: TimelineState;
   previewChars: Array<{ name: string; image: string } | null>;
   itemCount: number;
@@ -30,7 +35,6 @@ function loadSlots(): SlotArray {
     if (!raw) return Array(SLOT_COUNT).fill(null);
     const parsed = JSON.parse(raw) as SlotArray;
     if (!Array.isArray(parsed)) return Array(SLOT_COUNT).fill(null);
-    // 長さが足りない場合は末尾を null で埋める
     const filled = [...parsed];
     while (filled.length < SLOT_COUNT) filled.push(null);
     return filled.slice(0, SLOT_COUNT);
@@ -68,6 +72,15 @@ function buildPreview(state: TimelineState): Pick<SaveSlotData, 'previewChars' |
   };
 }
 
+/** ページの表示情報を返す */
+function getPageInfo(page: number): { isBoss: true; name: string; image: string } | { isBoss: false; freeNum: number } {
+  if (page <= BOSS_PAGE_COUNT) {
+    const boss = bossData[page - 1];
+    return { isBoss: true, name: boss.name, image: boss.image };
+  }
+  return { isBoss: false, freeNum: page - BOSS_PAGE_COUNT };
+}
+
 interface Props {
   initialMode: 'save' | 'load';
   state: TimelineState;
@@ -82,9 +95,16 @@ export function SaveLoadModal({ initialMode, state, dispatch, onClose, onSaved }
   const [mode, setMode] = useState<'save' | 'load'>(initialMode);
   const [overlay, setOverlay] = useState<OverlayState>(null);
   const [nameInput, setNameInput] = useState('');
+  const [page, setPage] = useState(1);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
-  // オーバーレイが開いたら name input にフォーカス
+  const totalPages = MAX_PAGES;
+
+  const pageSlotIndices = useMemo(() => {
+    const start = (page - 1) * SLOTS_PER_PAGE;
+    return Array.from({ length: SLOTS_PER_PAGE }, (_, i) => start + i);
+  }, [page]);
+
   useEffect(() => {
     if (overlay?.type === 'save-name') {
       setNameInput(overlay.defaultName);
@@ -92,7 +112,6 @@ export function SaveLoadModal({ initialMode, state, dispatch, onClose, onSaved }
     }
   }, [overlay]);
 
-  // Escape で閉じる
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -189,46 +208,79 @@ export function SaveLoadModal({ initialMode, state, dispatch, onClose, onSaved }
 
         {/* スロットグリッド */}
         <div className="sl-grid">
-          {slots.map((slot, idx) => (
-            <div
-              key={idx}
-              className={`sl-slot${slot ? ' filled' : ' empty'}${mode === 'load' && !slot ? ' disabled' : ''}`}
-              onClick={() => handleSlotClick(idx)}
-              title={mode === 'save' ? (slot ? '上書きセーブ' : 'セーブ') : (slot ? 'ロード' : '')}
-            >
-              <div className="sl-slot-num">{idx + 1}</div>
-              {slot ? (
-                <>
-                  <button
-                    className="sl-slot-delete"
-                    onClick={(e) => handleDeleteClick(e, idx)}
-                    title="削除"
-                  >
-                    ✕
-                  </button>
-                  <div className="sl-slot-preview">
-                    <div className="sl-slot-chars">
-                      {slot.previewChars.slice(0, 6).map((c, ci) =>
-                        c ? (
-                          <img key={ci} src={c.image} alt={c.name} className="sl-char-icon" />
-                        ) : (
-                          <div key={ci} className="sl-char-empty" />
-                        )
-                      )}
+          {pageSlotIndices.map((globalIdx) => {
+            const slot = slots[globalIdx];
+            const displayNum = globalIdx + 1;
+            return (
+              <div
+                key={globalIdx}
+                className={`sl-slot${slot ? ' filled' : ' empty'}${mode === 'load' && !slot ? ' disabled' : ''}`}
+                onClick={() => handleSlotClick(globalIdx)}
+                title={mode === 'save' ? (slot ? '上書きセーブ' : 'セーブ') : (slot ? 'ロード' : '')}
+              >
+                <div className="sl-slot-num">{displayNum}</div>
+                {slot ? (
+                  <>
+                    <button
+                      className="sl-slot-delete"
+                      onClick={(e) => handleDeleteClick(e, globalIdx)}
+                      title="削除"
+                    >
+                      ✕
+                    </button>
+                    <div className="sl-slot-preview">
+                      <div className="sl-slot-chars">
+                        {slot.previewChars.slice(0, 6).map((c, ci) =>
+                          c ? (
+                            <img key={ci} src={c.image} alt={c.name} className="sl-char-icon" />
+                          ) : (
+                            <div key={ci} className="sl-char-empty" />
+                          )
+                        )}
+                      </div>
                     </div>
+                    <div className="sl-slot-name">{slot.name}</div>
+                    <div className="sl-slot-meta">
+                      {formatTime(slot.totalTimeMs)} · {slot.itemCount}手 · {formatDate(slot.savedAt)}
+                    </div>
+                  </>
+                ) : (
+                  <div className="sl-slot-empty-label">
+                    {mode === 'save' ? t('空きスロット') : t('データなし')}
                   </div>
-                  <div className="sl-slot-name">{slot.name}</div>
-                  <div className="sl-slot-meta">
-                    {formatTime(slot.totalTimeMs)} · {slot.itemCount}手 · {formatDate(slot.savedAt)}
-                  </div>
-                </>
-              ) : (
-                <div className="sl-slot-empty-label">
-                  {mode === 'save' ? t('空きスロット') : t('データなし')}
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ページナビゲーション */}
+        <div className="sl-pagination">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
+            const info = getPageInfo(p);
+            const boss = info.isBoss ? bossData[p - 1] : null;
+            // rowBreakBefore フラグで強制改行
+            const forceBreak = boss && (boss as { rowBreakBefore?: boolean }).rowBreakBefore;
+            // ボス→フリーの切れ目にセパレーター（同行内のみ）
+            const showSeparator = p === BOSS_PAGE_COUNT + 1 && !forceBreak;
+            return (
+              <div key={p} style={{ display: 'contents' }}>
+                {forceBreak && <div className="sl-row-break" />}
+                {showSeparator && <div className="sl-page-separator" />}
+                <button
+                  className={`sl-page-btn${p === page ? ' active' : ''}`}
+                  onClick={() => { setPage(p); setOverlay(null); }}
+                  title={info.isBoss ? info.name : `フリー ${info.freeNum}`}
+                >
+                  {info.isBoss ? (
+                    <img src={info.image} alt={info.name} className="sl-page-icon" />
+                  ) : (
+                    <span className="sl-page-free-num">{info.freeNum}</span>
+                  )}
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         {/* オーバーレイダイアログ */}

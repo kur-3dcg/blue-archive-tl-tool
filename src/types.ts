@@ -29,6 +29,11 @@ export interface Character {
   nameKr?: string;
   nameTw?: string;
   nameCn?: string;
+  // NS関連
+  nsInterval?: number;     // 等間隔発動の間隔（秒）
+  nsDuration?: number;     // バフ効果時間（秒）。0またはundefinedはバフなし
+  nsConditional?: boolean; // 条件系NS（trueの場合は自動バー生成なし）
+  nsDelay?: number;        // NS発動から効果着弾までのディレイ（秒）
 }
 
 export type SlotType = 'striker' | 'special';
@@ -84,6 +89,7 @@ export interface TimelineState {
   standaloneComments: StandaloneComment[];
   stageGimmicks: StageGimmick[];
   skillQueueOrder?: number[]; // スキル使用順（slotIndexの配列）。undefinedはスロット番号順
+  nsBarOffsets?: Record<number, number[]>; // NS発動位置の調整量[slotIndex][barIndex]（ms、累積でbar以降に適用）
 }
 
 export interface StandaloneComment {
@@ -134,4 +140,7 @@ export type TimelineAction =
   | { type: 'SET_MODE'; mode: GameMode }
   | { type: 'SET_SLOT_SKILL_INDEX'; slotIndex: number; skillIndex: number }
   | { type: 'SET_SKILL_QUEUE_ORDER'; order: number[] | undefined }
+  | { type: 'SWAP_SLOTS'; slotA: number; slotB: number }
+  | { type: 'ADJUST_NS_BAR'; slotIndex: number; barIndex: number; deltaMs: number }
+  | { type: 'RESET_NS_BAR'; slotIndex: number; fromBarIndex: number }
   | { type: 'RESET_ALL' };

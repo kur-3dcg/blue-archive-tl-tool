@@ -6,106 +6,127 @@
   background: var(--timeline-bg);
 }
 
-.timeline-controls {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 10px 16px;
-  background: var(--bg-tertiary);
-  border-bottom: 1px solid var(--border-primary);
-  flex-shrink: 0;
-  flex-wrap: wrap;
+/* preset-btn, custom-time-input: CharacterPanel.css に移動済み */
+
+/* ─── NSレイヤーセクション ─── */
+.ns-layer-section {
+  border-top: 2px solid var(--separator-color);
+  position: relative;
 }
 
-.operation-ref {
-  display: flex;
-  gap: 12px;
-  font-size: 11px;
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-
-.operation-ref b {
-  color: var(--text-secondary);
-  font-weight: 600;
-}
-
-.timeline-control {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.timeline-control select {
-  background: var(--bg-control);
-  color: var(--text-primary);
-  border: 1px solid var(--border-tertiary);
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 14px;
-}
-
-.timeline-control button:not(.preset-btn) {
-  width: 30px;
+.ns-layer-row {
+  position: relative;
   height: 30px;
-  border: 1px solid var(--border-tertiary);
-  border-radius: 4px;
-  background: var(--bg-control);
-  color: var(--text-primary);
-  font-size: 18px;
-  cursor: pointer;
+  border-bottom: 1px solid var(--layer-border);
+  background: rgba(99, 102, 241, 0.04);
+}
+
+.ns-layer-row.ns-layer-row-alt {
+  background: rgba(99, 102, 241, 0.09);
+}
+
+.ns-layer-icon-area {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 32px;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  background: var(--layer-label-bg);
+  z-index: 5;
+  pointer-events: none;
 }
 
-.timeline-control button:not(.preset-btn):hover:not(:disabled) {
-  background: var(--bg-control-hover);
+.ns-layer-icon-area img {
+  width: 22px;
+  height: 22px;
+  border-radius: 3px;
+  border: 1px solid var(--border-secondary);
+  object-fit: cover;
 }
 
-.timeline-control button:not(.preset-btn):disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+/* NS発動ティック（縦線） */
+.ns-tick {
+  position: absolute;
+  width: 2px;
+  top: 3px;
+  bottom: 3px;
+  opacity: 0.75;
+  border-radius: 1px;
+  cursor: grab;
 }
 
-.preset-btn {
-  padding: 6px 24px;
-  border: 1px solid var(--border-tertiary);
-  border-radius: 5px;
-  background: var(--bg-control);
-  color: var(--text-secondary);
-  font-size: 14px;
+.ns-tick:hover {
+  opacity: 1;
+  width: 4px;
+  margin-left: -1px;
+}
+
+.ns-tick.dragging {
+  cursor: grabbing;
+  opacity: 1;
+}
+
+/* NSリセットメニュー */
+.ns-reset-menu {
+  position: fixed;
+  z-index: 300;
+  background: var(--bg-modal);
+  border: 1px solid var(--border-secondary);
+  border-radius: 6px;
+  padding: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.ns-reset-btn {
+  display: block;
+  padding: 6px 12px;
+  font-size: 13px;
+  background: none;
+  border: none;
+  color: var(--text-primary);
   cursor: pointer;
   white-space: nowrap;
+  border-radius: 4px;
 }
 
-.preset-btn:hover {
+.ns-reset-btn:hover {
   background: var(--bg-control-hover);
 }
 
-.preset-btn.active {
-  background: var(--bg-active);
-  border-color: var(--bg-active-border);
-  color: var(--text-active);
+/* NSバフ持続バー */
+.ns-buff-bar {
+  position: absolute;
+  height: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.22;
+  border-radius: 2px;
+  pointer-events: none;
 }
 
-.custom-time-input {
-  width: 60px;
-  padding: 5px 8px;
-  border: 1px solid var(--border-tertiary);
-  border-radius: 5px;
-  background: var(--bg-control);
-  color: var(--text-primary);
-  font-size: 14px;
-  font-family: monospace;
-  text-align: center;
+/* NSバー開始アイコン */
+.ns-bar-start-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid;
+  overflow: hidden;
+  z-index: 4;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-.custom-time-input::placeholder {
-  color: var(--text-dim);
+.ns-bar-start-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 

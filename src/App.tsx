@@ -3,6 +3,7 @@ import { CharacterPanel } from './components/CharacterPanel/CharacterPanel';
 import { Timeline } from './components/Timeline/Timeline';
 import { SharePanel, buildLoadState } from './components/SharePanel/SharePanel';
 import { SaveLoadModal } from './components/SaveLoad/SaveLoadModal';
+import { HelpModal, shouldShowHelp } from './components/HelpModal/HelpModal';
 import { useTimelineState } from './hooks/useTimelineState';
 import { decode } from './utils/shareCodec';
 import { computeCurrentQueueState, ACTIVE_SLOTS, EXTENDED_ACTIVE_SLOTS } from './utils/skillQueueValidator';
@@ -27,6 +28,10 @@ export default function App() {
   const [gameReplayMode, setGameReplayMode] = useState(false);
   const [editMode, setEditMode] = useState(true); // true=編成中, false=TL作成中
   const [pendingSlotIndex, setPendingSlotIndex] = useState<number | null>(null);
+  const [locked, setLocked] = useState(false);
+  const [queueValidation, setQueueValidation] = useState(false);
+  const [showNsLayers, setShowNsLayers] = useState(false);
+  const [showHelp, setShowHelp] = useState(() => shouldShowHelp());
 
   // ゲーム再現モード用：現在のキュー状態（順序付き slotIndex 配列）
   const currentQueueState = useMemo(() => {
@@ -139,6 +144,18 @@ export default function App() {
     })();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handleSetLayers = (newLayers: number) => {
+    if (newLayers < state.layers) {
+      const removedItems = state.items.filter((item) => item.layerIndex >= newLayers);
+      if (removedItems.length > 0) {
+        if (!window.confirm(`レイヤー${newLayers + 1}以降にスキルが${removedItems.length}個配置されています。削除しますか？`)) {
+          return;
+        }
+      }
+    }
+    dispatch({ type: 'SET_LAYERS', layers: newLayers });
+  };
+
   const t = useT();
 
   return (
@@ -230,8 +247,14 @@ export default function App() {
                 </a>
                 <div className="hamburger-divider" />
                 <div className="hamburger-section-label">{t('マニュアル')}</div>
+                <button
+                  className="hamburger-help-btn"
+                  onClick={() => { setShowHelp(true); setMenuOpen(false); }}
+                >
+                  {t('簡易マニュアル（操作方法）')}
+                </button>
                 <a href="https://note.com/kur7263/n/n2b856fe0e2a4" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
-                  {t('使い方・マニュアル（note）')}
+                  {t('詳細マニュアル（note）')}
                 </a>
                 <div className="hamburger-divider" />
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLScPJZCQZhZ-gdIcls9e-DUvQalF9Fx4pCkHLtn-Ec59eJMFcw/viewform?usp=dialog" target="_blank" rel="noopener noreferrer" className="hamburger-contact" onClick={() => setMenuOpen(false)}>
@@ -289,6 +312,9 @@ export default function App() {
         onSetSkillIndex={(slotIndex, skillIndex) =>
           dispatch({ type: 'SET_SLOT_SKILL_INDEX', slotIndex, skillIndex })
         }
+        onSwapSlots={(slotA, slotB) =>
+          dispatch({ type: 'SWAP_SLOTS', slotA, slotB })
+        }
         gameReplayMode={gameReplayMode}
         onToggleGameReplayMode={() => setGameReplayMode(v => !v)}
         currentQueueState={currentQueueState}
@@ -296,6 +322,19 @@ export default function App() {
         onToggleEditMode={() => setEditMode(v => !v)}
         pendingSlotIndex={pendingSlotIndex}
         onSetPendingSlotIndex={setPendingSlotIndex}
+        snapMode={state.snapMode}
+        onSetSnapMode={(m) => dispatch({ type: 'SET_SNAP_MODE', snapMode: m })}
+        locked={locked}
+        onSetLocked={setLocked}
+        queueValidation={queueValidation}
+        onSetQueueValidation={setQueueValidation}
+        showNsLayers={showNsLayers}
+        onToggleNsLayers={() => setShowNsLayers(v => !v)}
+        layerCount={state.layers}
+        onSetLayers={handleSetLayers}
+        targetTimeMs={state.targetTimeMs}
+        onSetTargetTime={(ms) => dispatch({ type: 'SET_TARGET_TIME', targetTimeMs: ms })}
+        onSetTotalTime={(ms) => dispatch({ type: 'SET_TOTAL_TIME', totalTimeMs: ms })}
       />
       <Timeline
         state={state}
@@ -303,6 +342,9 @@ export default function App() {
         arrowMode={arrowMode}
         pendingSlotIndex={pendingSlotIndex}
         onClearPendingSlot={() => setPendingSlotIndex(null)}
+        locked={locked}
+        queueValidation={queueValidation}
+        showNsLayers={showNsLayers}
       />
       {showSaveLoad && (
         <SaveLoadModal
@@ -313,6 +355,7 @@ export default function App() {
           onSaved={triggerCoreTooltip}
         />
       )}
+      {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
     </div>
     </LanguageContext.Provider>
   );

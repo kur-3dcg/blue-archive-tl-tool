@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { StandaloneComment } from '../../types';
-import { useT } from '../../i18n';
 import './TextMarkerPanel.css';
 
 interface Props {
   standaloneComments: StandaloneComment[];
   onSetComments: (comments: StandaloneComment[]) => void;
+  open: boolean;
 }
 
 function msToCS(ms: number): string {
@@ -41,11 +41,8 @@ function textToComments(text: string, existing: StandaloneComment[]): Standalone
   return result;
 }
 
-export function TextMarkerPanel({ standaloneComments, onSetComments }: Props) {
-  const t = useT();
-  const [open, setOpen] = useState(false);
+export function TextMarkerPanel({ standaloneComments, onSetComments, open }: Props) {
   const [localText, setLocalText] = useState('');
-  const panelRef = useRef<HTMLDivElement>(null);
   const isFromTextArea = useRef(false);
 
   // standaloneComments → textarea（ドラッグ追加等の外部変更を反映）
@@ -67,42 +64,21 @@ export function TextMarkerPanel({ standaloneComments, onSetComments }: Props) {
     [onSetComments, standaloneComments],
   );
 
-  // パネル外クリックで閉じる
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e: MouseEvent) => {
-      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [open]);
+  if (!open) return null;
 
   return (
-    <div className="text-marker-panel-wrapper" ref={panelRef}>
-      <button
-        className={`text-marker-btn${open ? ' active' : ''}`}
-        onClick={() => setOpen((v) => !v)}
-        title="テキストマーカーパネル"
-      >
-        {t('テキスト')}
-      </button>
-      {open && (
-        <div className="text-marker-panel">
-          <div className="text-marker-panel-header">テキスト入力</div>
-          <textarea
-            className="text-marker-textarea"
-            value={localText}
-            onChange={handleChange}
-            placeholder={'3:30.00 フリーテキスト\n3:20.00 追加テキスト'}
-            spellCheck={false}
-          />
-          <div className="text-marker-panel-hint">
-            形式: M:SS.dd テキスト（1行1マーカー）
-          </div>
-        </div>
-      )}
+    <div className="text-marker-panel">
+      <div className="text-marker-panel-header">テキスト入力</div>
+      <textarea
+        className="text-marker-textarea"
+        value={localText}
+        onChange={handleChange}
+        placeholder={'3:30.00 フリーテキスト\n3:20.00 追加テキスト'}
+        spellCheck={false}
+      />
+      <div className="text-marker-panel-hint">
+        形式: M:SS.dd テキスト（1行1マーカー）
+      </div>
     </div>
   );
 }

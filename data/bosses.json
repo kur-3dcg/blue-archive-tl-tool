@@ -1,0 +1,19 @@
+[
+  { "name": "ビナー",               "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/binah.jpg" },
+  { "name": "ケセド",               "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/chesed.jpg" },
+  { "name": "ホド",                 "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/hod.jpg" },
+  { "name": "シロクロ",             "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/shiro_kuro.jpg" },
+  { "name": "ペロロジラ",           "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/perorodzilla.jpg" },
+  { "name": "ゴズ",                 "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/goz.jpg" },
+  { "name": "ヒエロニムス",         "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/hieronymus.jpg" },
+  { "name": "カイテンジャー",       "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/kaiten_fx_mk.0.jpg" },
+  { "name": "グレゴリオ",           "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/gregorius.jpg" },
+  { "name": "ホバークラフトワカモ", "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/wakamo_hovercraft.jpg" },
+  { "name": "クロカゲ",             "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/myouki_kurokage.jpg" },
+  { "name": "ゲブラ",               "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/geburah.jpg" },
+  { "name": "イェソド",             "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/yesod.jpg" },
+  { "name": "ドラム缶カニ",         "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/drumbarka.jpg" },
+  { "name": "セトの憤怒",           "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/the_fury_of_set.jpg", "rowBreakBefore": true },
+  { "name": "コクマー",             "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/chokmah.jpg" },
+  { "name": "ティファレト",         "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/tiphareth.jpg" }
+]

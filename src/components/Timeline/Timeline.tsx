@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import type { TimelineState, TimelineAction, SnapMode, EtcIcon } from '../../types';
 import etcData from '../../../data/etc.json';
-import { RULER_HEIGHT, LAYER_HEIGHT, ITEM_WIDTH, MAX_LAYERS, TIME_PRESETS, TIMELINE_PAD_LEFT, TIMELINE_PAD_RIGHT, VIEWPORT_DURATION_S, MAX_TOTAL_TIME_MS, STANDALONE_COMMENT_HEIGHT } from '../../constants';
+import { RULER_HEIGHT, LAYER_HEIGHT, ITEM_WIDTH, TIMELINE_PAD_LEFT, TIMELINE_PAD_RIGHT, VIEWPORT_DURATION_S, STANDALONE_COMMENT_HEIGHT } from '../../constants';
 import { TimelineRuler } from './TimelineRuler';
 import { TimelineLayer } from './TimelineLayer';
 import { TimelineCursor } from './TimelineCursor';
@@ -9,6 +9,7 @@ import { BubbleLayer } from './BubbleLayer';
 import { StandaloneCommentLayer } from './StandaloneCommentLayer';
 import { ArrowLayer } from './ArrowLayer';
 import { CostRuler, COST_RULER_HEIGHT } from './CostRuler';
+import { NSLayerSection } from './NSLayerSection';
 import { snapTime, snapToNearestItem } from '../../utils/snap';
 import { calculateItemCosts, computeArmorCounts } from '../../utils/costCalc';
 import { msToDisplay, costToDisplay } from '../../utils/timeFormat';
@@ -22,20 +23,21 @@ interface Props {
   arrowMode: boolean;
   pendingSlotIndex: number | null;
   onClearPendingSlot: () => void;
+  locked: boolean;
+  queueValidation: boolean;
+  showNsLayers: boolean;
 }
 
 
-export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClearPendingSlot }: Props) {
+export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClearPendingSlot, locked, queueValidation, showNsLayers }: Props) {
   const t = useT();
   const containerRef = useRef<HTMLDivElement>(null);
   const [cursorX, setCursorX] = useState(0);
+  const [cursorY, setCursorY] = useState(0);
   const [cursorTimeMs, setCursorTimeMs] = useState(0);
   const [cursorVisible, setCursorVisible] = useState(false);
   const [dragInfo, setDragInfo] = useState<{ timeMs: number; itemId: string } | null>(null);
-  const [customTimeInput, setCustomTimeInput] = useState('');
-  const [targetTimeInput, setTargetTimeInput] = useState('');
-  const [locked, setLocked] = useState(false);
-  const [queueValidation, setQueueValidation] = useState(false);
+  const [isNsDragging, setIsNsDragging] = useState(false);
   const [commentModal, setCommentModal] = useState<
     | { kind: 'item'; id: string }
     | { kind: 'sc-new'; timeMs: number }
@@ -154,7 +156,9 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
       const timeMs = ((totalWidth - TIMELINE_PAD_RIGHT - xInContent) / zoomLevel) * 1000;
       const clampedTime = Math.max(0, Math.min(totalTimeMs, timeMs));
 
+      const yInContent = e.clientY - rect.top + container.scrollTop;
       setCursorX(xInContent);
+      setCursorY(yInContent);
       setCursorTimeMs(snapTime(clampedTime, snapMode));
       setCursorVisible(true);
     },
@@ -415,137 +419,6 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
 
   return (
     <div className="timeline-wrapper">
-      <div className="timeline-controls">
-        <div className="operation-ref">
-          <span>{t('クリック: 選択')}</span>
-          <span>{t('ダブルクリック: フリーコメント')}</span>
-          <span>{t('右クリック: 削除')}</span>
-          <span>{t('ドラッグ: 移動')}</span>
-          <span>{t('Shift+クリック: EX対象')}</span>
-          <span>{t('Ctrl+クリック: コメント')}</span>
-          <span>{t('Alt+クリック: 矢印')}</span>
-        </div>
-        <span className="timeline-control" style={{ marginLeft: 'auto' }}>
-          {t('時間')}:
-          {TIME_PRESETS.map((p) => (
-            <button
-              key={p.ms}
-              className={`preset-btn${totalTimeMs === p.ms ? ' active' : ''}`}
-              onClick={() => dispatch({ type: 'SET_TOTAL_TIME', totalTimeMs: p.ms })}
-            >
-              {p.label}
-            </button>
-          ))}
-          <input
-            className="custom-time-input"
-            type="text"
-            placeholder="M:SS"
-            value={customTimeInput}
-            onChange={(e) => setCustomTimeInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key !== 'Enter') return;
-              const m = customTimeInput.match(/^(\d+):(\d{2})(?:\.(\d{1,3}))?$/);
-              if (!m) return;
-              const ms = (Number(m[1]) * 60 + Number(m[2])) * 1000 + Number((m[3] ?? '').padEnd(3, '0'));
-              if (ms > 0 && ms <= MAX_TOTAL_TIME_MS) {
-                dispatch({ type: 'SET_TOTAL_TIME', totalTimeMs: ms });
-                setCustomTimeInput('');
-              }
-            }}
-            title="自由入力（例: 4:30 / 10:00）Enterで確定（最大10:00）"
-          />
-        </span>
-        <span className="timeline-control">
-          {t('スナップ')}:
-          <button
-            className={`preset-btn${snapMode === '1F' ? ' active' : ''}`}
-            onClick={() => dispatch({ type: 'SET_SNAP_MODE', snapMode: snapMode === '0.1s' ? '1F' : '0.1s' })}
-          >
-            {snapMode === '1F' ? '1F' : t('0.1秒')}
-          </button>
-        </span>
-        <span className="timeline-control">
-          <button
-            className={`preset-btn${locked ? ' active' : ''}`}
-            onClick={() => setLocked((v) => !v)}
-            title="ONにするとスキルアイコンのドラッグ移動を禁止（クリック操作は可能）"
-          >
-            {locked ? t('🔒移動禁止') : t('🔓移動可')}
-          </button>
-        </span>
-        <span className="timeline-control">
-          <button
-            className={`preset-btn${queueValidation ? ' active' : ''}`}
-            onClick={() => setQueueValidation((v) => !v)}
-            title="スキル順検証：ゲーム内のスキルカード順に合わないアイテムを赤くハイライト"
-          >
-            {t('スキル順')}
-          </button>
-        </span>
-        <label className="timeline-control">
-          {t('レイヤー')}:
-          <select
-            value={layers}
-            onChange={(e) => {
-              const newLayers = Number(e.target.value);
-              if (newLayers < layers) {
-                const removedItems = items.filter((item) => item.layerIndex >= newLayers);
-                if (removedItems.length > 0) {
-                  if (!window.confirm(`レイヤー${newLayers + 1}以降にスキルが${removedItems.length}個配置されています。削除しますか？`)) {
-                    return;
-                  }
-                }
-              }
-              dispatch({ type: 'SET_LAYERS', layers: newLayers });
-            }}
-          >
-            {Array.from({ length: MAX_LAYERS }, (_, i) => (
-              <option key={i + 1} value={i + 1}>
-                {i + 1}
-              </option>
-            ))}
-          </select>
-        </label>
-        <span className="timeline-control">
-          {t('目標')}:
-          <input
-            className="custom-time-input"
-            type="text"
-            placeholder="M:SS.000"
-            value={targetTimeInput}
-            onChange={(e) => setTargetTimeInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key !== 'Enter') return;
-              const val = targetTimeInput.trim();
-              if (!val) {
-                dispatch({ type: 'SET_TARGET_TIME', targetTimeMs: undefined });
-                setTargetTimeInput('');
-                return;
-              }
-              const m = val.match(/^(\d+):(\d{2})(?:\.(\d{1,3}))?$/);
-              if (!m) return;
-              const ms = (Number(m[1]) * 60 + Number(m[2])) * 1000 + Number((m[3] ?? '').padEnd(3, '0'));
-              if (ms >= 0 && ms <= totalTimeMs) {
-                dispatch({ type: 'SET_TARGET_TIME', targetTimeMs: ms });
-                setTargetTimeInput('');
-              }
-            }}
-            title="目標時間を入力（例: 1:30 / 1:30.500）Enterで確定、空欄で削除"
-          />
-          {targetTimeMs !== undefined && (
-            <button
-              className="preset-btn"
-              onClick={() => {
-                dispatch({ type: 'SET_TARGET_TIME', targetTimeMs: undefined });
-                setTargetTimeInput('');
-              }}
-              title="目標時間を削除"
-            >
-              {t('解除')}
-            </button>
-          )}
-        </span>
-      </div>
       <div className="timeline-nav-wrapper">
         <button
           className="timeline-nav-btn timeline-nav-left"
@@ -640,12 +513,31 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
               onRemoveArrow={handleRemoveArrow}
             />
           </div>
+          {/* NSレイヤーセクション */}
+          {showNsLayers && (
+            <NSLayerSection
+              slots={slots}
+              totalWidth={totalWidth}
+              totalTimeMs={state.totalTimeMs}
+              zoomLevel={zoomLevel}
+              nsBarOffsets={state.nsBarOffsets}
+              onAdjustNsBar={(slotIndex, barIndex, deltaMs) =>
+                dispatch({ type: 'ADJUST_NS_BAR', slotIndex, barIndex, deltaMs })
+              }
+              onResetNsBar={(slotIndex, fromBarIndex) =>
+                dispatch({ type: 'RESET_NS_BAR', slotIndex, fromBarIndex })
+              }
+              onDragChange={setIsNsDragging}
+              nsSnapMode={state.snapMode}
+            />
+          )}
           <TimelineCursor
             x={cursorX}
             timeMs={cursorTimeMs}
             visible={cursorVisible}
             layerTop={layerAreaTop}
             layerBottom={layerAreaBottom}
+            dragY={(dragInfo !== null || isNsDragging) ? cursorY : undefined}
           />
           {/* スタンドアロンコメントのティール縦線 */}
           {standaloneComments.map((comment) => {
