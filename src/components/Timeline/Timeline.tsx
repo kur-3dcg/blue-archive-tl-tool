@@ -521,11 +521,21 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
               totalTimeMs={state.totalTimeMs}
               zoomLevel={zoomLevel}
               nsBarOffsets={state.nsBarOffsets}
+              nsConditionalTicks={state.nsConditionalTicks}
               onAdjustNsBar={(slotIndex, barIndex, deltaMs) =>
                 dispatch({ type: 'ADJUST_NS_BAR', slotIndex, barIndex, deltaMs })
               }
               onResetNsBar={(slotIndex, fromBarIndex) =>
                 dispatch({ type: 'RESET_NS_BAR', slotIndex, fromBarIndex })
+              }
+              onAddNsConditionalTick={(slotIndex, timeMs) =>
+                dispatch({ type: 'ADD_NS_CONDITIONAL_TICK', slotIndex, timeMs })
+              }
+              onMoveNsConditionalTick={(slotIndex, tickIndex, newTimeMs) =>
+                dispatch({ type: 'MOVE_NS_CONDITIONAL_TICK', slotIndex, tickIndex, newTimeMs })
+              }
+              onRemoveNsConditionalTick={(slotIndex, tickIndex) =>
+                dispatch({ type: 'REMOVE_NS_CONDITIONAL_TICK', slotIndex, tickIndex })
               }
               onDragChange={setIsNsDragging}
               nsSnapMode={state.snapMode}

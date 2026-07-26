@@ -90,6 +90,7 @@ export interface TimelineState {
   stageGimmicks: StageGimmick[];
   skillQueueOrder?: number[]; // スキル使用順（slotIndexの配列）。undefinedはスロット番号順
   nsBarOffsets?: Record<number, number[]>; // NS発動位置の調整量[slotIndex][barIndex]（ms、累積でbar以降に適用）
+  nsConditionalTicks?: Record<number, number[]>; // 条件系NSの手動配置タイムスタンプ[slotIndex]（ms）
 }
 
 export interface StandaloneComment {
@@ -143,4 +144,7 @@ export type TimelineAction =
   | { type: 'SWAP_SLOTS'; slotA: number; slotB: number }
   | { type: 'ADJUST_NS_BAR'; slotIndex: number; barIndex: number; deltaMs: number }
   | { type: 'RESET_NS_BAR'; slotIndex: number; fromBarIndex: number }
+  | { type: 'ADD_NS_CONDITIONAL_TICK'; slotIndex: number; timeMs: number }
+  | { type: 'MOVE_NS_CONDITIONAL_TICK'; slotIndex: number; tickIndex: number; newTimeMs: number }
+  | { type: 'REMOVE_NS_CONDITIONAL_TICK'; slotIndex: number; tickIndex: number }
   | { type: 'RESET_ALL' };

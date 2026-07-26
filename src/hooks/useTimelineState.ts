@@ -55,6 +55,7 @@ const initialState: TimelineState = {
   stageGimmicks: [],
   skillQueueOrder: undefined,
   nsBarOffsets: {},
+  nsConditionalTicks: {},
 };
 
 function reducer(state: TimelineState, action: TimelineAction): TimelineState {
@@ -68,6 +69,8 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         const removedItemIds = new Set(
           state.items.filter((it) => it.slotIndex === action.slotIndex).map((it) => it.id)
         );
+        const newConditional = { ...(state.nsConditionalTicks ?? {}) };
+        delete newConditional[action.slotIndex];
         return {
           ...state,
           slots: newSlots,
@@ -75,6 +78,7 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
           arrows: state.arrows.filter(
             (a) => !removedItemIds.has(a.fromItemId) && !removedItemIds.has(a.toItemId)
           ),
+          nsConditionalTicks: newConditional,
         };
       }
       // キャラ設定時、スキル0番（EX1）のデータから自動設定 + activeSkillIndexをリセット
@@ -316,6 +320,7 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         arrows: [],
         standaloneComments: [],
         stageGimmicks: [],
+        nsConditionalTicks: {},
       };
     }
 
@@ -394,12 +399,26 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         if (idx === slotB) return slotA;
         return idx;
       });
+      const currentOffsets = state.nsBarOffsets ?? {};
+      const newOffsets = { ...currentOffsets };
+      const offsetA = newOffsets[slotA];
+      const offsetB = newOffsets[slotB];
+      if (offsetA !== undefined) newOffsets[slotB] = offsetA; else delete newOffsets[slotB];
+      if (offsetB !== undefined) newOffsets[slotA] = offsetB; else delete newOffsets[slotA];
+      const currentConditional = state.nsConditionalTicks ?? {};
+      const newConditionalSwap = { ...currentConditional };
+      const condA = newConditionalSwap[slotA];
+      const condB = newConditionalSwap[slotB];
+      if (condA !== undefined) newConditionalSwap[slotB] = condA; else delete newConditionalSwap[slotB];
+      if (condB !== undefined) newConditionalSwap[slotA] = condB; else delete newConditionalSwap[slotA];
       return {
         ...state,
         slots: newSlots,
         slotCostConfigs: newConfigs,
         items: newItems,
         skillQueueOrder: newOrder,
+        nsBarOffsets: newOffsets,
+        nsConditionalTicks: newConditionalSwap,
       };
     }
 
@@ -418,6 +437,27 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
       const slotAdj = [...(current[slotIndex] ?? [])];
       for (let i = fromBarIndex; i < slotAdj.length; i++) slotAdj[i] = 0;
       return { ...state, nsBarOffsets: { ...current, [slotIndex]: slotAdj } };
+    }
+
+    case 'ADD_NS_CONDITIONAL_TICK': {
+      const current = state.nsConditionalTicks ?? {};
+      const slotTicks = [...(current[action.slotIndex] ?? []), action.timeMs];
+      return { ...state, nsConditionalTicks: { ...current, [action.slotIndex]: slotTicks } };
+    }
+
+    case 'MOVE_NS_CONDITIONAL_TICK': {
+      const current = state.nsConditionalTicks ?? {};
+      const slotTicks = [...(current[action.slotIndex] ?? [])];
+      if (action.tickIndex >= 0 && action.tickIndex < slotTicks.length) {
+        slotTicks[action.tickIndex] = action.newTimeMs;
+      }
+      return { ...state, nsConditionalTicks: { ...current, [action.slotIndex]: slotTicks } };
+    }
+
+    case 'REMOVE_NS_CONDITIONAL_TICK': {
+      const current = state.nsConditionalTicks ?? {};
+      const slotTicks = (current[action.slotIndex] ?? []).filter((_, i) => i !== action.tickIndex);
+      return { ...state, nsConditionalTicks: { ...current, [action.slotIndex]: slotTicks } };
     }
 
     case 'RESET_ALL':
@@ -476,6 +516,7 @@ function loadFromStorage(base: TimelineState): TimelineState {
       standaloneComments: parsed.standaloneComments ?? base.standaloneComments,
       stageGimmicks: (parsed.stageGimmicks as StageGimmick[] | undefined) ?? base.stageGimmicks,
       skillQueueOrder: parsed.skillQueueOrder,
+      nsConditionalTicks: (parsed.nsConditionalTicks as Record<number, number[]> | undefined) ?? base.nsConditionalTicks,
     };
   } catch {
     return base;

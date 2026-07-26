@@ -58,6 +58,15 @@
   cursor: grab;
 }
 
+.ns-tick::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -6px;
+  right: -6px;
+}
+
 .ns-tick:hover {
   opacity: 1;
   width: 4px;
@@ -67,6 +76,11 @@
 .ns-tick.dragging {
   cursor: grabbing;
   opacity: 1;
+}
+
+/* 条件系NSの行（クリックでチック追加） */
+.ns-layer-row.ns-layer-row-conditional {
+  cursor: crosshair;
 }
 
 /* NSリセットメニュー */
