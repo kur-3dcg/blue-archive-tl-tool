@@ -207,7 +207,6 @@ export function CharacterPanel({
 
     // 編成中: アイコン行＋設定行を同一グリッドで表示（列が自動的に揃う）
     if (editMode) {
-      const hasMultiEX = slots.some(s => s.character?.skills && s.character.skills.length > 1);
       return (
         <div
           className="slots-with-settings-grid"
@@ -281,29 +280,6 @@ export function CharacterPanel({
             );
           })}
 
-          {/* EXタブ行（複数EXキャラがいる場合のみ） */}
-          {hasMultiEX && (
-            <>
-              <div className="settings-row-label">EX</div>
-              {slots.map((slot, i) => (
-                <div key={i} className="settings-cell">
-                  {slot.character?.skills && slot.character.skills.length > 1 && (
-                    <div className="slot-skill-tabs">
-                      {slot.character.skills.map((skill, idx) => (
-                        <button
-                          key={idx}
-                          className={`slot-skill-tab${(slotCostConfigs[i].activeSkillIndex ?? 0) === idx ? ' active' : ''}`}
-                          onClick={() => onSetSkillIndex(i, idx)}
-                          title={skill.label}
-                        >{skill.label}</button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </>
-          )}
-
           {/* コスト行 */}
           <div className="settings-row-label">{t('コスト')}</div>
           {slots.map((slot, i) => (
@@ -361,71 +337,65 @@ export function CharacterPanel({
       );
     }
 
-    // TL作成中: コンパクトアイコンのみ
+    // TL作成中: コンパクトアイコン + EXタブ行
+    const hasMultiEX = slots.some(s => s.character?.skills && s.character.skills.length > 1);
     return (
-      <>
-        <div className="slot-group-compact">
-          <div className="slot-group-label-sm">ST</div>
-          <div className="slot-group-slots">
-            {stSlots.map((slot, i) => {
-              const qPos = totalFilledSlots > activeSlots ? effectiveQueue.indexOf(i) + 1 : undefined;
-              return (
-                <SlotSelector
-                  key={i}
-                  slotIndex={i}
-                  slotType="striker"
-                  character={slot.character}
-                  characters={stCharacters}
-                  editMode={editMode}
-                  onSelect={(c) => onSetCharacter(i, c)}
-                  costConfig={slotCostConfigs[i]}
-                  onSetCost={(cost) => onSetSlotCost(i, cost)}
-                  onSetDelay={(delay) => onSetSlotDelay(i, delay)}
-                  onSetUniqueWeapon4={(v) => onSetUniqueWeapon4(i, v)}
-                  onSetUniqueWeapon2={(v) => onSetUniqueWeapon2(i, v)}
-                  queuePosition={qPos}
-                  queueBadgeColor={qPos !== undefined ? QUEUE_BADGE_COLORS[qPos - 1] : undefined}
-                  totalFilledSlots={totalFilledSlots}
-                  onSetQueuePosition={(pos) => handleSetQueuePosition(i, pos)}
-                  onSetSkillIndex={(idx) => onSetSkillIndex(i, idx)}
-                  compact
-                />
-              );
-            })}
-          </div>
-        </div>
-        <div className="slot-group-compact">
-          <div className="slot-group-label-sm">SP</div>
-          <div className="slot-group-slots">
-            {spSlots.map((slot, i) => {
-              const si = stCount + i;
-              const qPos = totalFilledSlots > activeSlots ? effectiveQueue.indexOf(si) + 1 : undefined;
-              return (
-                <SlotSelector
-                  key={si}
-                  slotIndex={si}
-                  slotType="special"
-                  character={slot.character}
-                  characters={spCharacters}
-                  editMode={editMode}
-                  onSelect={(c) => onSetCharacter(si, c)}
-                  costConfig={slotCostConfigs[si]}
-                  onSetCost={(cost) => onSetSlotCost(si, cost)}
-                  onSetDelay={(delay) => onSetSlotDelay(si, delay)}
-                  onSetUniqueWeapon4={(v) => onSetUniqueWeapon4(si, v)}
-                  onSetUniqueWeapon2={(v) => onSetUniqueWeapon2(si, v)}
-                  queuePosition={qPos}
-                  queueBadgeColor={qPos !== undefined ? QUEUE_BADGE_COLORS[qPos - 1] : undefined}
-                  totalFilledSlots={totalFilledSlots}
-                  onSetQueuePosition={(pos) => handleSetQueuePosition(si, pos)}
-                  onSetSkillIndex={(idx) => onSetSkillIndex(si, idx)}
-                  compact
-                />
-              );
-            })}
-          </div>
-        </div>
-      </>
+      <div
+        className="slots-with-settings-grid"
+        style={{ gridTemplateColumns: `auto repeat(${slots.length}, max-content)` }}
+      >
+        {/* アイコン行 */}
+        <div className="settings-row-label" />
+        {slots.map((slot, i) => {
+          const qPos = totalFilledSlots > activeSlots ? effectiveQueue.indexOf(i) + 1 : undefined;
+          return (
+            <div key={i} className="slot-icon-cell">
+              <SlotSelector
+                slotIndex={i}
+                slotType={i < stCount ? 'striker' : 'special'}
+                character={slot.character}
+                characters={i < stCount ? stCharacters : spCharacters}
+                editMode={editMode}
+                onSelect={(c) => onSetCharacter(i, c)}
+                costConfig={slotCostConfigs[i]}
+                onSetCost={(cost) => onSetSlotCost(i, cost)}
+                onSetDelay={(delay) => onSetSlotDelay(i, delay)}
+                onSetUniqueWeapon4={(v) => onSetUniqueWeapon4(i, v)}
+                onSetUniqueWeapon2={(v) => onSetUniqueWeapon2(i, v)}
+                queuePosition={qPos}
+                queueBadgeColor={qPos !== undefined ? QUEUE_BADGE_COLORS[qPos - 1] : undefined}
+                totalFilledSlots={totalFilledSlots}
+                onSetQueuePosition={(pos) => handleSetQueuePosition(i, pos)}
+                onSetSkillIndex={(idx) => onSetSkillIndex(i, idx)}
+                compact
+              />
+            </div>
+          );
+        })}
+
+        {/* EXタブ行（複数EXキャラがいる場合のみ） */}
+        {hasMultiEX && (
+          <>
+            <div className="settings-row-label">EX</div>
+            {slots.map((slot, i) => (
+              <div key={i} className="settings-cell">
+                {slot.character?.skills && slot.character.skills.length > 1 && (
+                  <div className="slot-skill-tabs">
+                    {slot.character.skills.map((skill, idx) => (
+                      <button
+                        key={idx}
+                        className={`slot-skill-tab${(slotCostConfigs[i].activeSkillIndex ?? 0) === idx ? ' active' : ''}`}
+                        onClick={() => onSetSkillIndex(i, idx)}
+                        title={skill.label}
+                      >{skill.label}</button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </>
+        )}
+      </div>
     );
   };
 
