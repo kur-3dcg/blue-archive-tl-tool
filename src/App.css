@@ -54,6 +54,32 @@ body {
   gap: 16px;
 }
 
+.header-affiliate {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.header-affiliate-text {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.header-affiliate-text:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.header-affiliate img {
+  height: 32px;
+  width: auto;
+  border-radius: 3px;
+  display: block;
+}
+
 .saveload-btns {
   display: flex;
   gap: 4px;

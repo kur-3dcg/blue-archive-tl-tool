@@ -22,6 +22,29 @@ const THEME_LABELS: Record<Theme, string> = {
   blue: 'ブルー',
 };
 
+const AFFILIATE_ITEMS = [
+  { id: 'RJ01678210', folder: 'RJ01679000', text: '【ブルーアーカイブ】セイアASMR～太陽と月と言葉と君の～' },
+  { id: 'RJ01678178', folder: 'RJ01679000', text: '【ブルーアーカイブ】ミヨASMR～先生が、悪いんですよ?～' },
+  { id: 'RJ01547274', folder: 'RJ01548000', text: '【ブルーアーカイブ】キサキASMR～混ざる香りと夢心地～' },
+  { id: 'RJ01547253', folder: 'RJ01548000', text: '【ブルーアーカイブ】イロハASMR～怠惰で甘美な過ごし方～' },
+  { id: 'RJ01430276', folder: 'RJ01431000', text: '【ブルーアーカイブ】シグレ(温泉)ASMR～溶けていく温度を交わして～' },
+  { id: 'RJ01427890', folder: 'RJ01428000', text: '【ブルーアーカイブ】セリナ(クリスマス)ASMR～それは聖なる、健やかで真っすぐな～' },
+  { id: 'RJ01322473', folder: 'RJ01323000', text: '【ブルーアーカイブ】ミサキASMR～なんじ、健やかならざる時も～' },
+  { id: 'RJ01323001', folder: 'RJ01324000', text: '【ブルーアーカイブ】カズサASMR～ただあなたを癒したくて～' },
+  { id: 'RJ01229253', folder: 'RJ01230000', text: '【ブルーアーカイブ】ノアASMR～めげないあなたのすぐ横で～' },
+  { id: 'RJ01229288', folder: 'RJ01230000', text: '【ブルーアーカイブ】ミヤコ(水着)ASMR～ふたりきりの島でおはようを。～' },
+  { id: 'RJ01144225', folder: 'RJ01145000', text: '【ブルーアーカイブ】カヨコASMR～穏やかで温かい距離感～' },
+  { id: 'RJ01144236', folder: 'RJ01145000', text: '【ブルーアーカイブ】ヒマリASMR～ほどけた心をゆだねられ～' },
+  { id: 'RJ01078257', folder: 'RJ01079000', text: '【ブルーアーカイブ】ヒナASMR～甘えられる優しいひと時～' },
+  { id: 'RJ01078259', folder: 'RJ01079000', text: '【ブルーアーカイブ】ウイASMR～囁きすらも届く位置で～' },
+  { id: 'RJ01017702', folder: 'RJ01018000', text: '【ブルーアーカイブ】シュン&シュン(幼女)ASMR～心地良い眠りに誘われて～' },
+  { id: 'RJ01017895', folder: 'RJ01018000', text: '【ブルーアーカイブ】チナツ(温泉)ASMR～あなたを癒す湯上がりの～' },
+  { id: 'RJ403038',   folder: 'RJ404000',   text: '【ブルーアーカイブ】ユウカASMR～頑張るあなたのすぐそばに～' },
+  { id: 'RJ403079',   folder: 'RJ404000',   text: '【ブルーアーカイブ】ミユASMR～ゴミ箱の中でふたりきり～' },
+  { id: 'RJ370099',   folder: 'RJ371000',   text: '【ブルーアーカイブ】ノノミASMR～ほのかな体温を感じる距離～' },
+  { id: 'RJ370190',   folder: 'RJ371000',   text: '【ブルーアーカイブ】ツバキASMR～穏やかな寝息に包まれて～' },
+] as const;
+
 export default function App() {
   const [state, dispatch, resetAll] = useTimelineState();
   const [arrowMode, setArrowMode] = useState(false);
@@ -59,6 +82,10 @@ export default function App() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [gameReplayMode, editMode, currentQueueState, state.mode, state.slots]);
+
+  const [affiliateItem] = useState(
+    () => AFFILIATE_ITEMS[Math.floor(Math.random() * AFFILIATE_ITEMS.length)]
+  );
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [showMenuTooltip, setShowMenuTooltip] = useState(
@@ -164,6 +191,26 @@ export default function App() {
       <header className="app-header">
         <h1>{t('ブルアカ TL作成支援ツール')} <span className="app-build-date">{__BUILD_DATE__}</span></h1>
         <div className="app-header-right">
+          <div className="header-affiliate">
+            <a
+              rel="noopener sponsored"
+              href={`https://dlaf.jp/home/dlaf/=/t/m/link/work/aid/nommu9088_tltool/id/${affiliateItem.id}.html`}
+              target="_blank"
+            >
+              <img
+                src={`//img.dlsite.jp/modpub/images2/work/doujin/${affiliateItem.folder}/${affiliateItem.id}_img_sam_mini.jpg`}
+                alt=""
+              />
+            </a>
+            <a
+              rel="noopener sponsored"
+              href={`https://dlaf.jp/home/dlaf/=/t/n/link/work/aid/nommu9088_tltool/id/${affiliateItem.id}.html`}
+              target="_blank"
+              className="header-affiliate-text"
+            >
+              {affiliateItem.text}
+            </a>
+          </div>
           <div className="saveload-btns">
             <button
               className="saveload-btn"
