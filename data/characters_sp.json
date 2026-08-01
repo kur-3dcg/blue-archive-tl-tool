@@ -170,6 +170,32 @@
     "nameCn": "一花（泳装）"
   },
   {
+    "name": "イブキ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/ibuki_swimsuit.png",
+    "reading": "いぶき（みずぎ）",
+    "school": "ゲヘナ",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 0,
+    "exDuration": null,
+    "nameEn": "Ibuki（Swimsuit）",
+    "nameKr": "이부키（수영복）",
+    "nameTw": "伊吹（泳裝）",
+    "nameCn": "伊吹（泳装）",
+    "skills": [
+      {
+        "label": "EX1",
+        "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/ibuki_swimsuit.png",
+        "cost": 0
+      },
+      {
+        "label": "EX2",
+        "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/ibuki_swimsuit_ex2.png",
+        "cost": 3
+      }
+    ]
+  },
+  {
     "name": "イロハ",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/iroha.png",
     "reading": "いろは",
@@ -632,6 +658,20 @@
     "nameKr": "세리나",
     "nameTw": "芹奈",
     "nameCn": "芹娜"
+  },
+  {
+    "name": "チアキ（水着）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/tiaki_swimsuit.png",
+    "reading": "ちあき（みずぎ）",
+    "school": "ゲヘナ",
+    "attackType": "貫通",
+    "armorType": "重装甲",
+    "cost": 4,
+    "exDuration": null,
+    "nameEn": "Chiaki（Swimsuit）",
+    "nameKr": "치아키（수영복）",
+    "nameTw": "千秋（泳裝）",
+    "nameCn": "千秋（泳装）"
   },
   {
     "name": "チェリノ（温泉）",
