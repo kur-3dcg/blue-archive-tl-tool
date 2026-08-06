@@ -3,6 +3,25 @@
     "name": "コピー",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/copy.png",
     "showWhen": "リオ",
-    "textPrefix": "C"
+    "textPrefix": "C",
+    "position": "left"
+  },
+  {
+    "name": "緑の聖遺物",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/green_relic.png",
+    "showWhen": null,
+    "position": "right"
+  },
+  {
+    "name": "赤の聖遺物",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/red_relic.png",
+    "showWhen": null,
+    "position": "right"
+  },
+  {
+    "name": "紫の聖遺物",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/etc/purple_relic.png",
+    "showWhen": null,
+    "position": "right"
   }
 ]

@@ -353,11 +353,12 @@ export async function generateTlImagePaged(
             ctx.stroke();
           }
 
-          // Etc icon badge (top-left)
+          // Etc icon badge (position depends on etc.json position field)
           if (item.targetEtcIcon) {
-            const etcMeta = (etcData as { name: string; image: string }[]).find((e) => e.name === item.targetEtcIcon);
+            const etcMeta = (etcData as { name: string; image: string; position?: string }[]).find((e) => e.name === item.targetEtcIcon);
             const eImgEl = etcMeta?.image ? imageCache.get(etcMeta.image) : undefined;
-            const ecx = iconX + badgeR - 2;
+            const isRight = etcMeta?.position === 'right';
+            const ecx = isRight ? iconX + ICON_SIZE - badgeR + 2 : iconX + badgeR - 2;
             const ecy = iconY + badgeR - 2;
             ctx.save();
             ctx.beginPath();

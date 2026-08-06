@@ -53,7 +53,7 @@ export default function App() {
   const [pendingSlotIndex, setPendingSlotIndex] = useState<number | null>(null);
   const [locked, setLocked] = useState(false);
   const [queueValidation, setQueueValidation] = useState(false);
-  const [showNsLayers, setShowNsLayers] = useState(false);
+  const [showNsLayers, setShowNsLayers] = useState(true);
   const [showHelp, setShowHelp] = useState(() => shouldShowHelp());
 
   // ゲーム再現モード用：現在のキュー状態（順序付き slotIndex 配列）

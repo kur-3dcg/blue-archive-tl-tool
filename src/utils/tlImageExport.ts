@@ -276,12 +276,13 @@ export async function generateTlImage(state: TimelineState, options: { transpare
           ctx.stroke();
         }
 
-        // Etc target icon: circular badge at top-left corner
+        // Etc target icon: circular badge (position depends on etc.json position field)
         if (item.targetEtcIcon) {
-          const etcIconMeta = (etcData as { name: string; image: string }[]).find((e) => e.name === item.targetEtcIcon);
+          const etcIconMeta = (etcData as { name: string; image: string; position?: string }[]).find((e) => e.name === item.targetEtcIcon);
           const eImgEl = etcIconMeta?.image ? imageCache.get(etcIconMeta.image) : undefined;
           const TR = 8;
-          const ecx = iconX + TR - 2; // 2px outside left edge
+          const isRight = etcIconMeta?.position === 'right';
+          const ecx = isRight ? iconX + ICON_SIZE - TR + 2 : iconX + TR - 2;
           const ecy = iconY + TR - 2;
           ctx.save();
           ctx.beginPath();

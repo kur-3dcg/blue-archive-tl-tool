@@ -177,7 +177,10 @@
     "attackType": "爆発",
     "armorType": "特殊装甲",
     "cost": 0,
-    "exDuration": null,
+    "exDuration": 0,
+    "nsInterval": 30,
+    "nsDuration": 20,
+    "nsConditional": true,
     "nameEn": "Ibuki（Swimsuit）",
     "nameKr": "이부키（수영복）",
     "nameTw": "伊吹（泳裝）",
@@ -186,12 +189,14 @@
       {
         "label": "EX1",
         "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/ibuki_swimsuit.png",
-        "cost": 0
+        "cost": 0,
+        "exDuration": 0
       },
       {
         "label": "EX2",
         "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/ibuki_swimsuit_ex2.png",
-        "cost": 3
+        "cost": 3,
+        "exDuration": 28
       }
     ]
   },

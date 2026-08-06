@@ -3,6 +3,7 @@ export interface EtcIcon {
   image: string;
   showWhen: string | null;
   textPrefix?: string;
+  position?: 'left' | 'right'; // バッジ表示位置（省略時は 'left'）
 }
 
 export interface CharacterSkill {

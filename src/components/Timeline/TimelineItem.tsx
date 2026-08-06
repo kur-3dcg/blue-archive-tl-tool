@@ -235,7 +235,6 @@ export function TimelineItem({
   const targetSlot = item.targetSlotIndex !== undefined ? allSlots?.[item.targetSlotIndex] : undefined;
   const targetChar = targetSlot?.character;
 
-  // etc対象アイコン（左上表示）
   const targetEtcIconData = item.targetEtcIcon
     ? etcIcons?.find((e) => e.name === item.targetEtcIcon)
     : undefined;
@@ -265,7 +264,7 @@ export function TimelineItem({
       {item.comment && <div className="timeline-item-comment-dot" />}
       {targetEtcIconData && (
         <img
-          className="timeline-item-target-etc"
+          className={targetEtcIconData.position === 'right' ? 'timeline-item-target' : 'timeline-item-target-etc'}
           src={targetEtcIconData.image}
           alt={targetEtcIconData.name}
           width={24}
