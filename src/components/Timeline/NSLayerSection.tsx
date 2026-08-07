@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect, Fragment } from 'react';
 import type { CharacterSlot, SnapMode } from '../../types';
 import { useCharName } from '../../i18n';
-import { TIMELINE_PAD_RIGHT, SLOT_COLORS } from '../../constants';
+import { TIMELINE_PAD_LEFT, TIMELINE_PAD_RIGHT, SLOT_COLORS } from '../../constants';
 import { snapTime } from '../../utils/snap';
 
 export const NS_LAYER_HEIGHT = 30;
@@ -123,7 +123,7 @@ export function NSLayerSection({ slots, totalWidth, totalTimeMs, zoomLevel, nsBa
 
             const isDragging = dragging?.slotIndex === slotIndex && dragging?.barIndex === bi && !dragging?.isConditional;
             const extraX = isDragging ? dragDeltaX : 0;
-            const xFire = totalWidth - TIMELINE_PAD_RIGHT - (fireMs / 1000) * zoomLevel + extraX;
+            const xFire = Math.max(TIMELINE_PAD_LEFT, totalWidth - TIMELINE_PAD_RIGHT - (fireMs / 1000) * zoomLevel + extraX);
             const xBuffStart = Math.min(xFire + nsDelay * zoomLevel, maxX);
             const xBuffEnd = Math.min(xFire + (nsDelay + nsDuration) * zoomLevel, maxX);
             const buffWidth = Math.max(0, xBuffEnd - xBuffStart);
@@ -194,7 +194,7 @@ export function NSLayerSection({ slots, totalWidth, totalTimeMs, zoomLevel, nsBa
             {condTicks.map((tickTimeMs, tickIndex) => {
               const isDragging = dragging?.slotIndex === slotIndex && dragging?.barIndex === tickIndex && dragging?.isConditional === true;
               const extraX = isDragging ? dragDeltaX : 0;
-              const xTick = totalWidth - TIMELINE_PAD_RIGHT - (tickTimeMs / 1000) * zoomLevel + extraX;
+              const xTick = Math.max(TIMELINE_PAD_LEFT, totalWidth - TIMELINE_PAD_RIGHT - (tickTimeMs / 1000) * zoomLevel + extraX);
               const xBuffStart = Math.min(xTick + nsDelay * zoomLevel, maxX);
               const xBuffEnd = Math.min(xTick + (nsDelay + nsDuration) * zoomLevel, maxX);
               const buffWidth = Math.max(0, xBuffEnd - xBuffStart);

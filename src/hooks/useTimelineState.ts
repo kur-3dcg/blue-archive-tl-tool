@@ -427,7 +427,23 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
       const current = state.nsBarOffsets ?? {};
       const slotAdj = [...(current[slotIndex] ?? [])];
       while (slotAdj.length <= barIndex) slotAdj.push(0);
-      slotAdj[barIndex] = (slotAdj[barIndex] ?? 0) + deltaMs;
+
+      // 開始時間（totalTimeMs）より前に移動できないようにクランプ
+      const char = state.slots[slotIndex]?.character;
+      const nsInterval = char?.nsInterval;
+      if (nsInterval) {
+        const baseFireMs = state.totalTimeMs - nsInterval * 1000 * (barIndex + 1);
+        let cumBefore = 0;
+        for (let j = 0; j <= barIndex; j++) cumBefore += slotAdj[j] ?? 0;
+        const fireMsBefore = baseFireMs - cumBefore;
+        // fireMs_new = fireMsBefore - clampedDelta <= totalTimeMs
+        const minDelta = fireMsBefore - state.totalTimeMs;
+        const clampedDelta = Math.max(deltaMs, minDelta);
+        slotAdj[barIndex] = (slotAdj[barIndex] ?? 0) + clampedDelta;
+      } else {
+        slotAdj[barIndex] = (slotAdj[barIndex] ?? 0) + deltaMs;
+      }
+
       return { ...state, nsBarOffsets: { ...current, [slotIndex]: slotAdj } };
     }
 
