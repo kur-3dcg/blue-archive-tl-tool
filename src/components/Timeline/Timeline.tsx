@@ -11,7 +11,7 @@ import { ArrowLayer } from './ArrowLayer';
 import { CostRuler, COST_RULER_HEIGHT } from './CostRuler';
 import { NSLayerSection } from './NSLayerSection';
 import { snapTime, snapToNearestItem } from '../../utils/snap';
-import { calculateItemCosts, computeArmorCounts } from '../../utils/costCalc';
+import { calculateItemCosts, computeArmorCounts, findCostSufficientTimeMs } from '../../utils/costCalc';
 import { msToDisplay, costToDisplay } from '../../utils/timeFormat';
 import { validateSkillQueue, ACTIVE_SLOTS, EXTENDED_ACTIVE_SLOTS } from '../../utils/skillQueueValidator';
 import { useT } from '../../i18n';
@@ -26,10 +26,11 @@ interface Props {
   locked: boolean;
   queueValidation: boolean;
   showNsLayers: boolean;
+  costSnap: boolean;
 }
 
 
-export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClearPendingSlot, locked, queueValidation, showNsLayers }: Props) {
+export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClearPendingSlot, locked, queueValidation, showNsLayers, costSnap }: Props) {
   const t = useT();
   const containerRef = useRef<HTMLDivElement>(null);
   const [cursorX, setCursorX] = useState(0);
@@ -114,11 +115,13 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
     return map;
   }, [items, layers, zoomLevel, totalWidth]);
 
+  // 重装甲・RW人数（コスト計算・コストスナップで共用）
+  const { heavyArmorCount, redWinterCount } = useMemo(() => computeArmorCounts(slots), [slots]);
+
   // Calculate cost for each item
   const itemCostMap = useMemo(() => {
-    const { heavyArmorCount, redWinterCount } = computeArmorCounts(slots);
     return calculateItemCosts(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks);
-  }, [slots, items, slotCostConfigs, totalTimeMs, stageGimmicks]);
+  }, [slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks]);
 
   // スキルキュー検証
   const queueErrorIds = useMemo(() => {
@@ -169,26 +172,50 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
     (slotIndex: number, timeMs: number, layerIndex: number) => {
       if (!slots[slotIndex]?.character) return;
       const activeSkillIndex = slotCostConfigs[slotIndex]?.activeSkillIndex ?? 0;
+      let finalTimeMs = timeMs;
+      if (costSnap) {
+        const base = slotCostConfigs[slotIndex]?.skillCosts?.[activeSkillIndex]
+          ?? slotCostConfigs[slotIndex]?.skillCost ?? 3;
+        const effective = Math.max(0, Math.min(10, base));
+        finalTimeMs = findCostSufficientTimeMs(
+          timeMs, effective, slots, items, slotCostConfigs,
+          totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks
+        );
+      }
       dispatch({
         type: 'ADD_ITEM',
         item: {
           id: crypto.randomUUID(),
           slotIndex,
-          timeMs,
+          timeMs: finalTimeMs,
           layerIndex,
           ...(activeSkillIndex > 0 ? { skillIndex: activeSkillIndex } : {}),
         },
       });
     },
-    [slots, slotCostConfigs, dispatch]
+    [slots, slotCostConfigs, dispatch, costSnap, items, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks]
   );
 
   const handleMoveItem = useCallback(
     (itemId: string, timeMs: number, layerIndex?: number) => {
-      dispatch({ type: 'MOVE_ITEM', itemId, timeMs, layerIndex });
-      setDragInfo({ timeMs, itemId });
+      let finalTimeMs = timeMs;
+      if (costSnap) {
+        const item = items.find((it) => it.id === itemId);
+        if (item) {
+          const skillIdx = item.skillIndex ?? 0;
+          const config = slotCostConfigs[item.slotIndex];
+          const base = config?.skillCosts?.[skillIdx] ?? config?.skillCost ?? 3;
+          const effective = Math.max(0, Math.min(10, base + (item.costAdjustment ?? 0)));
+          finalTimeMs = findCostSufficientTimeMs(
+            timeMs, effective, slots, items, slotCostConfigs,
+            totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, itemId
+          );
+        }
+      }
+      dispatch({ type: 'MOVE_ITEM', itemId, timeMs: finalTimeMs, layerIndex });
+      setDragInfo({ timeMs: finalTimeMs, itemId });
     },
-    [dispatch]
+    [dispatch, costSnap, items, slots, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks]
   );
 
   const handleRemoveItem = useCallback(

@@ -50,6 +50,8 @@ interface Props {
   onSetQueueValidation: (v: boolean) => void;
   showNsLayers: boolean;
   onToggleNsLayers: () => void;
+  costSnap: boolean;
+  onSetCostSnap: (v: boolean) => void;
   layerCount: number;
   onSetLayers: (n: number) => void;
   targetTimeMs: number | undefined;
@@ -98,6 +100,8 @@ export function CharacterPanel({
   onSetQueueValidation,
   showNsLayers,
   onToggleNsLayers,
+  costSnap,
+  onSetCostSnap,
   layerCount,
   onSetLayers,
   targetTimeMs,
@@ -484,7 +488,14 @@ export function CharacterPanel({
               onClick={() => onSetLocked(!locked)}
               title="ONにするとスキルアイコンのドラッグ移動を禁止（クリック操作は可能）"
             >
-              {locked ? t('🔒移動禁止') : t('🔓移動可')}
+              {locked ? t('🔒移動禁止') : t('🔓移動可能')}
+            </button>
+            <button
+              className={`preset-btn${costSnap ? ' active' : ''}`}
+              onClick={() => onSetCostSnap(!costSnap)}
+              title="ONにすると、コストが不足する位置に配置しようとしたとき、自動的にコストが溜まる時刻へスナップ"
+            >
+              {t('コストスナップ')}
             </button>
           </div>
 

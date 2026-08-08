@@ -53,6 +53,7 @@ export default function App() {
   const [pendingSlotIndex, setPendingSlotIndex] = useState<number | null>(null);
   const [locked, setLocked] = useState(false);
   const [queueValidation, setQueueValidation] = useState(false);
+  const [costSnap, setCostSnap] = useState(false);
   const [showNsLayers, setShowNsLayers] = useState(true);
   const [showHelp, setShowHelp] = useState(() => shouldShowHelp());
 
@@ -378,6 +379,8 @@ export default function App() {
         onSetQueueValidation={setQueueValidation}
         showNsLayers={showNsLayers}
         onToggleNsLayers={() => setShowNsLayers(v => !v)}
+        costSnap={costSnap}
+        onSetCostSnap={setCostSnap}
         layerCount={state.layers}
         onSetLayers={handleSetLayers}
         targetTimeMs={state.targetTimeMs}
@@ -393,6 +396,7 @@ export default function App() {
         locked={locked}
         queueValidation={queueValidation}
         showNsLayers={showNsLayers}
+        costSnap={costSnap}
       />
       {showSaveLoad && (
         <SaveLoadModal

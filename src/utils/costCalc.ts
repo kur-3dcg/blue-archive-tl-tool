@@ -656,3 +656,89 @@ export function calculateCostTimeline(
 
   return keypoints;
 }
+
+/**
+ * コストスナップ用: dropTimeMs の時点でコストが不足している場合、
+ * コストが requiredCost 以上になる最初の時刻（dropTimeMs から戦闘終了方向へ）を返す。
+ * コストが最後まで不足する場合は dropTimeMs をそのまま返す。
+ * excludeItemId: 移動中のアイテムをコスト計算から除外する（MOVE時に使用）
+ */
+export function findCostSufficientTimeMs(
+  dropTimeMs: number,
+  requiredCost: number,
+  slots: CharacterSlot[],
+  items: TimelineItem[],
+  slotCostConfigs: SlotCostConfig[],
+  totalTimeMs: number,
+  heavyArmorCount: number,
+  redWinterCount: number,
+  stageGimmicks: StageGimmick[],
+  excludeItemId?: string
+): number {
+  if (requiredCost <= 0) return dropTimeMs;
+
+  const effectiveItems = excludeItemId
+    ? items.filter((it) => it.id !== excludeItemId)
+    : items;
+
+  const kps = calculateCostTimeline(
+    slots, effectiveItems, slotCostConfigs, totalTimeMs,
+    heavyArmorCount, redWinterCount, stageGimmicks
+  );
+
+  if (kps.length < 2) return dropTimeMs;
+
+  // ① dropTimeMs での cost を補間
+  // kps は timeMs 降順（totalTimeMs → 0）
+  let costAtDrop = kps[kps.length - 1].cost;
+  for (let i = 0; i + 1 < kps.length; i++) {
+    const a = kps[i];
+    const b = kps[i + 1];
+    if (a.timeMs >= dropTimeMs && b.timeMs <= dropTimeMs) {
+      if (a.timeMs === b.timeMs) {
+        costAtDrop = Math.min(a.cost, b.cost); // skill_use 直後コスト
+      } else {
+        const frac = (a.timeMs - dropTimeMs) / (a.timeMs - b.timeMs);
+        costAtDrop = a.cost + frac * (b.cost - a.cost);
+      }
+      break;
+    }
+  }
+
+  if (costAtDrop >= requiredCost) return dropTimeMs; // すでに充足
+
+  // ② dropTimeMs から低 timeMs 方向（戦闘終了方向）を走査
+  // 最初に requiredCost 以上になる時刻を探す
+  let scanTime = dropTimeMs;
+  let scanCost = costAtDrop;
+
+  // dropTimeMs 以下の最初のキーポイントインデックス
+  const startI = kps.findIndex((kp) => kp.timeMs <= dropTimeMs);
+  const scanStart = startI < 0 ? kps.length - 1 : startI;
+
+  for (let i = scanStart; i < kps.length; i++) {
+    const kp = kps[i];
+
+    if (kp.timeMs === scanTime) {
+      // 同一時刻イベント（skill_use によるコスト降下 or buff 変化）
+      if (kp.cost < scanCost) scanCost = kp.cost;
+      continue;
+    }
+
+    // kp.timeMs < scanTime: 回復セグメント [kp.timeMs, scanTime]
+    if (scanCost >= requiredCost) return scanTime;
+
+    if (kp.cost >= requiredCost) {
+      // このセグメント内で requiredCost に到達 → 線形補間で交差点を算出
+      const tSnap = scanTime - (requiredCost - scanCost) / (kp.cost - scanCost) * (scanTime - kp.timeMs);
+      // 浮動小数点誤差補正: 1ms 戦闘終了側へシフトしてコストが確実に達成されるよう保証
+      return Math.max(kp.timeMs, Math.min(scanTime, tSnap - 1));
+    }
+
+    scanTime = kp.timeMs;
+    scanCost = kp.cost;
+  }
+
+  if (scanCost >= requiredCost) return scanTime;
+  return dropTimeMs; // コストが最後まで不足 → スナップしない
+}
