@@ -46,7 +46,7 @@ const AFFILIATE_ITEMS = [
 ] as const;
 
 export default function App() {
-  const [state, dispatch, resetAll] = useTimelineState();
+  const [state, dispatch, resetAll, clearTl] = useTimelineState();
   const [arrowMode, setArrowMode] = useState(false);
   const [gameReplayMode, setGameReplayMode] = useState(false);
   const [editMode, setEditMode] = useState(true); // true=編成中, false=TL作成中
@@ -339,6 +339,7 @@ export default function App() {
         onSetUniqueWeapon2={(slotIndex, value) =>
           dispatch({ type: 'SET_UNIQUE_WEAPON2', slotIndex, value })
         }
+        onClearTl={clearTl}
         onResetAll={resetAll}
         standaloneComments={state.standaloneComments}
         onSetStandaloneComments={(comments) =>

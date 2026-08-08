@@ -49,6 +49,7 @@ const T: Record<string, Partial<Record<Lang, string>>> = {
   'TL作成中': { en: 'Creating a timeline', cn: '创建时间线', tw: '創建時間軸', ko: 'TL 작성 중' },
   'ゲーム再現': { en: 'Game recreation', cn: '游戏娱乐', tw: '遊戲娛樂', ko: '게임 재현' },
   '矢印': { en: 'arrow', cn: '箭', tw: '箭', ko: '화살' },
+  'TLクリア': { en: 'Clear TL', cn: '清空TL', tw: '清空TL', ko: 'TL 클리어' },
   '全クリア': { en: 'Completed', cn: '完全的', tw: '重置全部', ko: '모든 클리어' },
   '編成モード': { en: 'Formation Mode', cn: '形成模式', tw: '編輯模式', ko: '편성 모드' },
   '通常': { en: 'usually', cn: '通常', tw: '一般模式', ko: '보통' },

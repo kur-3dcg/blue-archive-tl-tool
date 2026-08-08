@@ -476,6 +476,17 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
       return { ...state, nsConditionalTicks: { ...current, [action.slotIndex]: slotTicks } };
     }
 
+    case 'CLEAR_TL':
+      return {
+        ...state,
+        items: [],
+        arrows: [],
+        standaloneComments: [],
+        stageGimmicks: [],
+        nsBarOffsets: {},
+        nsConditionalTicks: {},
+      };
+
     case 'RESET_ALL':
       return initialState;
 
@@ -550,10 +561,14 @@ export function useTimelineState() {
     }
   }, [state]);
 
+  const clearTl = useCallback(() => {
+    dispatch({ type: 'CLEAR_TL' });
+  }, []);
+
   const resetAll = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
     dispatch({ type: 'RESET_ALL' });
   }, []);
 
-  return [state, dispatch, resetAll] as const;
+  return [state, dispatch, resetAll, clearTl] as const;
 }

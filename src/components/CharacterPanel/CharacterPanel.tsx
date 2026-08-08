@@ -22,6 +22,7 @@ interface Props {
   onSetSlotDelay: (slotIndex: number, exDelay: number) => void;
   onSetUniqueWeapon4: (slotIndex: number, value: boolean) => void;
   onSetUniqueWeapon2: (slotIndex: number, value: boolean) => void;
+  onClearTl: () => void;
   onResetAll: () => void;
   standaloneComments: StandaloneComment[];
   onSetStandaloneComments: (comments: StandaloneComment[]) => void;
@@ -70,6 +71,7 @@ export function CharacterPanel({
   onSetSlotDelay,
   onSetUniqueWeapon4,
   onSetUniqueWeapon2,
+  onClearTl,
   onResetAll,
   standaloneComments,
   onSetStandaloneComments,
@@ -519,6 +521,17 @@ export function CharacterPanel({
               title="TL設定（総時間・レイヤー・目標時間）を開閉"
             >
               {t('TL設定')}▼
+            </button>
+            <button
+              className="reset-all-btn"
+              onClick={() => {
+                if (window.confirm('タイムライン上のアイテム・コメント・矢印・ギミックをクリアします。\nこの操作は取り消せません。よろしいですか？')) {
+                  onClearTl();
+                }
+              }}
+              title="TLのみリセット（編成は残す）"
+            >
+              {t('TLクリア')}
             </button>
             <button
               className="reset-all-btn"
