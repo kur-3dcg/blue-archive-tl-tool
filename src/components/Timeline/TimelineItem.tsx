@@ -41,6 +41,7 @@ interface Props {
   allSlots?: CharacterSlot[];
   etcIcons?: EtcIcon[];
   locked?: boolean;
+  onContextMenu?: (itemId: string, x: number, y: number) => void;
 }
 
 export function TimelineItem({
@@ -76,6 +77,7 @@ export function TimelineItem({
   etcIcons,
   locked,
   isQueueError,
+  onContextMenu,
 }: Props) {
   const charName = useCharName();
   const dragRef = useRef<{
@@ -185,7 +187,11 @@ export function TimelineItem({
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
-    onRemove(item.id);
+    if (onContextMenu) {
+      onContextMenu(item.id, e.clientX, e.clientY);
+    } else {
+      onRemove(item.id);
+    }
   };
 
   const handleClick = useCallback((e: React.MouseEvent) => {

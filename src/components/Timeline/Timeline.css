@@ -484,6 +484,39 @@
   pointer-events: none;
 }
 
+/* Right-click context menu */
+.timeline-context-menu {
+  position: fixed;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  padding: 4px 0;
+  z-index: 1000;
+  min-width: 160px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+.timeline-context-menu-item {
+  display: block;
+  width: 100%;
+  padding: 7px 14px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #e2e8f0;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.timeline-context-menu-item:hover {
+  background: #334155;
+}
+.timeline-context-menu-item.danger {
+  color: #f87171;
+}
+.timeline-context-menu-item.danger:hover {
+  background: #450a0a;
+}
+
 /* Comment input modal */
 .comment-modal-overlay {
   position: fixed;

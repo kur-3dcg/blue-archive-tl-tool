@@ -493,9 +493,9 @@ export function CharacterPanel({
             <button
               className={`preset-btn${costSnap ? ' active' : ''}`}
               onClick={() => onSetCostSnap(!costSnap)}
-              title="ONにすると、コストが不足する位置に配置しようとしたとき、自動的にコストが溜まる時刻へスナップ"
+              title={costSnap ? 'MinMaxスナップON：コスト不足→EX充足時刻へ／コストMAX中→MAX到達時刻へスナップ' : 'MinMaxスナップOFF（ONにするとコストの有効範囲にスナップ）'}
             >
-              {t('コストスナップ')}
+              {costSnap ? t('MinMaxスナップ') : t('MinMaxスナップ')}
             </button>
           </div>
 

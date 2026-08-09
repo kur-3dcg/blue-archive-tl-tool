@@ -11,7 +11,7 @@ import { ArrowLayer } from './ArrowLayer';
 import { CostRuler, COST_RULER_HEIGHT } from './CostRuler';
 import { NSLayerSection } from './NSLayerSection';
 import { snapTime, snapToNearestItem } from '../../utils/snap';
-import { calculateItemCosts, computeArmorCounts, findCostSufficientTimeMs } from '../../utils/costCalc';
+import { calculateItemCosts, computeArmorCounts, findCostSufficientTimeMs, findCostMaxReachedTimeMs, calculateCostCap } from '../../utils/costCalc';
 import { msToDisplay, costToDisplay } from '../../utils/timeFormat';
 import { validateSkillQueue, ACTIVE_SLOTS, EXTENDED_ACTIVE_SLOTS } from '../../utils/skillQueueValidator';
 import { useT } from '../../i18n';
@@ -176,11 +176,20 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
       if (costSnap) {
         const base = slotCostConfigs[slotIndex]?.skillCosts?.[activeSkillIndex]
           ?? slotCostConfigs[slotIndex]?.skillCost ?? 3;
-        const effective = Math.max(0, Math.min(10, base));
+        const exCost = Math.max(0, Math.min(10, base));
+        // EXスナップ（コスト不足時に充足時刻へ）
         finalTimeMs = findCostSufficientTimeMs(
-          timeMs, effective, slots, items, slotCostConfigs,
+          timeMs, exCost, slots, items, slotCostConfigs,
           totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks
         );
+        // MAXスナップ（EXスナップが不要 & コストMAX中ならMAX到達時刻へ）
+        if (finalTimeMs === timeMs) {
+          const cap = calculateCostCap(slotCostConfigs, slots);
+          finalTimeMs = findCostMaxReachedTimeMs(
+            timeMs, cap, slots, items, slotCostConfigs,
+            totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks
+          );
+        }
       }
       dispatch({
         type: 'ADD_ITEM',
@@ -205,11 +214,20 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
           const skillIdx = item.skillIndex ?? 0;
           const config = slotCostConfigs[item.slotIndex];
           const base = config?.skillCosts?.[skillIdx] ?? config?.skillCost ?? 3;
-          const effective = Math.max(0, Math.min(10, base + (item.costAdjustment ?? 0)));
+          const exCost = Math.max(0, Math.min(10, base + (item.costAdjustment ?? 0)));
+          // EXスナップ
           finalTimeMs = findCostSufficientTimeMs(
-            timeMs, effective, slots, items, slotCostConfigs,
+            timeMs, exCost, slots, items, slotCostConfigs,
             totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, itemId
           );
+          // MAXスナップ（EXスナップが不要 & コストMAX中ならMAX到達時刻へ）
+          if (finalTimeMs === timeMs) {
+            const cap = calculateCostCap(slotCostConfigs, slots);
+            finalTimeMs = findCostMaxReachedTimeMs(
+              timeMs, cap, slots, items, slotCostConfigs,
+              totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, itemId
+            );
+          }
         }
       }
       dispatch({ type: 'MOVE_ITEM', itemId, timeMs: finalTimeMs, layerIndex });
@@ -223,6 +241,100 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
       dispatch({ type: 'REMOVE_ITEM', itemId });
     },
     [dispatch]
+  );
+
+  // ── コンテキストメニュー ──
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; itemId: string } | null>(null);
+
+  useEffect(() => {
+    if (!contextMenu) return;
+    const close = () => setContextMenu(null);
+    window.addEventListener('mousedown', close);
+    return () => window.removeEventListener('mousedown', close);
+  }, [contextMenu]);
+
+  const handleContextMenuItem = useCallback(
+    (itemId: string, x: number, y: number) => setContextMenu({ x, y, itemId }),
+    []
+  );
+
+  const handleRemoveLayerItems = useCallback(
+    (layerIndex: number) => {
+      setContextMenu(null);
+      dispatch({ type: 'REMOVE_LAYER_ITEMS', layerIndex });
+    },
+    [dispatch]
+  );
+
+  const handleRemoveSlotItems = useCallback(
+    (slotIndex: number) => {
+      setContextMenu(null);
+      dispatch({ type: 'REMOVE_SLOT_ITEMS', slotIndex });
+    },
+    [dispatch]
+  );
+
+  // バフ終了チェーン: 元アイテムのバフ持続時間ごとに同スロット・同レイヤーへ連鎖配置
+  const handleChainBuff = useCallback(
+    (itemId: string) => {
+      setContextMenu(null);
+      const item = items.find((it) => it.id === itemId);
+      if (!item) return;
+      const char = slots[item.slotIndex]?.character;
+      if (!char) return;
+
+      const skillIndex = item.skillIndex ?? 0;
+      const rawDuration =
+        (char.skills?.[skillIndex]?.exDuration ?? char.exDuration) ?? null;
+      if (typeof rawDuration !== 'number' || rawDuration <= 0) return;
+
+      // 固有2/4によるバフ時間倍率（BuffBarLayer と同じ計算）
+      const config = slotCostConfigs[item.slotIndex];
+      const hasU2 = config?.hasUniqueWeapon2 || config?.hasUniqueWeapon4;
+      const mult = char.hasDurationBuff && hasU2 ? 1.19 : 1;
+      const stepMs = Math.round(rawDuration * mult * 1000);
+
+      // 戦闘開始方向（timeMs=totalTimeMs）に達するまでチェーン
+      const chainTimes: number[] = [];
+      let cur = item.timeMs;
+      while (true) {
+        const next = cur - stepMs;
+        if (next <= 0) break;
+        chainTimes.push(next);
+        cur = next;
+      }
+      if (chainTimes.length === 0) return;
+
+      // 既存アイテムとの重なりチェック（同レイヤー・500ms 以内）
+      const OVERLAP_MS = 500;
+      const conflicts = chainTimes.filter((t) =>
+        items.some(
+          (it) => it.layerIndex === item.layerIndex && Math.abs(it.timeMs - t) < OVERLAP_MS
+        )
+      );
+      if (conflicts.length > 0) {
+        if (
+          !window.confirm(
+            `${conflicts.length}箇所で既存のスキルと重なります。続けますか？`
+          )
+        )
+          return;
+      }
+
+      for (const timeMs of chainTimes) {
+        dispatch({
+          type: 'ADD_ITEM',
+          item: {
+            id: crypto.randomUUID(),
+            slotIndex: item.slotIndex,
+            timeMs,
+            layerIndex: item.layerIndex,
+            ...(skillIndex > 0 ? { skillIndex } : {}),
+          },
+        });
+      }
+    },
+    [items, slots, slotCostConfigs, dispatch]
   );
 
   const handleItemDragStart = useCallback(
@@ -508,6 +620,7 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
                 onDrop={handleDrop}
                 onMoveItem={handleMoveItem}
                 onRemoveItem={handleRemoveItem}
+                onContextMenuItem={handleContextMenuItem}
                 onDoubleClickItem={handleDoubleClickItem}
                 onCtrlClickItem={handleCtrlClickItem}
                 onItemDragStart={handleItemDragStart}
@@ -636,6 +749,55 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
           )}
         </div>
       )}
+      {/* 右クリックコンテキストメニュー */}
+      {contextMenu !== null && (() => {
+        const ctxItem = items.find((it) => it.id === contextMenu.itemId);
+        const ctxChar = ctxItem ? slots[ctxItem.slotIndex]?.character : null;
+        const ctxSkillIdx = ctxItem?.skillIndex ?? 0;
+        const ctxRawDur =
+          ctxChar?.skills?.[ctxSkillIdx]?.exDuration ?? ctxChar?.exDuration ?? null;
+        const canChain = typeof ctxRawDur === 'number' && ctxRawDur > 0;
+        const sameLayerCount = ctxItem ? items.filter((it) => it.layerIndex === ctxItem.layerIndex).length : 0;
+        const sameSlotCount = ctxItem ? items.filter((it) => it.slotIndex === ctxItem.slotIndex).length : 0;
+        return (
+          <div
+            className="timeline-context-menu"
+            style={{ left: contextMenu.x, top: contextMenu.y }}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <button
+              className="timeline-context-menu-item danger"
+              onClick={() => { setContextMenu(null); handleRemoveItem(contextMenu.itemId); }}
+            >
+              削除
+            </button>
+            {canChain && (
+              <button
+                className="timeline-context-menu-item"
+                onClick={() => handleChainBuff(contextMenu.itemId)}
+              >
+                バフ終了にチェーン
+              </button>
+            )}
+            {ctxItem && sameLayerCount > 1 && (
+              <button
+                className="timeline-context-menu-item danger"
+                onClick={() => handleRemoveLayerItems(ctxItem.layerIndex)}
+              >
+                同レイヤーの全削除（{sameLayerCount}個）
+              </button>
+            )}
+            {ctxItem && sameSlotCount > 1 && (
+              <button
+                className="timeline-context-menu-item danger"
+                onClick={() => handleRemoveSlotItems(ctxItem.slotIndex)}
+              >
+                同キャラEXの全削除（{sameSlotCount}個）
+              </button>
+            )}
+          </div>
+        );
+      })()}
       {commentModal !== null && (
         <div className="comment-modal-overlay" onClick={() => { setCommentModal(null); setCommentInput(''); }}>
           <div className="comment-modal" onClick={(e) => e.stopPropagation()}>

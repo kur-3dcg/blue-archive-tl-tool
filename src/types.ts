@@ -148,5 +148,7 @@ export type TimelineAction =
   | { type: 'ADD_NS_CONDITIONAL_TICK'; slotIndex: number; timeMs: number }
   | { type: 'MOVE_NS_CONDITIONAL_TICK'; slotIndex: number; tickIndex: number; newTimeMs: number }
   | { type: 'REMOVE_NS_CONDITIONAL_TICK'; slotIndex: number; tickIndex: number }
+  | { type: 'REMOVE_LAYER_ITEMS'; layerIndex: number }
+  | { type: 'REMOVE_SLOT_ITEMS'; slotIndex: number }
   | { type: 'CLEAR_TL' }
   | { type: 'RESET_ALL' };

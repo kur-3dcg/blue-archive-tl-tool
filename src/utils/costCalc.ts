@@ -742,3 +742,65 @@ export function findCostSufficientTimeMs(
   if (scanCost >= requiredCost) return scanTime;
   return dropTimeMs; // コストが最後まで不足 → スナップしない
 }
+
+/**
+ * MAXスナップ用: dropTimeMs 時点でコストが上限（costCap）に達している場合、
+ * 現在の MAX プラトーが始まった時刻（コストが costCap に最初に到達した瞬間）を返す。
+ * costCap に達していなければ dropTimeMs をそのまま返す。
+ */
+export function findCostMaxReachedTimeMs(
+  dropTimeMs: number,
+  costCap: number,
+  slots: CharacterSlot[],
+  items: TimelineItem[],
+  slotCostConfigs: SlotCostConfig[],
+  totalTimeMs: number,
+  heavyArmorCount: number,
+  redWinterCount: number,
+  stageGimmicks: StageGimmick[],
+  excludeItemId?: string
+): number {
+  const effectiveItems = excludeItemId
+    ? items.filter((it) => it.id !== excludeItemId)
+    : items;
+
+  const kps = calculateCostTimeline(
+    slots, effectiveItems, slotCostConfigs, totalTimeMs,
+    heavyArmorCount, redWinterCount, stageGimmicks
+  );
+
+  if (kps.length < 2) return dropTimeMs;
+
+  // dropTimeMs 時点のコストを補間し、段インデックスを特定
+  // kps は timeMs 降順（高 timeMs = 戦闘開始 → 低 timeMs = 戦闘終了）
+  let costAtDrop = kps[kps.length - 1].cost;
+  let dropIdx = 0; // kps[dropIdx].timeMs >= dropTimeMs の最初のインデックス
+  for (let i = 0; i + 1 < kps.length; i++) {
+    const a = kps[i], b = kps[i + 1];
+    if (a.timeMs >= dropTimeMs && b.timeMs <= dropTimeMs) {
+      if (a.timeMs === b.timeMs) {
+        costAtDrop = Math.max(a.cost, b.cost); // 同一時刻ならスキル使用前コスト（最大値）
+      } else {
+        const frac = (a.timeMs - dropTimeMs) / (a.timeMs - b.timeMs);
+        costAtDrop = a.cost + frac * (b.cost - a.cost);
+      }
+      dropIdx = i;
+      break;
+    }
+  }
+
+  // コストが上限未満なら MAX スナップ不要
+  if (costAtDrop < costCap - 0.01) return dropTimeMs;
+
+  // dropIdx から低インデックス方向（戦闘開始 = 高 timeMs）へ走査し、
+  // MAX プラトーが始まった時刻（コストが初めて costCap に達した瞬間）を探す
+  for (let i = dropIdx; i >= 1; i--) {
+    if (kps[i - 1].cost < costCap - 0.01) {
+      // kps[i-1] は上限未満 → kps[i] でプラトー開始
+      return kps[i].timeMs;
+    }
+  }
+
+  // 戦闘開始から上限に達していた（理論上まれ）
+  return kps[0].timeMs;
+}

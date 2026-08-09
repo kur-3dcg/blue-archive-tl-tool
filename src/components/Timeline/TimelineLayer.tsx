@@ -37,6 +37,7 @@ interface Props {
   slotCostConfigs: SlotCostConfig[];
   locked?: boolean;
   queueErrorIds?: Set<string>;
+  onContextMenuItem?: (itemId: string, x: number, y: number) => void;
 }
 
 interface ItemLayout {
@@ -76,6 +77,7 @@ export function TimelineLayer({
   slotCostConfigs,
   locked,
   queueErrorIds,
+  onContextMenuItem,
 }: Props) {
   const [dragOver, setDragOver] = useState(false);
 
@@ -225,6 +227,7 @@ export function TimelineLayer({
             allSlots={slots}
             etcIcons={etcIcons}
             locked={locked}
+            onContextMenu={onContextMenuItem}
           />
         );
       })}

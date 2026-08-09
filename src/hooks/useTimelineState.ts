@@ -123,6 +123,28 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         ),
       };
 
+    case 'REMOVE_LAYER_ITEMS': {
+      const removedIds = new Set(
+        state.items.filter((it) => it.layerIndex === action.layerIndex).map((it) => it.id)
+      );
+      return {
+        ...state,
+        items: state.items.filter((it) => it.layerIndex !== action.layerIndex),
+        arrows: state.arrows.filter((a) => !removedIds.has(a.fromItemId) && !removedIds.has(a.toItemId)),
+      };
+    }
+
+    case 'REMOVE_SLOT_ITEMS': {
+      const removedIds = new Set(
+        state.items.filter((it) => it.slotIndex === action.slotIndex).map((it) => it.id)
+      );
+      return {
+        ...state,
+        items: state.items.filter((it) => it.slotIndex !== action.slotIndex),
+        arrows: state.arrows.filter((a) => !removedIds.has(a.fromItemId) && !removedIds.has(a.toItemId)),
+      };
+    }
+
     case 'ADD_ARROW':
       return { ...state, arrows: [...state.arrows, action.arrow] };
 
