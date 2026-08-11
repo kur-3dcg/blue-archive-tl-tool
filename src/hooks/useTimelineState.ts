@@ -374,6 +374,8 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         standaloneComments: action.state.standaloneComments ?? [],
         stageGimmicks: action.state.stageGimmicks ?? [],
         skillQueueOrder: action.state.skillQueueOrder,
+        nsBarOffsets: action.state.nsBarOffsets ?? {},
+        nsConditionalTicks: action.state.nsConditionalTicks ?? {},
       };
     }
 
@@ -565,6 +567,7 @@ function loadFromStorage(base: TimelineState): TimelineState {
       standaloneComments: parsed.standaloneComments ?? base.standaloneComments,
       stageGimmicks: (parsed.stageGimmicks as StageGimmick[] | undefined) ?? base.stageGimmicks,
       skillQueueOrder: parsed.skillQueueOrder,
+      nsBarOffsets: (parsed.nsBarOffsets as Record<number, number[]> | undefined) ?? base.nsBarOffsets,
       nsConditionalTicks: (parsed.nsConditionalTicks as Record<number, number[]> | undefined) ?? base.nsConditionalTicks,
     };
   } catch {

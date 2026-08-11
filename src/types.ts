@@ -138,7 +138,7 @@ export type TimelineAction =
   | { type: 'ADD_STAGE_GIMMICK'; gimmick: StageGimmick }
   | { type: 'REMOVE_STAGE_GIMMICK'; id: string }
   | { type: 'SET_STAGE_GIMMICKS'; gimmicks: StageGimmick[] }
-  | { type: 'LOAD_STATE'; state: Pick<TimelineState, 'slots' | 'items' | 'arrows' | 'layers' | 'totalTimeMs'> & { mode?: GameMode; slotCostConfigs?: SlotCostConfig[]; targetTimeMs?: number; heavyArmorCount?: number; redWinterCount?: number; standaloneComments?: StandaloneComment[]; stageGimmicks?: StageGimmick[]; skillQueueOrder?: number[] } }
+  | { type: 'LOAD_STATE'; state: Pick<TimelineState, 'slots' | 'items' | 'arrows' | 'layers' | 'totalTimeMs'> & { mode?: GameMode; slotCostConfigs?: SlotCostConfig[]; targetTimeMs?: number; heavyArmorCount?: number; redWinterCount?: number; standaloneComments?: StandaloneComment[]; stageGimmicks?: StageGimmick[]; skillQueueOrder?: number[]; nsBarOffsets?: Record<number, number[]>; nsConditionalTicks?: Record<number, number[]> } }
   | { type: 'SET_MODE'; mode: GameMode }
   | { type: 'SET_SLOT_SKILL_INDEX'; slotIndex: number; skillIndex: number }
   | { type: 'SET_SKILL_QUEUE_ORDER'; order: number[] | undefined }

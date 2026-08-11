@@ -98,6 +98,8 @@ export function buildLoadState(
     standaloneComments,
     stageGimmicks,
     skillQueueOrder: data.skillQueueOrder,
+    nsBarOffsets: data.nsBarOffsets,
+    nsConditionalTicks: data.nsConditionalTicks,
   };
 }
 
@@ -135,7 +137,7 @@ export function SharePanel({ state, onCoreAction, onImport, onImportText }: Prop
       state.slots, state.items, state.layers, state.totalTimeMs,
       state.arrows, state.slotCostConfigs, state.targetTimeMs,
       state.standaloneComments, state.stageGimmicks, state.skillQueueOrder,
-      state.mode,
+      state.mode, state.nsBarOffsets, state.nsConditionalTicks,
     );
   };
 

@@ -36,6 +36,8 @@ interface CompactData {
   K?: { t: number; d: number; r: number; l?: string }[];  // stageGimmicks: timeMs, durationMs, recoveryDelta, label
   Q?: number[];                                            // skillQueueOrder
   o?: 1;                                                   // mode: 1=extended, absent=normal
+  B?: Record<string, number[]>;                            // nsBarOffsets: slotIndex -> adjustments[]
+  X?: Record<string, number[]>;                            // nsConditionalTicks: slotIndex -> timeMs[]
 }
 
 // Decoded result (unified)
@@ -53,6 +55,8 @@ export interface ShareData {
   stageGimmicks?: { timeMs: number; durationMs: number; recoveryDelta: number; label?: string }[];
   skillQueueOrder?: number[];
   mode?: string;
+  nsBarOffsets?: Record<number, number[]>;
+  nsConditionalTicks?: Record<number, number[]>;
 }
 
 // --- Compression helpers using DecompressionStream/CompressionStream ---
@@ -135,6 +139,8 @@ export async function encode(
   stageGimmicks?: StageGimmick[],
   skillQueueOrder?: number[],
   mode?: string,
+  nsBarOffsets?: Record<number, number[]>,
+  nsConditionalTicks?: Record<number, number[]>,
 ): Promise<string> {
   const itemIdToIndex = new Map(items.map((item, idx) => [item.id, idx]));
 
@@ -179,6 +185,12 @@ export async function encode(
       : {}),
     ...(skillQueueOrder && skillQueueOrder.length > 0 ? { Q: skillQueueOrder } : {}),
     ...(mode === 'extended' ? { o: 1 as const } : {}),
+    ...(nsBarOffsets && Object.keys(nsBarOffsets).some((k) => (nsBarOffsets[Number(k)]?.some((v) => v !== 0)))
+      ? { B: Object.fromEntries(Object.entries(nsBarOffsets).map(([k, v]) => [k, v])) }
+      : {}),
+    ...(nsConditionalTicks && Object.keys(nsConditionalTicks).length > 0
+      ? { X: Object.fromEntries(Object.entries(nsConditionalTicks).map(([k, v]) => [k, v])) }
+      : {}),
   };
 
   const jsonStr = JSON.stringify(compact);
@@ -245,5 +257,11 @@ function compactToShareData(c: CompactData): ShareData {
     stageGimmicks: c.K?.map((k) => ({ timeMs: k.t, durationMs: k.d, recoveryDelta: k.r, label: k.l })),
     skillQueueOrder: c.Q,
     mode: c.o === 1 ? 'extended' : 'normal',
+    nsBarOffsets: c.B
+      ? (Object.fromEntries(Object.entries(c.B).map(([k, v]) => [Number(k), v])) as Record<number, number[]>)
+      : undefined,
+    nsConditionalTicks: c.X
+      ? (Object.fromEntries(Object.entries(c.X).map(([k, v]) => [Number(k), v])) as Record<number, number[]>)
+      : undefined,
   };
 }

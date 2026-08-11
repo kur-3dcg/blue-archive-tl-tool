@@ -4,10 +4,11 @@ import { costToDisplay } from './timeFormat';
 import etcData from '../../data/etc.json';
 
 function msToMSS(ms: number): string {
-  const totalSec = Math.round(ms / 1000);
-  const m = Math.floor(totalSec / 60);
-  const s = totalSec % 60;
-  return `${m}:${String(s).padStart(2, '0')}`;
+  const totalMs = Math.round(ms);
+  const m = Math.floor(totalMs / 60000);
+  const s = Math.floor((totalMs % 60000) / 1000);
+  const msec = totalMs % 1000;
+  return `${m}:${String(s).padStart(2, '0')}.${String(msec).padStart(3, '0')}`;
 }
 
 /** キャラ（対象）の形式で1つのエントリを生成 */
@@ -89,8 +90,8 @@ export function generateTlText(state: TimelineState): string {
       rows.push([msToMSS(entry.timeMs), '', entry.text]);
     } else {
       const [parent, ...children] = entry.group;
-      const exStr = [parent, ...children].map((item) => formatEntry(item, slots)).join('→');
-      rows.push([msToMSS(parent.timeMs), exStr, parent.comment ?? '']);
+      const exCols = [parent, ...children].map((item) => formatEntry(item, slots));
+      rows.push([msToMSS(parent.timeMs), ...exCols, parent.comment ?? '']);
     }
   }
 

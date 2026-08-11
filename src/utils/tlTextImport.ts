@@ -120,18 +120,14 @@ function parseRows(
   const rows: ParsedRow[] = [];
   const parseWarnings: string[] = [];
 
-  // カラムフォーマット検出（旧: 時間/コスト/EX/コメント → 新: 時間/EX/コメント）
-  let exCol = 1;
-  let commentCol = 2;
+  // 旧4列形式（時間/コスト/EX/コメント）の検出
+  let legacyMode = false;
   for (const line of lines) {
     const firstCols = line.split('\t');
     const first = firstCols[0]?.trim();
     if (first === '時間' || first === 'Time' || first === '시간' || first === '时间') {
       const second = firstCols[1]?.trim();
-      if (second === 'コスト' || second === 'Cost') {
-        exCol = 2;
-        commentCol = 3;
-      }
+      if (second === 'コスト' || second === 'Cost') legacyMode = true;
       break;
     }
   }
@@ -139,11 +135,9 @@ function parseRows(
   for (const line of lines) {
     const cols = line.split('\t');
     const timeStr = cols[0]?.trim() ?? '';
-    const exStr = cols[exCol]?.trim() ?? '';
-    const commentStr = cols[commentCol]?.trim() ?? '';
 
     // ヘッダー行スキップ
-    if (timeStr === '時間' || timeStr === 'Time' || timeStr === '시간' || timeStr === '时间' || timeStr === '時間') continue;
+    if (timeStr === '時間' || timeStr === 'Time' || timeStr === '시간' || timeStr === '时间') continue;
 
     const timeMs = parseMss(timeStr);
     if (timeMs === null) {
@@ -152,7 +146,12 @@ function parseRows(
     }
 
     const entries: ParsedEntry[] = [];
-    if (exStr) {
+    let commentStr = '';
+
+    if (legacyMode) {
+      // 旧4列形式: 3列目がEX（→連結）、4列目がコメント
+      const exStr = cols[2]?.trim() ?? '';
+      commentStr = cols[3]?.trim() ?? '';
       for (const part of exStr.split('→')) {
         const trimmed = part.trim();
         if (trimmed) {
@@ -160,10 +159,42 @@ function parseRows(
           if (entry.charName) entries.push(entry);
         }
       }
+    } else {
+      // 新形式: 2列目以降を動的走査（キャラ名完全一致でEX判定）
+      for (let col = 1; col < cols.length; col++) {
+        const val = cols[col]?.trim() ?? '';
+        if (!val) continue; // 空列スキップ
+
+        // →連結の後方互換（旧3列形式）
+        if (val.includes('→')) {
+          for (const part of val.split('→')) {
+            const trimmed = part.trim();
+            if (trimmed) {
+              const entry = parseExEntry(trimmed, charLookup);
+              if (entry.charName) entries.push(entry);
+            }
+          }
+          // 残りの列からコメントを探す
+          for (let nc = col + 1; nc < cols.length; nc++) {
+            const nv = cols[nc]?.trim() ?? '';
+            if (nv) { commentStr = nv; break; }
+          }
+          break;
+        }
+
+        // キャラ名として完全一致するかチェック
+        const entry = parseExEntry(val, charLookup);
+        if (entry.charName && charLookup.has(entry.charName)) {
+          entries.push(entry);
+        } else {
+          // 最初に認識できない列をコメントとして確定
+          commentStr = val;
+          break;
+        }
+      }
     }
 
     if (entries.length === 0 && !commentStr) continue;
-
     rows.push({ timeMs, entries, comment: commentStr || undefined });
   }
 
@@ -278,13 +309,16 @@ export function parseTlText(text: string): TlImportResult {
   let maxChainLength = 0;
   const now = Date.now();
 
-  // エントリをフラット化（コメントは各行の先頭エントリに付与）
+  // 行単位でグループ化（即チェーンは同一グループ → 同一レイヤーに配置）
   interface EntryMeta {
-    timeMs: number;
     entry: ParsedEntry;
     comment?: string;
   }
-  const allEntries: EntryMeta[] = [];
+  interface EntryGroup {
+    timeMs: number;
+    metas: EntryMeta[];
+  }
+  const entryGroups: EntryGroup[] = [];
 
   for (const row of rows) {
     if (row.entries.length === 0) {
@@ -301,28 +335,27 @@ export function parseTlText(text: string): TlImportResult {
     const validEntries = row.entries.filter((e) => nameToSlot.has(e.charName));
     if (validEntries.length === 0) continue;
 
-    validEntries.forEach((entry, idx) => {
-      allEntries.push({
-        timeMs: row.timeMs,
+    entryGroups.push({
+      timeMs: row.timeMs,
+      metas: validEntries.map((entry, idx) => ({
         entry,
         comment: idx === 0 ? row.comment : undefined,
-      });
+      })),
     });
   }
 
   // 時間降順ソート（降順処理で lastTimeOnLayer[l] が常にそのレイヤーの最小値になる）
-  allEntries.sort((a, b) => b.timeMs - a.timeMs);
+  entryGroups.sort((a, b) => b.timeMs - a.timeMs);
 
   // 3.3秒以上離れていれば同一レイヤーに配置できる
   const OVERLAP_THRESHOLD_MS = 3300;
-  // lastTimeOnLayer[l] = レイヤー l に最後に配置したアイテムの timeMs（降順処理なので最小値）
   const lastTimeOnLayer: number[] = [];
 
-  for (const meta of allEntries) {
-    // 空きレイヤーを貪欲に探す（距離 > 3300ms なら配置可）
+  for (const group of entryGroups) {
+    // グループ全体で1回レイヤー割り当て（即チェーンが同一レイヤーになる）
     let assignedLayer = -1;
     for (let l = 0; l < MAX_LAYERS; l++) {
-      if (lastTimeOnLayer[l] === undefined || lastTimeOnLayer[l] - meta.timeMs > OVERLAP_THRESHOLD_MS) {
+      if (lastTimeOnLayer[l] === undefined || lastTimeOnLayer[l] - group.timeMs > OVERLAP_THRESHOLD_MS) {
         assignedLayer = l;
         break;
       }
@@ -330,25 +363,27 @@ export function parseTlText(text: string): TlImportResult {
     // 全レイヤーが埋まっている場合は最後のレイヤーに重ねる
     if (assignedLayer === -1) assignedLayer = MAX_LAYERS - 1;
 
-    lastTimeOnLayer[assignedLayer] = meta.timeMs;
+    lastTimeOnLayer[assignedLayer] = group.timeMs;
     maxChainLength = Math.max(maxChainLength, assignedLayer + 1);
 
-    const slotIndex = nameToSlot.get(meta.entry.charName)!;
-    const targetSlotIndex =
-      meta.entry.targetCharName !== undefined ? nameToSlot.get(meta.entry.targetCharName) : undefined;
+    for (const meta of group.metas) {
+      const slotIndex = nameToSlot.get(meta.entry.charName)!;
+      const targetSlotIndex =
+        meta.entry.targetCharName !== undefined ? nameToSlot.get(meta.entry.targetCharName) : undefined;
 
-    const item: TimelineItem = {
-      id: `imported-${now}-${items.length}`,
-      slotIndex,
-      timeMs: meta.timeMs,
-      layerIndex: assignedLayer,
-    };
+      const item: TimelineItem = {
+        id: `imported-${now}-${items.length}`,
+        slotIndex,
+        timeMs: group.timeMs,
+        layerIndex: assignedLayer,
+      };
 
-    if (targetSlotIndex !== undefined) item.targetSlotIndex = targetSlotIndex;
-    if (meta.entry.etcIconName) item.targetEtcIcon = meta.entry.etcIconName;
-    if (meta.comment) item.comment = meta.comment;
+      if (targetSlotIndex !== undefined) item.targetSlotIndex = targetSlotIndex;
+      if (meta.entry.etcIconName) item.targetEtcIcon = meta.entry.etcIconName;
+      if (meta.comment) item.comment = meta.comment;
 
-    items.push(item);
+      items.push(item);
+    }
   }
 
   // 最大時間からtotalTimeMsを決定（プリセットに切り上げ）
