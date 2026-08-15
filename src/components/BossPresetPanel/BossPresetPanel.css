@@ -1,0 +1,110 @@
+.boss-preset-wrapper {
+  position: relative;
+}
+
+.boss-preset-btn {
+  padding: 4px 10px;
+  font-size: 13px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.boss-preset-btn:hover {
+  background: var(--bg-tertiary);
+}
+
+.boss-preset-btn.active {
+  background: rgba(251, 146, 60, 0.2);
+  border-color: #fb923c;
+  color: #fb923c;
+}
+
+.boss-preset-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 420px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+}
+
+.boss-preset-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fb923c;
+  letter-spacing: 0.04em;
+}
+
+.boss-preset-grid-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.boss-preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.boss-preset-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  width: 64px;
+  transition: border-color 0.1s, background 0.1s;
+}
+
+.boss-preset-item.has-preset:hover {
+  border-color: #fb923c;
+  background: rgba(251, 146, 60, 0.1);
+}
+
+.boss-preset-item.no-preset {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.boss-preset-item img {
+  border-radius: 4px;
+  object-fit: cover;
+  width: 44px;
+  height: 44px;
+}
+
+.boss-preset-item-name {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.2;
+  word-break: break-all;
+  max-width: 100%;
+}
+
+.boss-preset-badge {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  font-size: 8px;
+  color: #fb923c;
+  line-height: 1;
+  pointer-events: none;
+}

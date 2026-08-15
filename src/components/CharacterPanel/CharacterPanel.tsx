@@ -6,6 +6,8 @@ import { useT, useCharName } from '../../i18n';
 import { SlotSelector } from './SlotSelector';
 import { TextMarkerPanel } from '../TextMarkerPanel/TextMarkerPanel';
 import { StageGimmickPanel } from '../StageGimmickPanel/StageGimmickPanel';
+import { BossPresetPanel } from '../BossPresetPanel/BossPresetPanel';
+import type { BossPresetLoadState } from '../../data/bossPresets';
 import './CharacterPanel.css';
 
 interface Props {
@@ -57,6 +59,7 @@ interface Props {
   targetTimeMs: number | undefined;
   onSetTargetTime: (ms: number | undefined) => void;
   onSetTotalTime: (ms: number) => void;
+  onLoadBossPreset: (loadState: BossPresetLoadState) => void;
 }
 
 export function CharacterPanel({
@@ -107,6 +110,7 @@ export function CharacterPanel({
   targetTimeMs,
   onSetTargetTime,
   onSetTotalTime,
+  onLoadBossPreset,
 }: Props) {
   const t = useT();
   const charName = useCharName();
@@ -519,6 +523,11 @@ export function CharacterPanel({
                 </button>
               </>
             )}
+            <BossPresetPanel
+              stCharacters={stCharacters}
+              spCharacters={spCharacters}
+              onLoad={onLoadBossPreset}
+            />
             <StageGimmickPanel
               stageGimmicks={stageGimmicks}
               totalTimeMs={totalTimeMs}

@@ -30,6 +30,8 @@ export const STAGE_GIMMICK_PRESETS = [
   { label: 'コクマー バリスタ', recoveryPerStriker: 1000, durationMs: 22000 },
   // recoveryPerStudent: 全生徒数 × この値が回復力増加量, fixedTimes: 一括登録する発動時間(ms)
   { label: 'グレゴリオ', recoveryPerStudent: 300, durationMs: 60000, fixedTimes: [60000, 50000, 40000, 30000, 20000, 10000] as number[] },
+  // recovery: 固定回復力増加量, fixedTimes: 一括登録する発動時間(ms)
+  { label: 'セトの憤怒グロッキー', recovery: 5000, durationMs: 23000, fixedTimes: [34333] as number[] },
 ] as const;
 
 // スロットごとのバフバー色（将来10スロット対応想定）

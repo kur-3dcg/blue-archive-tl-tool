@@ -59,7 +59,9 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
       ? presetData.recoveryPerStriker * strikerCount
       : 'recoveryPerStudent' in presetData
         ? presetData.recoveryPerStudent * studentCount
-        : 0
+        : 'recovery' in presetData
+          ? presetData.recovery
+          : 0
     : 0;
 
   // 固定発動時間を持つプリセット（グレゴリオ等）
@@ -152,6 +154,11 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
                 回復力 +{presetData.recoveryPerStudent} × {studentCount}人 = <strong>+{presetRecoveryDelta}</strong>（×6回 一括登録）
               </div>
             )}
+            {!isCustom && presetData && 'recovery' in presetData && (
+              <div className="stage-gimmick-note">
+                回復力 <strong>+{presetData.recovery}</strong>
+              </div>
+            )}
             {isCustom && (
               <>
                 <div className="stage-gimmick-row">
@@ -191,7 +198,13 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
             )}
             {isFixedTimePreset ? (
               <div className="stage-gimmick-row">
-                <span className="stage-gimmick-note">1:00〜0:10（10秒間隔×6回）</span>
+                <span className="stage-gimmick-note">
+                  {presetData && 'fixedTimes' in presetData
+                    ? presetData.fixedTimes.length === 1
+                      ? `${msToDisplay(presetData.fixedTimes[0])}（1回 一括登録）`
+                      : `${msToDisplay(presetData.fixedTimes[0])}〜${msToDisplay(presetData.fixedTimes[presetData.fixedTimes.length - 1])}（${presetData.fixedTimes.length}回 一括登録）`
+                    : ''}
+                </span>
                 <button className="stage-gimmick-add-btn" onClick={handleAdd}>{t('追加')}</button>
               </div>
             ) : (

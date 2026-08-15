@@ -386,6 +386,7 @@ export default function App() {
         targetTimeMs={state.targetTimeMs}
         onSetTargetTime={(ms) => dispatch({ type: 'SET_TARGET_TIME', targetTimeMs: ms })}
         onSetTotalTime={(ms) => dispatch({ type: 'SET_TOTAL_TIME', totalTimeMs: ms })}
+        onLoadBossPreset={(loadState) => dispatch({ type: 'LOAD_STATE', state: loadState })}
       />
       <Timeline
         state={state}
