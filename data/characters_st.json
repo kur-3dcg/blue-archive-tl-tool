@@ -872,6 +872,40 @@
     "nameCn": "心奈"
   },
   {
+    "name": "ココロ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/cocoro.png",
+    "reading": "こころ",
+    "school": "オデュッセイア",
+    "attackType": "神秘",
+    "armorType": "特殊装甲",
+    "cost": 2,
+    "exDuration": 15,
+    "exDelay": 1.5,
+    "hasDurationBuff": true,
+    "nsDuration": 25,
+    "nsConditional": true,
+    "nsDelay": 3.17,
+    "nameEn": "Cocoro",
+    "nameKr": "코코로",
+    "nameTw": "心",
+    "nameCn": "心",
+    "skills": [
+      {
+        "label": "EX1",
+        "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/cocoro.png",
+        "cost": 2,
+        "exDuration": 15,
+        "exDelay": 1.5
+      },
+      {
+        "label": "EX2",
+        "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/cocoro.png",
+        "cost": 2,
+        "exDuration": 15
+      }
+    ]
+  },
+  {
     "name": "コタマ（キャンプ）",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kotama_camp.png",
     "reading": "こたま（きゃんぷ）",
@@ -884,6 +918,24 @@
     "nameKr": "코타마（캠핑）",
     "nameTw": "小玉（露營）",
     "nameCn": "小玉（露营）"
+  },
+  {
+    "name": "コトネ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/kotone.png",
+    "reading": "ことね",
+    "school": "オデュッセイア",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 2,
+    "exDuration": 0,
+    "exDelay": 3.17,
+    "nsInterval": 35,
+    "nsDuration": 28,
+    "nsDelay": 2.2,
+    "nameEn": "Kotone",
+    "nameKr": "코토네",
+    "nameTw": "琴音",
+    "nameCn": "琴音"
   },
   {
     "name": "コトリ",
