@@ -313,6 +313,21 @@
     "nameCn": "阿露（礼服）"
   },
   {
+    "name": "アンナ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/anna.png",
+    "reading": "あんな",
+    "school": "レッドウィンター",
+    "attackType": "貫通",
+    "armorType": "軽装備",
+    "cost": 6,
+    "exDuration": null,
+    "nsConditional": true,
+    "nameEn": "Anna",
+    "nameKr": "안나",
+    "nameTw": "安娜",
+    "nameCn": "安娜"
+  },
+  {
     "name": "イオリ",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/iori.png",
     "reading": "いおり",
