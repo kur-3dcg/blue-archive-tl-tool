@@ -284,14 +284,8 @@ export default function App() {
             {menuOpen && (
               <div className="hamburger-dropdown">
                 <div className="hamburger-section-label">{t('他のツール')}</div>
-                <a href="https://kur-3dcg.github.io/blue-archive-faceimage/index.html" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
-                  {t('戦術対抗戦編成記録ツール')}
-                </a>
-                <a href="https://kur-3dcg.github.io/Furniture-placement-simulator/" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
-                  {t('家具シミュレーションツール')}
-                </a>
-                <a href="https://kur-3dcg.github.io/Tactical-Battle-Stone-Accounting/index.html" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
-                  {t('石割収支管理ツール')}
+                <a href="https://kur-3dcg.github.io/" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
+                  {t('他ツール')}
                 </a>
                 <div className="hamburger-divider" />
                 <div className="hamburger-section-label">{t('マニュアル')}</div>
