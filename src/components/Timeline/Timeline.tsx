@@ -14,7 +14,7 @@ import { snapTime, snapToNearestItem } from '../../utils/snap';
 import { calculateItemCosts, computeArmorCounts, findCostSufficientTimeMs, findCostMaxReachedTimeMs, calculateCostCap } from '../../utils/costCalc';
 import { msToDisplay, costToDisplay } from '../../utils/timeFormat';
 import { validateSkillQueue, ACTIVE_SLOTS, EXTENDED_ACTIVE_SLOTS } from '../../utils/skillQueueValidator';
-import { useT } from '../../i18n';
+import { useT, useCharName } from '../../i18n';
 import './Timeline.css';
 
 interface Props {
@@ -32,7 +32,9 @@ interface Props {
 
 export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClearPendingSlot, locked, queueValidation, showNsLayers, costSnap }: Props) {
   const t = useT();
+  const charName = useCharName();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [cursorX, setCursorX] = useState(0);
   const [cursorY, setCursorY] = useState(0);
   const [cursorTimeMs, setCursorTimeMs] = useState(0);
@@ -191,16 +193,18 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
           );
         }
       }
+      const newId = crypto.randomUUID();
       dispatch({
         type: 'ADD_ITEM',
         item: {
-          id: crypto.randomUUID(),
+          id: newId,
           slotIndex,
           timeMs: finalTimeMs,
           layerIndex,
           ...(activeSkillIndex > 0 ? { skillIndex: activeSkillIndex } : {}),
         },
       });
+      setSelectedItemId(newId);
     },
     [slots, slotCostConfigs, dispatch, costSnap, items, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks]
   );
@@ -239,9 +243,23 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
   const handleRemoveItem = useCallback(
     (itemId: string) => {
       dispatch({ type: 'REMOVE_ITEM', itemId });
+      setSelectedItemId((prev) => (prev === itemId ? null : prev));
     },
     [dispatch]
   );
+
+  // ── アイテム選択 ──
+  const handleSelectItem = useCallback((itemId: string) => {
+    setSelectedItemId((prev) => (prev === itemId ? prev : itemId));
+  }, []);
+
+  const handleMoveSelectedItem = useCallback((deltaMs: number) => {
+    if (!selectedItemId) return;
+    const item = items.find((it) => it.id === selectedItemId);
+    if (!item) return;
+    const newTimeMs = Math.max(0, Math.min(totalTimeMs, item.timeMs + deltaMs));
+    dispatch({ type: 'MOVE_ITEM', itemId: selectedItemId, timeMs: newTimeMs });
+  }, [selectedItemId, items, totalTimeMs, dispatch]);
 
   // ── コンテキストメニュー ──
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; itemId: string } | null>(null);
@@ -345,8 +363,8 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
   );
 
   const handleItemDragEnd = useCallback(
-    (_itemId: string) => {
-      // ズーム機能削除のため、ドラッグ終了時の処理は不要
+    (itemId: string) => {
+      setSelectedItemId(itemId);
     },
     []
   );
@@ -426,6 +444,10 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
   // pendingSlotIndex が設定された状態でのクリック → アイテムを配置
   const handleLayersClick = useCallback(
     (e: React.MouseEvent) => {
+      // タイムラインアイテム以外をクリックしたら選択解除
+      if (!(e.target as Element).closest('.timeline-item')) {
+        setSelectedItemId(null);
+      }
       if (pendingSlotIndex === null) return;
       const container = containerRef.current;
       if (!container) return;
@@ -556,8 +578,42 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
     ? totalWidth - TIMELINE_PAD_RIGHT - (targetTimeMs / 1000) * zoomLevel
     : null;
 
+  const selectedItem = selectedItemId ? items.find((it) => it.id === selectedItemId) : null;
+  const ONE_FRAME_MS = 1000 / 30;
+
   return (
     <div className="timeline-wrapper">
+      {selectedItem && (
+        <div className="timeline-selection-bar">
+          <div className="sel-bar-btns">
+            <button className="sel-btn-skip" onClick={() => handleMoveSelectedItem(1000)} title="+1秒（大きい時間方向）">
+              <span className="sel-btn-arrow">|◀</span>
+              <span className="sel-btn-label">1s</span>
+            </button>
+            <button onClick={() => handleMoveSelectedItem(100)} title="+0.1秒">
+              <span className="sel-btn-arrow">◀◀</span>
+              <span className="sel-btn-label">0.1s</span>
+            </button>
+            <button onClick={() => handleMoveSelectedItem(ONE_FRAME_MS)} title="+1フレーム">
+              <span className="sel-btn-arrow">◀</span>
+              <span className="sel-btn-label">1F</span>
+            </button>
+            <button onClick={() => handleMoveSelectedItem(-ONE_FRAME_MS)} title="-1フレーム">
+              <span className="sel-btn-arrow">▶</span>
+              <span className="sel-btn-label">1F</span>
+            </button>
+            <button onClick={() => handleMoveSelectedItem(-100)} title="-0.1秒">
+              <span className="sel-btn-arrow">▶▶</span>
+              <span className="sel-btn-label">0.1s</span>
+            </button>
+            <button className="sel-btn-skip" onClick={() => handleMoveSelectedItem(-1000)} title="-1秒（0:00方向）">
+              <span className="sel-btn-arrow">▶|</span>
+              <span className="sel-btn-label">1s</span>
+            </button>
+          </div>
+          <button className="sel-bar-close" onClick={() => setSelectedItemId(null)} title="選択解除">✕</button>
+        </div>
+      )}
       <div className="timeline-nav-wrapper">
         <button
           className="timeline-nav-btn timeline-nav-left"
@@ -640,6 +696,8 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
                 slotCostConfigs={slotCostConfigs}
                 locked={locked}
                 queueErrorIds={queueErrorIds}
+                selectedItemId={selectedItemId}
+                onSelectItem={handleSelectItem}
               />
             ))}
             <ArrowLayer

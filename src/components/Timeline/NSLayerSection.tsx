@@ -3,8 +3,9 @@ import type { CharacterSlot, SnapMode } from '../../types';
 import { useCharName } from '../../i18n';
 import { TIMELINE_PAD_LEFT, TIMELINE_PAD_RIGHT, SLOT_COLORS } from '../../constants';
 import { snapTime } from '../../utils/snap';
+import { msToDisplay } from '../../utils/timeFormat';
 
-export const NS_LAYER_HEIGHT = 30;
+export const NS_LAYER_HEIGHT = 44;
 const NS_ICON_SIZE = 24;
 const NS_TICK_WIDTH = 2;
 
@@ -164,7 +165,7 @@ export function NSLayerSection({ slots, totalWidth, totalTimeMs, zoomLevel, nsBa
                     />
                     <div
                       className="ns-bar-start-icon"
-                      style={{ left: xFire - 8, borderColor: color }}
+                      style={{ left: xFire, borderColor: color }}
                     >
                       <img src={char.image} alt={char.name} />
                     </div>
@@ -187,6 +188,12 @@ export function NSLayerSection({ slots, totalWidth, totalTimeMs, zoomLevel, nsBa
                     setResetTarget({ slotIndex, barIndex, clientX: e.clientX, clientY: e.clientY + 6 });
                   }}
                 />
+                <div
+                  className="ns-tick-label"
+                  style={{ left: xFire }}
+                >
+                  {msToDisplay((totalWidth - TIMELINE_PAD_RIGHT - xFire) / zoomLevel * 1000)}
+                </div>
               </Fragment>
             ))}
 
@@ -210,7 +217,7 @@ export function NSLayerSection({ slots, totalWidth, totalTimeMs, zoomLevel, nsBa
                   {/* 条件チックは常にアイコン表示 */}
                   <div
                     className="ns-bar-start-icon"
-                    style={{ left: xTick - 8, borderColor: color }}
+                    style={{ left: xTick, borderColor: color }}
                   >
                     <img src={char.image} alt={char.name} />
                   </div>
@@ -231,6 +238,12 @@ export function NSLayerSection({ slots, totalWidth, totalTimeMs, zoomLevel, nsBa
                       onRemoveNsConditionalTick(slotIndex, tickIndex);
                     }}
                   />
+                  <div
+                    className="ns-tick-label"
+                    style={{ left: xTick }}
+                  >
+                    {msToDisplay((totalWidth - TIMELINE_PAD_RIGHT - xTick) / zoomLevel * 1000)}
+                  </div>
                 </Fragment>
               );
             })}

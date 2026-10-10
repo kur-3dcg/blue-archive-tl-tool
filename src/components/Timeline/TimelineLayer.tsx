@@ -38,6 +38,8 @@ interface Props {
   locked?: boolean;
   queueErrorIds?: Set<string>;
   onContextMenuItem?: (itemId: string, x: number, y: number) => void;
+  selectedItemId?: string | null;
+  onSelectItem?: (itemId: string) => void;
 }
 
 interface ItemLayout {
@@ -78,6 +80,8 @@ export function TimelineLayer({
   locked,
   queueErrorIds,
   onContextMenuItem,
+  selectedItemId,
+  onSelectItem,
 }: Props) {
   const [dragOver, setDragOver] = useState(false);
 
@@ -228,6 +232,8 @@ export function TimelineLayer({
             etcIcons={etcIcons}
             locked={locked}
             onContextMenu={onContextMenuItem}
+            isSelected={selectedItemId === item.id}
+            onSelect={onSelectItem}
           />
         );
       })}

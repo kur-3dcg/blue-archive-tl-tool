@@ -42,6 +42,8 @@ interface Props {
   etcIcons?: EtcIcon[];
   locked?: boolean;
   onContextMenu?: (itemId: string, x: number, y: number) => void;
+  isSelected?: boolean;
+  onSelect?: (itemId: string) => void;
 }
 
 export function TimelineItem({
@@ -78,6 +80,8 @@ export function TimelineItem({
   locked,
   isQueueError,
   onContextMenu,
+  isSelected,
+  onSelect,
 }: Props) {
   const charName = useCharName();
   const dragRef = useRef<{
@@ -215,12 +219,12 @@ export function TimelineItem({
     }
     if (didDragRef.current || arrowMode || e.shiftKey) return;
 
+    // 選択（即時）
+    onSelect?.(item.id);
+
     clickCountRef.current += 1;
     if (clickCountRef.current === 1) {
       clickTimerRef.current = setTimeout(() => {
-        if (clickCountRef.current === 1) {
-          onToggleTimeDisplay?.(item.id);
-        }
         clickCountRef.current = 0;
       }, DOUBLE_CLICK_MS);
     } else if (clickCountRef.current === 2) {
@@ -228,14 +232,8 @@ export function TimelineItem({
       clickCountRef.current = 0;
       onDoubleClick(item.id);
     }
-  }, [arrowMode, item.id, onToggleTimeDisplay, onDoubleClick, onArrowClick, onCtrlClick]);
+  }, [arrowMode, item.id, onDoubleClick, onArrowClick, onCtrlClick, onSelect]);
 
-  const showCost = !item.useTimeDisplay && costValue !== undefined;
-  const timeLabel = isInstant ? '即' : (
-    showCost
-      ? costToDisplay(costValue)
-      : msToDisplay(item.timeMs)
-  );
 
   // 対象スロットのキャラ画像（右上表示）
   const targetSlot = item.targetSlotIndex !== undefined ? allSlots?.[item.targetSlotIndex] : undefined;
@@ -250,14 +248,14 @@ export function TimelineItem({
   return (
     <div
       ref={itemRef}
-      className={`timeline-item${item.comment ? ' has-comment' : ''}${isInstant ? ' is-instant' : ''}${arrowMode ? ' arrow-mode' : ''}${arrowClickFrom === item.id ? ' arrow-from' : ''}`}
+      className={`timeline-item${item.comment ? ' has-comment' : ''}${isInstant ? ' is-instant' : ''}${arrowMode ? ' arrow-mode' : ''}${arrowClickFrom === item.id ? ' arrow-from' : ''}${isSelected ? ' selected' : ''}`}
       style={{ left: x }}
       data-item-id={item.id}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
       onDoubleClick={(e) => e.stopPropagation()}
       onContextMenu={handleContextMenu}
-      title={`${charName(character)} - ${msToDisplay(item.timeMs)}${costValue !== undefined ? ` (コスト: ${costToDisplay(costValue)})` : ''}${isInstant ? '（即）' : ''}（クリックで表示切替 / Ctrl+クリックでコメント / 右クリックで削除 / Shift+クリックで対象指定）`}
+      title={`${charName(character)} - ${msToDisplay(item.timeMs)}${costValue !== undefined ? ` (コスト: ${costToDisplay(costValue)})` : ''}${isInstant ? '（即）' : ''}（Ctrl+クリックでコメント / 右クリックで削除 / Shift+クリックで対象指定）`}
     >
       {adj !== 0 && (
         <div className={`timeline-item-adj-badge${adj > 0 ? ' positive' : ' negative'}`}>
@@ -266,7 +264,14 @@ export function TimelineItem({
       )}
       <img src={skillImage} alt={character.name} width={48} height={48} />
       {isQueueError && <div className="timeline-item-queue-error" title="スキル順エラー: このタイミングではこのキャラのスキルはアクティブスロットにありません" />}
-      <div className={`timeline-item-time${showCost ? ' cost-mode' : ''}${costOverrun ? ' overrun' : ''}${costOvercost ? ' overcost' : ''}`}>{timeLabel}</div>
+      {!isInstant && costValue !== undefined && (
+        <div className={`timeline-item-time cost-mode${costOverrun ? ' overrun' : ''}${costOvercost ? ' overcost' : ''}`}>
+          {costToDisplay(costValue)}
+        </div>
+      )}
+      <div className={`timeline-item-time${!isInstant && costValue !== undefined ? ' time-sub' : ''}`}>
+        {isInstant ? '即' : msToDisplay(item.timeMs)}
+      </div>
       {item.comment && <div className="timeline-item-comment-dot" />}
       {targetEtcIconData && (
         <img

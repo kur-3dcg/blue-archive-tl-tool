@@ -1587,6 +1587,21 @@
     "nameCn": "椿"
   },
   {
+    "name": "ツムギ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/tsumugi.png",
+    "reading": "つむぎ",
+    "school": "ワイルドハント",
+    "attackType": "貫通",
+    "armorType": "特殊装甲",
+    "cost": 3,
+    "exDuration": 5,
+    "nsInterval": 40,
+    "nameEn": "Tsumugi",
+    "nameKr": "참기",
+    "nameTw": "紬",
+    "nameCn": "紬"
+  },
+  {
     "name": "ツルギ",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/turugi.png",
     "reading": "つるぎ",

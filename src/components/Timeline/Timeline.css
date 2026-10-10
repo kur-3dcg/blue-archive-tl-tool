@@ -16,7 +16,7 @@
 
 .ns-layer-row {
   position: relative;
-  height: 30px;
+  height: 44px;
   border-bottom: 1px solid var(--layer-border);
   background: rgba(99, 102, 241, 0.04);
 }
@@ -40,8 +40,8 @@
 }
 
 .ns-layer-icon-area img {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   border-radius: 3px;
   border: 1px solid var(--border-secondary);
   object-fit: cover;
@@ -52,7 +52,7 @@
   position: absolute;
   width: 2px;
   top: 3px;
-  bottom: 3px;
+  bottom: 17px;
   opacity: 0.75;
   border-radius: 1px;
   cursor: grab;
@@ -113,21 +113,37 @@
 /* NSバフ持続バー */
 .ns-buff-bar {
   position: absolute;
-  height: 12px;
-  top: 50%;
-  transform: translateY(-50%);
+  height: 16px;
+  top: 3px;
   opacity: 0.22;
   border-radius: 2px;
   pointer-events: none;
 }
 
+/* NS発動時間ラベル */
+.ns-tick-label {
+  position: absolute;
+  bottom: 3px;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-family: monospace;
+  font-weight: 700;
+  padding: 1px 3px;
+  background: #facc15;
+  color: #111;
+  border-radius: 2px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 5;
+}
+
 /* NSバー開始アイコン */
 .ns-bar-start-icon {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
+  top: 3px;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   border: 1.5px solid;
   overflow: hidden;
@@ -272,6 +288,97 @@
   border-radius: 4px;
 }
 
+.timeline-item.selected img {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+  border-radius: 6px;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.8));
+}
+
+/* 選択ツールバー */
+.timeline-selection-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-secondary);
+  flex-shrink: 0;
+  min-height: 48px;
+}
+
+/* 移動ボタン群（中央に大きく） */
+.sel-bar-btns {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+}
+
+.sel-bar-btns button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 18px;
+  min-width: 56px;
+  font-family: monospace;
+  background: var(--bg-control);
+  color: var(--text-primary);
+  border: 1px solid var(--border-secondary);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sel-bar-btns button:hover {
+  background: var(--bg-control-hover);
+  border-color: var(--border-primary);
+}
+
+.sel-bar-btns button:active {
+  transform: scale(0.95);
+}
+
+.sel-btn-arrow {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.sel-btn-label {
+  font-size: 10px;
+  opacity: 0.7;
+  line-height: 1;
+}
+
+/* スキップボタン（|◀ ▶|）は少し目立たせる */
+.sel-bar-btns button.sel-btn-skip {
+  border-color: var(--border-primary);
+  opacity: 0.8;
+}
+
+.sel-bar-btns button.sel-btn-skip .sel-btn-arrow {
+  font-size: 13px;
+  letter-spacing: -1px;
+}
+
+.sel-bar-close {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  font-size: 13px;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sel-bar-close:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
 .timeline-item img {
   width: 48px;
   height: 48px;
@@ -299,6 +406,17 @@
 .timeline-item-time.overcost {
   color: #c8a000;
   font-weight: 700;
+}
+
+/* 時間サブラベル（コストと同時表示時） */
+.timeline-item-time.time-sub {
+  font-size: 11px;
+  font-family: monospace;
+  font-weight: 700;
+  padding: 2px 5px;
+  background: #facc15;
+  color: #111;
+  opacity: 1;
 }
 
 /* Cursor */

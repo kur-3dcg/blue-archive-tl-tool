@@ -188,11 +188,11 @@ function getExBuffParams(charName: string, hasUniqueWeapon2: boolean, hasDuratio
   if (charName === YUKARI_SWIMSUIT) return { recoveryDelta: 1259, durationMs: 10000, countTrigger: 2 };
   // レイジョ: 毎回
   if (charName === REIJO) return { recoveryDelta: 1861, durationMs: 5000 };
-  // キサキ（水着）: EX1=+1625, EX2=+2500（5秒、毎回）
+  // キサキ（水着）: EX1=+1625, EX2=+2500（5秒、毎回、固有2↑で×1.19）
   if (charName === KISAKI_SWIMSUIT) {
     return skillIndex === 1
-      ? { recoveryDelta: 2500, durationMs: 5000 }
-      : { recoveryDelta: 1625, durationMs: 5000 };
+      ? { recoveryDelta: 2500, durationMs: applyDuration(5000) }
+      : { recoveryDelta: 1625, durationMs: applyDuration(5000) };
   }
   return null;
 }
