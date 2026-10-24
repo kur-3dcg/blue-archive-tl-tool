@@ -1,7 +1,9 @@
-import type { CharacterSlot, TimelineItem, SlotCostConfig, StageGimmick } from '../types';
+import type { CharacterSlot, TimelineItem, SlotCostConfig, StageGimmick, StudentDrop } from '../types';
 
-// コスト回復開始遅延（戦闘開始から2.033秒後に回復開始）
-const RECOVERY_DELAY_MS = 2033;
+// コスト回復開始遅延（戦闘開始から2.000秒後に回復開始）
+// ゲーム内では2.033秒（61F目）に最初の回復が表示されるが、その時点で1F分（2.000〜2.033秒）の回復が既に含まれるため、
+// 連続計算では2.000秒を起点にする（実測: 6人+SP SSで3:56.000、SSなしで3:55.600に1コスト到達 @4:00）
+const RECOVERY_DELAY_MS = 2000;
 
 /**
  * 区間 [fromTimeMs, toTimeMs]（カウントダウン方向: from > to）で
@@ -54,10 +56,15 @@ const REIJO = 'レイジョ';                   // SS: +1861, 5秒（EX毎回）
 
 interface CostEvent {
   timeMs: number;       // タイムラインの時間位置（カウントダウン方向）
-  type: 'skill_use' | 'buff_start' | 'buff_end';
+  type: 'skill_use' | 'buff_start' | 'buff_end' | 'drop' | 'cost_gain';
   itemId?: string;
+  slotIndex?: number;      // drop: 落ちるスロット
   skillCost?: number;
   recoveryDelta?: number;  // バフによる回復力変化量
+  recoveryPercent?: number; // ステージギミック乗算（%）。回復速度全体に (1 + Σ%/100) を掛ける
+  recoveryPerStudent?: number; // ステージギミック: 生徒1人あたり加算（残り人数を掛ける）
+  recoveryPerStriker?: number; // ステージギミック: ストライカー1人あたり加算（残りST数を掛ける）
+  costGain?: number;       // cost_gain: ステージギミックの固定コスト獲得量
   costAdjustment?: number; // 手動コスト調整
 }
 
@@ -118,7 +125,9 @@ function getBaseRecovery(
   redWinterCount: number
 ): { baseSum: number; multiplier: number } {
   const BASE_PER_CHAR = 700;
-  let baseSum = BASE_PER_CHAR * slots.length;
+  // 基礎回復力は編成済み（キャラ設定あり）の生徒数ぶんのみ
+  const filledCount = slots.filter((s) => s.character !== null).length;
+  let baseSum = BASE_PER_CHAR * filledCount;
   let multiplier = 1;
 
   // チェリノSS: +511 + レッドウィンター1人あたり+146（最大3人）。トリガーはチェリノ（ST版）のみ
@@ -160,6 +169,50 @@ function getBaseRecovery(
 }
 
 /**
+ * 落ちた生徒を除いた編成で基礎回復力・SP SS倍率を再計算する。
+ * 落ちた生徒の700・SS（チェリノ/カノエ/クルミ）・RW/重装甲カウントへの寄与がすべて外れる。
+ */
+function getAliveRecovery(slots: CharacterSlot[], droppedSlots: Set<number>): { baseSum: number; multiplier: number } {
+  const alive = slots.map((s, i) => (droppedSlots.has(i) ? { ...s, character: null } : s));
+  const { heavyArmorCount, redWinterCount } = computeArmorCounts(alive);
+  return getBaseRecovery(alive, heavyArmorCount, redWinterCount);
+}
+
+/** 人数比例のステージギミック加算（その時点で残っている生徒数・ST数を掛ける） */
+function aliveGimmickRecovery(
+  slots: CharacterSlot[],
+  droppedSlots: Set<number>,
+  perStudent: number,
+  perStriker: number
+): number {
+  if (perStudent === 0 && perStriker === 0) return 0;
+  let students = 0;
+  let strikers = 0;
+  slots.forEach((s, i) => {
+    if (!s.character || droppedSlots.has(i)) return;
+    students++;
+    if (s.type === 'striker') strikers++;
+  });
+  return perStudent * students + perStriker * strikers;
+}
+
+/** 落とし生徒イベントを追加（キャラ未設定スロットは無視） */
+function pushDropEvents(events: CostEvent[], slots: CharacterSlot[], studentDrops?: StudentDrop[]) {
+  for (const d of studentDrops ?? []) {
+    if (!slots[d.slotIndex]?.character) continue;
+    events.push({ timeMs: d.timeMs, type: 'drop', slotIndex: d.slotIndex });
+  }
+}
+
+/**
+ * コスト回復速度（コスト/秒）
+ * = (回復力合計 × SP SS倍率 / 10000) × (1 + ステージギミック乗算%の合計 / 100)
+ */
+function recoveryRate(recoverySum: number, multiplier: number, gimmickPercent: number): number {
+  return (recoverySum * multiplier / 10000) * (1 + gimmickPercent / 100);
+}
+
+/**
  * 特定スロットのキャラがEXバフキャラかを判定し、バフパ���メータを返す
  * countTrigger: N回目のEX使用ごとに発動（デフォルト1=毎回）
  */
@@ -172,11 +225,22 @@ interface ExBuffInfo {
 
 // バフ効果持続力倍率（固有2↑）
 const BUFF_DURATION_MULTIPLIER = 1.19;
+const FRAME_MS = 1000 / 30;
+
+/**
+ * 固有2↑のバフ効果持続力×1.19を適用した効果時間(ms)を返す。
+ * ゲーム内では延長後の効果時間がフレーム（1/30秒）単位で切り捨てられる。
+ * 例: 15秒→17.85秒→535F=17.833秒、13秒→15.47秒→464F=15.466秒
+ */
+export function applyBuffDurationMultiplier(ms: number): number {
+  const frames = Math.floor((ms * BUFF_DURATION_MULTIPLIER) / FRAME_MS + 1e-6);
+  return frames * FRAME_MS;
+}
 
 function getExBuffParams(charName: string, hasUniqueWeapon2: boolean, hasDurationBuff: boolean, skillIndex?: number): ExBuffInfo | null {
   const applyDuration = (ms: number) =>
     hasDurationBuff && hasUniqueWeapon2
-      ? Math.round(ms * BUFF_DURATION_MULTIPLIER)
+      ? applyBuffDurationMultiplier(ms)
       : ms;
 
   if (charName === HOSHINO_SWIMSUIT) return { recoveryDelta: 684, durationMs: 50000 };
@@ -224,8 +288,9 @@ function buildAllBuffEvents(
   slotCostConfigs: SlotCostConfig[],
   slotItemsSorted: Map<number, TimelineItem[]>
 ): CostEvent[] {
-  // スロットごとに発動したバフ使用をまとめる
-  const slotTriggered = new Map<number, { timeMs: number; recoveryDelta: number; durationMs: number }[]>();
+  // スロット×スキルバリアントごとに発動したバフ使用をまとめる
+  // （キサキ（水着）EX1/EX2 のように回復力が異なるバリアントは別バフとして扱う）
+  const slotTriggered = new Map<string, { timeMs: number; recoveryDelta: number; durationMs: number }[]>();
 
   for (const item of items) {
     const slot = slots[item.slotIndex];
@@ -237,11 +302,12 @@ function buildAllBuffEvents(
     if (!buffParams) continue;
     if (!checkBuffTrigger(buffParams, item, slotItemsSorted)) continue;
 
-    const arr = slotTriggered.get(item.slotIndex) ?? [];
+    const key = `${item.slotIndex}:${item.skillIndex ?? 0}`;
+    const arr = slotTriggered.get(key) ?? [];
     const delayMs = (config?.exDelay ?? slot.character.exDelay ?? 0) * 1000;
     const buffStartMs = item.timeMs - delayMs;
     arr.push({ timeMs: buffStartMs, recoveryDelta: buffParams.recoveryDelta, durationMs: buffParams.durationMs });
-    slotTriggered.set(item.slotIndex, arr);
+    slotTriggered.set(key, arr);
   }
 
   const result: CostEvent[] = [];
@@ -311,14 +377,17 @@ export function calculateItemCosts(
   totalTimeMs: number,
   heavyArmorCount = 0,
   redWinterCount = 0,
-  stageGimmicks?: StageGimmick[]
+  stageGimmicks?: StageGimmick[],
+  studentDrops?: StudentDrop[],
+  initialCost = 0
 ): Map<string, ItemCostInfo> {
   const result = new Map<string, ItemCostInfo>();
   if (items.length === 0) return result;
 
   const costCap = calculateCostCap(slotCostConfigs, slots);
   const costFloor = getOvercostFloor(slots);
-  const { baseSum, multiplier } = getBaseRecovery(slots, heavyArmorCount, redWinterCount);
+  let { baseSum, multiplier } = getBaseRecovery(slots, heavyArmorCount, redWinterCount);
+  const droppedSlots = new Set<number>();
 
   // イベントリストを構築
   const events: CostEvent[] = [];
@@ -366,21 +435,32 @@ export function calculateItemCosts(
 
   // ステージギミックのバフイベントを追加
   for (const g of stageGimmicks ?? []) {
-    events.push({ timeMs: g.timeMs, type: 'buff_start', recoveryDelta: g.recoveryDelta });
-    events.push({ timeMs: g.timeMs - g.durationMs, type: 'buff_end', recoveryDelta: g.recoveryDelta });
+    // 固定獲得: 発動時刻に所持コストを即時加算（効果時間なし）
+    if (g.costGain !== undefined) {
+      events.push({ timeMs: g.timeMs, type: 'cost_gain', costGain: g.costGain });
+      continue;
+    }
+    events.push({ timeMs: g.timeMs, type: 'buff_start', recoveryDelta: g.recoveryDelta, recoveryPercent: g.recoveryPercent, recoveryPerStudent: g.recoveryPerStudent, recoveryPerStriker: g.recoveryPerStriker });
+    events.push({ timeMs: g.timeMs - g.durationMs, type: 'buff_end', recoveryDelta: g.recoveryDelta, recoveryPercent: g.recoveryPercent, recoveryPerStudent: g.recoveryPerStudent, recoveryPerStriker: g.recoveryPerStriker });
   }
 
-  // 時間降順でソート（totalTimeMs → 0方向）、同一時間ならbuff_start → skill_use → buff_end
-  const typePriority = { buff_start: 0, skill_use: 1, buff_end: 2 };
+  pushDropEvents(events, slots, studentDrops);
+
+  // 時間降順でソート（totalTimeMs → 0方向）、同一時間ならbuff_start → skill_use → drop → buff_end
+  const typePriority = { buff_start: 0, cost_gain: 1, skill_use: 2, drop: 3, buff_end: 4 };
   events.sort((a, b) => {
     if (b.timeMs !== a.timeMs) return b.timeMs - a.timeMs;
     return typePriority[a.type] - typePriority[b.type];
   });
 
   // セグメントごとにコスト計算
-  let currentCost = 0;
+  // 開始時コスト（TL設定、上限でクランプ）
+  let currentCost = Math.max(0, Math.min(costCap, initialCost));
   let currentTimeMs = totalTimeMs; // 戦闘開始位置
   let activeBuffDelta = 0; // 現在のバフによる追加回復力
+  let activeGimmickPercent = 0; // 現在のステージギミック乗算（%の合計）
+  let activePerStudent = 0; // 現在のステージギミック生徒1人あたり加算の合計
+  let activePerStriker = 0; // 現在のステージギミックST1人あたり加算の合計
   const recoveryStartMs = totalTimeMs - RECOVERY_DELAY_MS; // 回復開始タイムライン時間
 
   for (const event of events) {
@@ -392,7 +472,7 @@ export function calculateItemCosts(
     // このイベントまでの経過時間でコスト回復（遅延考慮）
     const effectiveMs = getEffectiveRecoveryMs(currentTimeMs, event.timeMs, recoveryStartMs);
     if (effectiveMs > 0) {
-      const recoveryPerSec = (baseSum + activeBuffDelta) * multiplier / 10000;
+      const recoveryPerSec = recoveryRate(baseSum + activeBuffDelta + aliveGimmickRecovery(slots, droppedSlots, activePerStudent, activePerStriker), multiplier, activeGimmickPercent);
       const recovered = recoveryPerSec * (effectiveMs / 1000);
       currentCost = Math.min(costCap, currentCost + recovered);
     }
@@ -401,10 +481,23 @@ export function calculateItemCosts(
 
     switch (event.type) {
       case 'buff_start':
-        activeBuffDelta += event.recoveryDelta!;
+        activeBuffDelta += event.recoveryDelta ?? 0;
+        activeGimmickPercent += event.recoveryPercent ?? 0;
+        activePerStudent += event.recoveryPerStudent ?? 0;
+        activePerStriker += event.recoveryPerStriker ?? 0;
         break;
       case 'buff_end':
-        activeBuffDelta -= event.recoveryDelta!;
+        activeBuffDelta -= event.recoveryDelta ?? 0;
+        activeGimmickPercent -= event.recoveryPercent ?? 0;
+        activePerStudent -= event.recoveryPerStudent ?? 0;
+        activePerStriker -= event.recoveryPerStriker ?? 0;
+        break;
+      case 'cost_gain':
+        currentCost = Math.max(Math.min(0, currentCost), Math.min(costCap, currentCost + (event.costGain ?? 0)));
+        break;
+      case 'drop':
+        droppedSlots.add(event.slotIndex!);
+        ({ baseSum, multiplier } = getAliveRecovery(slots, droppedSlots));
         break;
       case 'skill_use': {
         const baseSkillCost = event.skillCost ?? 3;
@@ -443,11 +536,14 @@ export function calculateCostTimeline(
   totalTimeMs: number,
   heavyArmorCount = 0,
   redWinterCount = 0,
-  stageGimmicks?: StageGimmick[]
+  stageGimmicks?: StageGimmick[],
+  studentDrops?: StudentDrop[],
+  initialCost = 0
 ): CostKeypoint[] {
   const costCap = calculateCostCap(slotCostConfigs, slots);
   const costFloor = getOvercostFloor(slots);
-  const { baseSum, multiplier } = getBaseRecovery(slots, heavyArmorCount, redWinterCount);
+  let { baseSum, multiplier } = getBaseRecovery(slots, heavyArmorCount, redWinterCount);
+  const droppedSlots = new Set<number>();
   const keypoints: CostKeypoint[] = [];
 
   // 戦闘開始時コスト獲得（シュンNS: +3.8 / シュエリン（水着）NS: +0.71×編成人数、両立不可）
@@ -494,31 +590,42 @@ export function calculateCostTimeline(
 
   // ステージギミックのバフイベントを追加
   for (const g of stageGimmicks ?? []) {
-    events.push({ timeMs: g.timeMs, type: 'buff_start', recoveryDelta: g.recoveryDelta });
-    events.push({ timeMs: g.timeMs - g.durationMs, type: 'buff_end', recoveryDelta: g.recoveryDelta });
+    // 固定獲得: 発動時刻に所持コストを即時加算（効果時間なし）
+    if (g.costGain !== undefined) {
+      events.push({ timeMs: g.timeMs, type: 'cost_gain', costGain: g.costGain });
+      continue;
+    }
+    events.push({ timeMs: g.timeMs, type: 'buff_start', recoveryDelta: g.recoveryDelta, recoveryPercent: g.recoveryPercent, recoveryPerStudent: g.recoveryPerStudent, recoveryPerStriker: g.recoveryPerStriker });
+    events.push({ timeMs: g.timeMs - g.durationMs, type: 'buff_end', recoveryDelta: g.recoveryDelta, recoveryPercent: g.recoveryPercent, recoveryPerStudent: g.recoveryPerStudent, recoveryPerStriker: g.recoveryPerStriker });
   }
 
-  const typePriority = { buff_start: 0, skill_use: 1, buff_end: 2 };
+  pushDropEvents(events, slots, studentDrops);
+
+  const typePriority = { buff_start: 0, cost_gain: 1, skill_use: 2, drop: 3, buff_end: 4 };
   events.sort((a, b) => {
     if (b.timeMs !== a.timeMs) return b.timeMs - a.timeMs;
     return typePriority[a.type] - typePriority[b.type];
   });
 
-  let currentCost = 0;
+  // 開始時コスト（TL設定、上限でクランプ）
+  let currentCost = Math.max(0, Math.min(costCap, initialCost));
   let currentTimeMs = totalTimeMs;
   let activeBuffDelta = 0;
+  let activeGimmickPercent = 0;
+  let activePerStudent = 0;
+  let activePerStriker = 0;
   const recoveryStartMs = totalTimeMs - RECOVERY_DELAY_MS;
   let isOvercostZone = false;
 
   // 開始点
-  keypoints.push({ timeMs: totalTimeMs, cost: 0 });
+  keypoints.push({ timeMs: totalTimeMs, cost: currentCost });
 
   // 回復開始地点をキーポイントとして挿入（遅延区間の終わり）
   if (recoveryStartMs > 0) {
-    // 回復開始前にイベントがなければ、ここでコスト=0のポイントを挿入
+    // 回復開始前にイベントがなければ、ここで開始時コストのポイントを挿入
     const firstEventTime = events.length > 0 ? events[0].timeMs : -1;
     if (firstEventTime < recoveryStartMs) {
-      keypoints.push({ timeMs: recoveryStartMs, cost: 0 });
+      keypoints.push({ timeMs: recoveryStartMs, cost: currentCost });
     }
   }
 
@@ -535,7 +642,7 @@ export function calculateCostTimeline(
 
     const effectiveMs = getEffectiveRecoveryMs(currentTimeMs, event.timeMs, recoveryStartMs);
     if (effectiveMs > 0) {
-      const recoveryPerSec = (baseSum + activeBuffDelta) * multiplier / 10000;
+      const recoveryPerSec = recoveryRate(baseSum + activeBuffDelta + aliveGimmickRecovery(slots, droppedSlots, activePerStudent, activePerStriker), multiplier, activeGimmickPercent);
       const recovered = recoveryPerSec * (effectiveMs / 1000);
       const newCost = Math.min(costCap, currentCost + recovered);
 
@@ -579,11 +686,29 @@ export function calculateCostTimeline(
     switch (event.type) {
       case 'buff_start':
         keypoints.push({ timeMs: event.timeMs, cost: Math.max(0, currentCost), isOvercost: isOvercostZone || undefined });
-        activeBuffDelta += event.recoveryDelta!;
+        activeBuffDelta += event.recoveryDelta ?? 0;
+        activeGimmickPercent += event.recoveryPercent ?? 0;
+        activePerStudent += event.recoveryPerStudent ?? 0;
+        activePerStriker += event.recoveryPerStriker ?? 0;
         break;
       case 'buff_end':
         keypoints.push({ timeMs: event.timeMs, cost: Math.max(0, currentCost), isOvercost: isOvercostZone || undefined });
-        activeBuffDelta -= event.recoveryDelta!;
+        activeBuffDelta -= event.recoveryDelta ?? 0;
+        activeGimmickPercent -= event.recoveryPercent ?? 0;
+        activePerStudent -= event.recoveryPerStudent ?? 0;
+        activePerStriker -= event.recoveryPerStriker ?? 0;
+        break;
+      case 'cost_gain':
+        // 獲得前後のキーポイントで縦に段差を描画
+        keypoints.push({ timeMs: event.timeMs, cost: Math.max(0, currentCost), isOvercost: isOvercostZone || undefined });
+        currentCost = Math.max(Math.min(0, currentCost), Math.min(costCap, currentCost + (event.costGain ?? 0)));
+        if (currentCost >= 0) isOvercostZone = false;
+        keypoints.push({ timeMs: event.timeMs, cost: Math.max(0, currentCost), isOvercost: isOvercostZone || undefined });
+        break;
+      case 'drop':
+        keypoints.push({ timeMs: event.timeMs, cost: Math.max(0, currentCost), isOvercost: isOvercostZone || undefined });
+        droppedSlots.add(event.slotIndex!);
+        ({ baseSum, multiplier } = getAliveRecovery(slots, droppedSlots));
         break;
       case 'skill_use': {
         const baseSkillCost = event.skillCost ?? 3;
@@ -612,7 +737,7 @@ export function calculateCostTimeline(
   if (currentTimeMs > 0) {
     const effectiveMs = getEffectiveRecoveryMs(currentTimeMs, 0, recoveryStartMs);
     if (effectiveMs > 0) {
-      const recoveryPerSec = (baseSum + activeBuffDelta) * multiplier / 10000;
+      const recoveryPerSec = recoveryRate(baseSum + activeBuffDelta + aliveGimmickRecovery(slots, droppedSlots, activePerStudent, activePerStriker), multiplier, activeGimmickPercent);
       const recovered = recoveryPerSec * (effectiveMs / 1000);
       const finalCost = Math.min(costCap, currentCost + recovered);
 
@@ -673,7 +798,9 @@ export function findCostSufficientTimeMs(
   heavyArmorCount: number,
   redWinterCount: number,
   stageGimmicks: StageGimmick[],
-  excludeItemId?: string
+  excludeItemId?: string,
+  studentDrops?: StudentDrop[],
+  initialCost = 0
 ): number {
   if (requiredCost <= 0) return dropTimeMs;
 
@@ -683,7 +810,7 @@ export function findCostSufficientTimeMs(
 
   const kps = calculateCostTimeline(
     slots, effectiveItems, slotCostConfigs, totalTimeMs,
-    heavyArmorCount, redWinterCount, stageGimmicks
+    heavyArmorCount, redWinterCount, stageGimmicks, studentDrops, initialCost
   );
 
   if (kps.length < 2) return dropTimeMs;
@@ -758,7 +885,9 @@ export function findCostMaxReachedTimeMs(
   heavyArmorCount: number,
   redWinterCount: number,
   stageGimmicks: StageGimmick[],
-  excludeItemId?: string
+  excludeItemId?: string,
+  studentDrops?: StudentDrop[],
+  initialCost = 0
 ): number {
   const effectiveItems = excludeItemId
     ? items.filter((it) => it.id !== excludeItemId)
@@ -766,7 +895,7 @@ export function findCostMaxReachedTimeMs(
 
   const kps = calculateCostTimeline(
     slots, effectiveItems, slotCostConfigs, totalTimeMs,
-    heavyArmorCount, redWinterCount, stageGimmicks
+    heavyArmorCount, redWinterCount, stageGimmicks, studentDrops, initialCost
   );
 
   if (kps.length < 2) return dropTimeMs;

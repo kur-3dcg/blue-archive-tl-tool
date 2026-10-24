@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import type { StageGimmick, CharacterSlot } from '../../types';
 import { STAGE_GIMMICK_PRESETS } from '../../constants';
 import { useT } from '../../i18n';
+import { msToDisplay as msToDisplayFull, parseTimeInput } from '../../utils/timeFormat';
 import './StageGimmickPanel.css';
 
 interface Props {
@@ -10,15 +11,6 @@ interface Props {
   slots: CharacterSlot[];
   onAdd: (gimmick: StageGimmick) => void;
   onRemove: (id: string) => void;
-}
-
-function parseTimeInput(input: string): number | null {
-  const m = input.trim().match(/^(\d+):(\d{2})(?:\.(\d{1,3}))?$/);
-  if (!m) return null;
-  const ms =
-    (parseInt(m[1]) * 60 + parseInt(m[2])) * 1000 +
-    parseInt((m[3] ?? '').padEnd(3, '0'));
-  return ms;
 }
 
 function msToDisplay(ms: number): string {
@@ -41,8 +33,12 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
   const [preset, setPreset] = useState('0');
   const [timeInput, setTimeInput] = useState('');
   const [customLabel, setCustomLabel] = useState('');
+  const [customKind, setCustomKind] = useState<'add' | 'mul' | 'fixed'>('add');
+  const [customGain, setCustomGain] = useState('');
   const [customRecovery, setCustomRecovery] = useState('');
+  const [customPercent, setCustomPercent] = useState('');
   const [customDuration, setCustomDuration] = useState('');
+  const [error, setError] = useState('');
   const panelRef = useRef<HTMLDivElement>(null);
 
   const isCustom = preset === CUSTOM_KEY;
@@ -53,19 +49,27 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
   // 全生徒数（ST+SP、キャラが設定されているスロットのみ）
   const studentCount = slots.filter((s) => s.character !== null).length;
 
-  // プリセットの実効回復力
-  const presetRecoveryDelta = presetData
-    ? 'recoveryPerStriker' in presetData
-      ? presetData.recoveryPerStriker * strikerCount
-      : 'recoveryPerStudent' in presetData
-        ? presetData.recoveryPerStudent * studentCount
-        : 'recovery' in presetData
-          ? presetData.recovery
-          : 0
-    : 0;
+  // 乗算プリセット（ゲブラ 知性の根源等）
+  const presetPercent = presetData && 'recoveryPercent' in presetData ? presetData.recoveryPercent : undefined;
+  // 人数比例プリセット（人数はコスト計算時にその時点の残り人数で自動計算）
+  const presetDynamicPerStudent = presetData && 'dynamicPerStudent' in presetData ? presetData.dynamicPerStudent : undefined;
+  const presetDynamicPerStriker = presetData && 'dynamicPerStriker' in presetData ? presetData.dynamicPerStriker : undefined;
+
+  // プリセットの回復力フィールド（StageGimmick に展開）
+  const presetValueFields: Pick<StageGimmick, 'recoveryDelta' | 'recoveryPercent' | 'recoveryPerStudent' | 'recoveryPerStriker'> = {
+    recoveryDelta: 0,
+    ...(presetPercent !== undefined ? { recoveryPercent: presetPercent } : {}),
+    ...(presetDynamicPerStudent !== undefined ? { recoveryPerStudent: presetDynamicPerStudent } : {}),
+    ...(presetDynamicPerStriker !== undefined ? { recoveryPerStriker: presetDynamicPerStriker } : {}),
+  };
+
+  // 効果時間を手入力するプリセット
+  const isManualDuration = !!presetData && 'manualDuration' in presetData;
 
   // 固定発動時間を持つプリセット（グレゴリオ等）
   const isFixedTimePreset = presetData && 'fixedTimes' in presetData;
+  // 常時発動プリセット（戦闘開始〜終了）
+  const isAlwaysPreset = presetData && 'always' in presetData;
 
   // パネル外クリックで閉じる
   useEffect(() => {
@@ -79,42 +83,90 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
     return () => document.removeEventListener('mousedown', handler);
   }, [open]);
 
+  // 発動時間の検証（不正ならエラー表示して null）
+  const validateTime = (): number | null => {
+    const timeMs = parseTimeInput(timeInput);
+    if (timeMs === null) {
+      setError(t('時間は M:SS または M:SS.000 形式で入力してください'));
+      return null;
+    }
+    if (timeMs <= 0 || timeMs > totalTimeMs) {
+      setError(`${t('戦闘時間内で入力してください')}（0:00.001〜${msToDisplayFull(totalTimeMs)}）`);
+      return null;
+    }
+    return timeMs;
+  };
+
   const handleAdd = () => {
+    setError('');
     let label: string;
     let recoveryDelta: number;
     let durationMs: number;
 
     if (isCustom) {
-      const timeMs = parseTimeInput(timeInput);
-      if (timeMs === null || timeMs <= 0 || timeMs > totalTimeMs) return;
+      const timeMs = validateTime();
+      if (timeMs === null) return;
       label = customLabel.trim() || 'カスタム';
-      recoveryDelta = parseInt(customRecovery);
+      if (customKind === 'fixed') {
+        // 固定獲得: 発動時刻に所持コストを即時加算（効果時間なし）
+        const costGain = parseFloat(customGain);
+        if (!isFinite(costGain) || costGain === 0) {
+          setError(t('獲得コストを入力してください'));
+          return;
+        }
+        onAdd({ id: crypto.randomUUID(), timeMs, durationMs: 0, recoveryDelta: 0, costGain, label });
+        setTimeInput('');
+        return;
+      }
       durationMs = Math.round(parseFloat(customDuration) * 1000);
-      if (!isFinite(recoveryDelta) || recoveryDelta <= 0) return;
-      if (!isFinite(durationMs) || durationMs <= 0) return;
-      onAdd({ id: crypto.randomUUID(), timeMs, durationMs, recoveryDelta, label });
+      if (!isFinite(durationMs) || durationMs <= 0) {
+        setError(t('効果時間（秒）を正の数で入力してください'));
+        return;
+      }
+      if (customKind === 'mul') {
+        const recoveryPercent = parseFloat(customPercent);
+        if (!isFinite(recoveryPercent) || recoveryPercent === 0) {
+          setError(t('回復速度%を入力してください'));
+          return;
+        }
+        onAdd({ id: crypto.randomUUID(), timeMs, durationMs, recoveryDelta: 0, recoveryPercent, label });
+      } else {
+        recoveryDelta = parseInt(customRecovery);
+        if (!isFinite(recoveryDelta) || recoveryDelta <= 0) {
+          setError(t('回復力を正の数で入力してください'));
+          return;
+        }
+        onAdd({ id: crypto.randomUUID(), timeMs, durationMs, recoveryDelta, label });
+      }
       setTimeInput('');
-    } else if (isFixedTimePreset && presetData && 'fixedTimes' in presetData) {
-      if (presetRecoveryDelta <= 0) return; // 生徒0人では追加しない
+    } else if (presetData) {
       label = presetData.label;
-      recoveryDelta = presetRecoveryDelta;
-      durationMs = presetData.durationMs;
-      for (const timeMs of presetData.fixedTimes) {
-        if (timeMs <= totalTimeMs) {
-          onAdd({ id: crypto.randomUUID(), timeMs, durationMs, recoveryDelta, label });
+      if ('always' in presetData) {
+        // 戦闘開始（総時間）から終了（0:00）まで
+        onAdd({ id: crypto.randomUUID(), timeMs: totalTimeMs, durationMs: totalTimeMs, ...presetValueFields, label });
+        return;
+      }
+      if ('durationMs' in presetData) {
+        durationMs = presetData.durationMs;
+      } else {
+        durationMs = Math.round(parseFloat(customDuration) * 1000);
+        if (!isFinite(durationMs) || durationMs <= 0) {
+          setError(t('効果時間（秒）を正の数で入力してください'));
+          return;
         }
       }
-    } else if (presetData) {
-      const timeMs = parseTimeInput(timeInput);
-      if (timeMs === null || timeMs <= 0 || timeMs > totalTimeMs) return;
-      label = presetData.label;
-      recoveryDelta = presetRecoveryDelta;
-      durationMs = presetData.durationMs;
-      if (recoveryDelta <= 0) return;
-      onAdd({ id: crypto.randomUUID(), timeMs, durationMs, recoveryDelta, label });
+      if ('fixedTimes' in presetData) {
+        for (const timeMs of presetData.fixedTimes) {
+          if (timeMs <= totalTimeMs) {
+            onAdd({ id: crypto.randomUUID(), timeMs, durationMs, ...presetValueFields, label });
+          }
+        }
+        return;
+      }
+      const timeMs = validateTime();
+      if (timeMs === null) return;
+      onAdd({ id: crypto.randomUUID(), timeMs, durationMs, ...presetValueFields, label });
       setTimeInput('');
-    } else {
-      return;
     }
   };
 
@@ -136,7 +188,7 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
               <select
                 className="stage-gimmick-select"
                 value={preset}
-                onChange={(e) => setPreset(e.target.value)}
+                onChange={(e) => { setPreset(e.target.value); setError(''); }}
               >
                 {STAGE_GIMMICK_PRESETS.map((p, i) => (
                   <option key={i} value={String(i)}>{p.label}</option>
@@ -144,19 +196,33 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
                 <option value={CUSTOM_KEY}>{t('カスタム')}</option>
               </select>
             </div>
-            {!isCustom && presetData && 'recoveryPerStriker' in presetData && (
+            {!isCustom && presetDynamicPerStriker !== undefined && (
               <div className="stage-gimmick-note">
-                回復力 +{presetData.recoveryPerStriker} × ST{strikerCount}人 = <strong>+{presetRecoveryDelta}</strong>
+                回復力 +{presetDynamicPerStriker} × 残りST数（現在{strikerCount}人 = <strong>+{presetDynamicPerStriker * strikerCount}</strong>）
               </div>
             )}
-            {!isCustom && presetData && 'recoveryPerStudent' in presetData && (
+            {!isCustom && presetDynamicPerStudent !== undefined && (
               <div className="stage-gimmick-note">
-                回復力 +{presetData.recoveryPerStudent} × {studentCount}人 = <strong>+{presetRecoveryDelta}</strong>（×6回 一括登録）
+                回復力 +{presetDynamicPerStudent} × 残り人数（現在{studentCount}人 = <strong>+{presetDynamicPerStudent * studentCount}</strong>）
               </div>
             )}
-            {!isCustom && presetData && 'recovery' in presetData && (
+            {isManualDuration && (
+              <div className="stage-gimmick-row">
+                <label className="stage-gimmick-label">{t('効果時間(秒)')}</label>
+                <input
+                  className="stage-gimmick-input stage-gimmick-input--short"
+                  type="number"
+                  value={customDuration}
+                  onChange={(e) => { setCustomDuration(e.target.value); setError(''); }}
+                  placeholder="35"
+                  min="0.1"
+                  step="0.1"
+                />
+              </div>
+            )}
+            {!isCustom && presetPercent !== undefined && (
               <div className="stage-gimmick-note">
-                回復力 <strong>+{presetData.recovery}</strong>
+                回復速度 <strong>×{(1 + presetPercent / 100).toFixed(2)}</strong>（+{presetPercent}%）
               </div>
             )}
             {isCustom && (
@@ -172,31 +238,94 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
                   />
                 </div>
                 <div className="stage-gimmick-row">
-                  <label className="stage-gimmick-label">{t('回復力+')}</label>
-                  <input
-                    className="stage-gimmick-input stage-gimmick-input--short"
-                    type="number"
-                    value={customRecovery}
-                    onChange={(e) => setCustomRecovery(e.target.value)}
-                    placeholder="1000"
-                    min="1"
-                  />
+                  <label className="stage-gimmick-label">{t('種類')}</label>
+                  <label className="stage-gimmick-radio">
+                    <input
+                      type="radio"
+                      name="stage-gimmick-kind"
+                      checked={customKind === 'add'}
+                      onChange={() => setCustomKind('add')}
+                    />
+                    {t('加算')}
+                  </label>
+                  <label className="stage-gimmick-radio">
+                    <input
+                      type="radio"
+                      name="stage-gimmick-kind"
+                      checked={customKind === 'mul'}
+                      onChange={() => setCustomKind('mul')}
+                    />
+                    {t('乗算')}
+                  </label>
+                  <label className="stage-gimmick-radio">
+                    <input
+                      type="radio"
+                      name="stage-gimmick-kind"
+                      checked={customKind === 'fixed'}
+                      onChange={() => setCustomKind('fixed')}
+                    />
+                    {t('固定')}
+                  </label>
                 </div>
-                <div className="stage-gimmick-row">
-                  <label className="stage-gimmick-label">{t('効果時間(秒)')}</label>
-                  <input
-                    className="stage-gimmick-input stage-gimmick-input--short"
-                    type="number"
-                    value={customDuration}
-                    onChange={(e) => setCustomDuration(e.target.value)}
-                    placeholder="22"
-                    min="0.1"
-                    step="0.1"
-                  />
-                </div>
+                {customKind === 'fixed' ? (
+                  <div className="stage-gimmick-row">
+                    <label className="stage-gimmick-label">{t('コスト+')}</label>
+                    <input
+                      className="stage-gimmick-input stage-gimmick-input--short"
+                      type="number"
+                      value={customGain}
+                      onChange={(e) => setCustomGain(e.target.value)}
+                      placeholder="3"
+                      step="0.1"
+                    />
+                  </div>
+                ) : customKind === 'add' ? (
+                  <div className="stage-gimmick-row">
+                    <label className="stage-gimmick-label">{t('回復力+')}</label>
+                    <input
+                      className="stage-gimmick-input stage-gimmick-input--short"
+                      type="number"
+                      value={customRecovery}
+                      onChange={(e) => setCustomRecovery(e.target.value)}
+                      placeholder="1000"
+                      min="1"
+                    />
+                  </div>
+                ) : (
+                  <div className="stage-gimmick-row">
+                    <label className="stage-gimmick-label">{t('回復速度%')}</label>
+                    <input
+                      className="stage-gimmick-input stage-gimmick-input--short"
+                      type="number"
+                      value={customPercent}
+                      onChange={(e) => setCustomPercent(e.target.value)}
+                      placeholder="25"
+                      step="0.1"
+                    />
+                  </div>
+                )}
+                {customKind !== 'fixed' && (
+                  <div className="stage-gimmick-row">
+                    <label className="stage-gimmick-label">{t('効果時間(秒)')}</label>
+                    <input
+                      className="stage-gimmick-input stage-gimmick-input--short"
+                      type="number"
+                      value={customDuration}
+                      onChange={(e) => setCustomDuration(e.target.value)}
+                      placeholder="22"
+                      min="0.1"
+                      step="0.1"
+                    />
+                  </div>
+                )}
               </>
             )}
-            {isFixedTimePreset ? (
+            {isAlwaysPreset ? (
+              <div className="stage-gimmick-row">
+                <span className="stage-gimmick-note">{t('常時（戦闘開始〜終了）')}</span>
+                <button className="stage-gimmick-add-btn" onClick={handleAdd}>{t('追加')}</button>
+              </div>
+            ) : isFixedTimePreset ? (
               <div className="stage-gimmick-row">
                 <span className="stage-gimmick-note">
                   {presetData && 'fixedTimes' in presetData
@@ -214,13 +343,14 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
                   className="stage-gimmick-input stage-gimmick-input--short"
                   type="text"
                   value={timeInput}
-                  onChange={(e) => setTimeInput(e.target.value)}
+                  onChange={(e) => { setTimeInput(e.target.value); setError(''); }}
                   onKeyDown={(e) => { if (e.key === 'Enter') handleAdd(); }}
                   placeholder="1:30"
                 />
                 <button className="stage-gimmick-add-btn" onClick={handleAdd}>{t('追加')}</button>
               </div>
             )}
+            {error && <div className="stage-gimmick-error">{error}</div>}
           </div>
           {stageGimmicks.length > 0 && (
             <div className="stage-gimmick-list">
@@ -230,7 +360,15 @@ export function StageGimmickPanel({ stageGimmicks, totalTimeMs, slots, onAdd, on
                   <div key={g.id} className="stage-gimmick-item">
                     <span className="stage-gimmick-item-label">{g.label ?? 'ギミック'}</span>
                     <span className="stage-gimmick-item-detail">
-                      +{g.recoveryDelta} {secToDisplay(g.durationMs)} @{msToDisplay(g.timeMs)}
+                      {g.costGain !== undefined
+                        ? `${g.costGain >= 0 ? '+' : ''}${g.costGain}コスト`
+                        : g.recoveryPercent !== undefined
+                        ? `+${g.recoveryPercent}%`
+                        : g.recoveryPerStudent !== undefined
+                          ? `+${g.recoveryPerStudent}×人数`
+                          : g.recoveryPerStriker !== undefined
+                            ? `+${g.recoveryPerStriker}×ST数`
+                            : `+${g.recoveryDelta}`} {g.costGain === undefined ? secToDisplay(g.durationMs) : ''} @{msToDisplay(g.timeMs)}
                     </span>
                     <button
                       className="stage-gimmick-remove-btn"

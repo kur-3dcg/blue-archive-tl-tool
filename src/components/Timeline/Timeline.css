@@ -204,6 +204,12 @@
   cursor: crosshair;
 }
 
+/* 中クリックでつかんで移動中 */
+.timeline-scroll.panning,
+.timeline-scroll.panning * {
+  cursor: grabbing !important;
+}
+
 .timeline-content {
   position: relative;
 }
@@ -218,6 +224,38 @@
 
 .timeline-layers {
   position: relative;
+}
+
+/* 再生位置（ゲーム再現モード） */
+.timeline-ruler.playhead-enabled {
+  cursor: pointer;
+}
+
+.timeline-playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: #22c55e;
+  pointer-events: none;
+  z-index: 12;
+}
+
+.timeline-playhead-handle {
+  position: sticky;
+  top: 0;
+  width: 0;
+  height: 0;
+  margin-left: -6px;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 10px solid #22c55e;
+}
+
+/* 再生位置より未来側のアイテム */
+.timeline-item.is-future {
+  opacity: 0.35;
 }
 
 .timeline-layer {

@@ -6,9 +6,10 @@ interface Props {
   zoomLevel: number;
   snapMode: SnapMode;
   totalTimeS: number;
+  onMouseDown?: (e: React.MouseEvent<HTMLCanvasElement>) => void; // 再生位置の設定（ゲーム再現モード）
 }
 
-export function TimelineRuler({ zoomLevel, snapMode, totalTimeS }: Props) {
+export function TimelineRuler({ zoomLevel, snapMode, totalTimeS, onMouseDown }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const timelineWidth = totalTimeS * zoomLevel;
   const canvasWidth = TIMELINE_PAD_LEFT + timelineWidth + TIMELINE_PAD_RIGHT;
@@ -99,5 +100,11 @@ export function TimelineRuler({ zoomLevel, snapMode, totalTimeS }: Props) {
     }
   }, [zoomLevel, snapMode, canvasWidth, timelineWidth, totalTimeS, theme]);
 
-  return <canvas ref={canvasRef} className="timeline-ruler" />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className={`timeline-ruler${onMouseDown ? ' playhead-enabled' : ''}`}
+      onMouseDown={onMouseDown}
+    />
+  );
 }

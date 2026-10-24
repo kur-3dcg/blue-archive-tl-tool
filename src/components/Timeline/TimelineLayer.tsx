@@ -37,6 +37,7 @@ interface Props {
   slotCostConfigs: SlotCostConfig[];
   locked?: boolean;
   queueErrorIds?: Set<string>;
+  playheadMs?: number; // ゲーム再現モードの再生位置（これより未来側のアイテムを薄く表示）
   onContextMenuItem?: (itemId: string, x: number, y: number) => void;
   selectedItemId?: string | null;
   onSelectItem?: (itemId: string) => void;
@@ -79,6 +80,7 @@ export function TimelineLayer({
   slotCostConfigs,
   locked,
   queueErrorIds,
+  playheadMs,
   onContextMenuItem,
   selectedItemId,
   onSelectItem,
@@ -225,6 +227,7 @@ export function TimelineLayer({
             costOvercost={itemCostMap?.get(item.id)?.isOvercost}
             onCostAdjust={onCostAdjust}
             isQueueError={queueErrorIds?.has(item.id)}
+            isFuture={playheadMs !== undefined && item.timeMs < playheadMs}
             onSetTarget={onSetTarget}
             onSetTargetEtc={onSetTargetEtc}
             onToggleTimeDisplay={onToggleTimeDisplay}

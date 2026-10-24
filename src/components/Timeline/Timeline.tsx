@@ -9,9 +9,10 @@ import { BubbleLayer } from './BubbleLayer';
 import { StandaloneCommentLayer } from './StandaloneCommentLayer';
 import { ArrowLayer } from './ArrowLayer';
 import { CostRuler, COST_RULER_HEIGHT } from './CostRuler';
+import { layoutStandaloneComments, layoutItemBubbles } from '../../utils/commentLayout';
 import { NSLayerSection } from './NSLayerSection';
 import { snapTime, snapToNearestItem } from '../../utils/snap';
-import { calculateItemCosts, computeArmorCounts, findCostSufficientTimeMs, findCostMaxReachedTimeMs, calculateCostCap } from '../../utils/costCalc';
+import { calculateItemCosts, computeArmorCounts, findCostSufficientTimeMs, findCostMaxReachedTimeMs, calculateCostCap, applyBuffDurationMultiplier } from '../../utils/costCalc';
 import { msToDisplay, costToDisplay } from '../../utils/timeFormat';
 import { validateSkillQueue, ACTIVE_SLOTS, EXTENDED_ACTIVE_SLOTS } from '../../utils/skillQueueValidator';
 import { useT, useCharName } from '../../i18n';
@@ -27,10 +28,13 @@ interface Props {
   queueValidation: boolean;
   showNsLayers: boolean;
   costSnap: boolean;
+  gameReplayMode: boolean;       // ゲーム再現モード（TL作成中のみ true）
+  playheadMs: number;            // 再生位置（ゲーム再現のスロット計算の基準）
+  onSetPlayhead: (ms: number | null) => void;
 }
 
 
-export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClearPendingSlot, locked, queueValidation, showNsLayers, costSnap }: Props) {
+export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClearPendingSlot, locked, queueValidation, showNsLayers, costSnap, gameReplayMode, playheadMs, onSetPlayhead }: Props) {
   const t = useT();
   const charName = useCharName();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -51,7 +55,7 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
   const [arrowClickFrom, setArrowClickFrom] = useState<string | null>(null);
   const [containerWidth, setContainerWidth] = useState(800);
 
-  const { snapMode, layers, items, arrows, slots, totalTimeMs, slotCostConfigs, targetTimeMs, standaloneComments, stageGimmicks } = state;
+  const { snapMode, layers, items, arrows, slots, totalTimeMs, slotCostConfigs, targetTimeMs, standaloneComments, stageGimmicks, studentDrops, initialCost } = state;
   const totalTimeS = totalTimeMs / 1000;
 
   // zoomLevel をビューポート幅から自動算出
@@ -122,16 +126,16 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
 
   // Calculate cost for each item
   const itemCostMap = useMemo(() => {
-    return calculateItemCosts(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks);
-  }, [slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks]);
+    return calculateItemCosts(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, studentDrops, initialCost);
+  }, [slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, studentDrops, initialCost]);
 
   // スキルキュー検証
   const queueErrorIds = useMemo(() => {
     if (!queueValidation) return new Set<string>();
     const filledSlotIndices = slots.map((s, i) => s.character ? i : -1).filter(i => i >= 0);
     const activeSlots = state.mode === 'extended' ? EXTENDED_ACTIVE_SLOTS : ACTIVE_SLOTS;
-    return validateSkillQueue(items, state.skillQueueOrder, filledSlotIndices, activeSlots);
-  }, [queueValidation, items, state.skillQueueOrder, slots, state.mode]);
+    return validateSkillQueue(items, state.skillQueueOrder, filledSlotIndices, activeSlots, studentDrops ?? []);
+  }, [queueValidation, items, state.skillQueueOrder, slots, state.mode, studentDrops]);
 
   // ビューポート移動（30秒刻み）
   const scrollByStep = useCallback((direction: 'left' | 'right') => {
@@ -182,14 +186,14 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
         // EXスナップ（コスト不足時に充足時刻へ）
         finalTimeMs = findCostSufficientTimeMs(
           timeMs, exCost, slots, items, slotCostConfigs,
-          totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks
+          totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, undefined, studentDrops, initialCost
         );
         // MAXスナップ（EXスナップが不要 & コストMAX中ならMAX到達時刻へ）
         if (finalTimeMs === timeMs) {
           const cap = calculateCostCap(slotCostConfigs, slots);
           finalTimeMs = findCostMaxReachedTimeMs(
             timeMs, cap, slots, items, slotCostConfigs,
-            totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks
+            totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, undefined, studentDrops, initialCost
           );
         }
       }
@@ -205,8 +209,10 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
         },
       });
       setSelectedItemId(newId);
+      // ゲーム再現モード: 配置したスキルの直後に再生位置を進める
+      if (gameReplayMode) onSetPlayhead(finalTimeMs);
     },
-    [slots, slotCostConfigs, dispatch, costSnap, items, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks]
+    [slots, slotCostConfigs, dispatch, costSnap, items, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, studentDrops, initialCost, gameReplayMode, onSetPlayhead]
   );
 
   const handleMoveItem = useCallback(
@@ -222,14 +228,14 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
           // EXスナップ
           finalTimeMs = findCostSufficientTimeMs(
             timeMs, exCost, slots, items, slotCostConfigs,
-            totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, itemId
+            totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, itemId, studentDrops, initialCost
           );
           // MAXスナップ（EXスナップが不要 & コストMAX中ならMAX到達時刻へ）
           if (finalTimeMs === timeMs) {
             const cap = calculateCostCap(slotCostConfigs, slots);
             finalTimeMs = findCostMaxReachedTimeMs(
               timeMs, cap, slots, items, slotCostConfigs,
-              totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, itemId
+              totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, itemId, studentDrops, initialCost
             );
           }
         }
@@ -237,7 +243,7 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
       dispatch({ type: 'MOVE_ITEM', itemId, timeMs: finalTimeMs, layerIndex });
       setDragInfo({ timeMs: finalTimeMs, itemId });
     },
-    [dispatch, costSnap, items, slots, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks]
+    [dispatch, costSnap, items, slots, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, studentDrops, initialCost]
   );
 
   const handleRemoveItem = useCallback(
@@ -309,8 +315,9 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
       // 固有2/4によるバフ時間倍率（BuffBarLayer と同じ計算）
       const config = slotCostConfigs[item.slotIndex];
       const hasU2 = config?.hasUniqueWeapon2 || config?.hasUniqueWeapon4;
-      const mult = char.hasDurationBuff && hasU2 ? 1.19 : 1;
-      const stepMs = Math.round(rawDuration * mult * 1000);
+      const stepMs = char.hasDurationBuff && hasU2
+        ? applyBuffDurationMultiplier(rawDuration * 1000)
+        : Math.round(rawDuration * 1000);
 
       // 戦闘開始方向（timeMs=totalTimeMs）に達するまでチェーン
       const chainTimes: number[] = [];
@@ -473,6 +480,58 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
     [pendingSlotIndex, totalWidth, totalTimeMs, layers, items, handleDrop, onClearPendingSlot]
   );
 
+  // 中クリックでつかんで移動（ハンドツール）。ブラウザの自動スクロールは無効化
+  const [isPanning, setIsPanning] = useState(false);
+  const handlePanMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button !== 1) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const container = containerRef.current;
+    if (!container) return;
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startLeft = container.scrollLeft;
+    const startTop = container.scrollTop;
+    setIsPanning(true);
+    const onMove = (ev: MouseEvent) => {
+      container.scrollLeft = startLeft - (ev.clientX - startX);
+      container.scrollTop = startTop - (ev.clientY - startY);
+    };
+    const onUp = (ev: MouseEvent) => {
+      if (ev.button !== 1) return;
+      setIsPanning(false);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  }, []);
+
+  // 再生位置（ゲーム再現モード）: 目盛りをクリック/ドラッグで移動
+  const handlePlayheadMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      const container = containerRef.current;
+      if (!container) return;
+      const toTime = (clientX: number) => {
+        const rect = container.getBoundingClientRect();
+        const xInContent = clientX - rect.left + container.scrollLeft;
+        const timeMs = ((totalWidth - TIMELINE_PAD_RIGHT - xInContent) / zoomRef.current) * 1000;
+        return snapTime(Math.max(0, Math.min(totalTimeMs, timeMs)), snapRef.current);
+      };
+      onSetPlayhead(toTime(e.clientX));
+      const onMove = (ev: MouseEvent) => onSetPlayhead(toTime(ev.clientX));
+      const onUp = () => {
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onUp);
+      };
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+    },
+    [totalWidth, totalTimeMs, onSetPlayhead]
+  );
+
   const handleMoveStandaloneComment = useCallback((id: string, timeMs: number) => {
     dispatch({ type: 'MOVE_STANDALONE_COMMENT', id, timeMs });
   }, [dispatch]);
@@ -567,8 +626,11 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
     [dispatch]
   );
 
-  const layerAreaTop = RULER_HEIGHT + COST_RULER_HEIGHT + STANDALONE_COMMENT_HEIGHT;
-  const layerAreaBottom = RULER_HEIGHT + COST_RULER_HEIGHT + STANDALONE_COMMENT_HEIGHT + layers * LAYER_HEIGHT;
+  // レイヤー上端 = 目盛り + コストグラフ + フリーコメント（段積みで可変）+ キャラ依存コメント（段積みで可変）
+  const standaloneAreaHeight = layoutStandaloneComments(standaloneComments, zoomLevel, totalWidth).height;
+  const itemBubbleAreaHeight = layoutItemBubbles(items, zoomLevel, totalWidth).height;
+  const layerAreaTop = RULER_HEIGHT + COST_RULER_HEIGHT + standaloneAreaHeight + itemBubbleAreaHeight;
+  const layerAreaBottom = layerAreaTop + layers * LAYER_HEIGHT;
 
   // ドラッグ中のコスト値を取得
   const dragCostValue = dragInfo ? itemCostMap.get(dragInfo.itemId)?.usedCost : undefined;
@@ -624,13 +686,29 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
         </button>
         <div
           ref={containerRef}
-          className={`timeline-scroll${pendingSlotIndex !== null ? ' pending-placement' : ''}`}
+          className={`timeline-scroll${pendingSlotIndex !== null ? ' pending-placement' : ''}${isPanning ? ' panning' : ''}`}
+          onMouseDownCapture={handlePanMouseDown}
+          onAuxClick={(e) => { if (e.button === 1) e.preventDefault(); }}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setCursorVisible(false)}
           onMouseUp={handleMouseUp}
         >
         <div className="timeline-content" style={{ width: totalWidth }}>
-          <TimelineRuler zoomLevel={zoomLevel} snapMode={snapMode} totalTimeS={totalTimeS} />
+          <TimelineRuler
+            zoomLevel={zoomLevel}
+            snapMode={snapMode}
+            totalTimeS={totalTimeS}
+            onMouseDown={gameReplayMode ? handlePlayheadMouseDown : undefined}
+          />
+          {gameReplayMode && (
+            <div
+              className="timeline-playhead"
+              style={{ left: totalWidth - TIMELINE_PAD_RIGHT - (playheadMs / 1000) * zoomLevel }}
+              title="再生位置（ゲーム再現のスキルスロットはこの時点の状態を表示）"
+            >
+              <div className="timeline-playhead-handle" />
+            </div>
+          )}
           <CostRuler
             slots={slots}
             items={items}
@@ -639,6 +717,8 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
             zoomLevel={zoomLevel}
             totalWidth={totalWidth}
             stageGimmicks={stageGimmicks}
+            studentDrops={studentDrops}
+            initialCost={initialCost}
           />
           <StandaloneCommentLayer
             comments={standaloneComments}
@@ -696,6 +776,7 @@ export function Timeline({ state, dispatch, arrowMode, pendingSlotIndex, onClear
                 slotCostConfigs={slotCostConfigs}
                 locked={locked}
                 queueErrorIds={queueErrorIds}
+                playheadMs={gameReplayMode ? playheadMs : undefined}
                 selectedItemId={selectedItemId}
                 onSelectItem={handleSelectItem}
               />

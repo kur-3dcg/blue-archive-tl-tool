@@ -131,10 +131,10 @@ function canvasToPngBytes(canvas: HTMLCanvasElement): Promise<Uint8Array> {
 // ---------------------------------------------------------------------------
 
 function buildEntries(state: TimelineState) {
-  const { slots, items, slotCostConfigs, totalTimeMs, targetTimeMs, standaloneComments, stageGimmicks } = state;
+  const { slots, items, slotCostConfigs, totalTimeMs, targetTimeMs, standaloneComments, stageGimmicks, studentDrops, initialCost } = state;
 
   const { heavyArmorCount, redWinterCount } = computeArmorCounts(slots);
-  const costMap = calculateItemCosts(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks);
+  const costMap = calculateItemCosts(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, studentDrops, initialCost);
 
   const filteredItems = items.filter(
     (item) => slots[item.slotIndex]?.character && (targetTimeMs === undefined || item.timeMs >= targetTimeMs)

@@ -50,11 +50,11 @@ function drawTextClipped(
 
 export async function generateTlImage(state: TimelineState, options: { transparent?: boolean } = {}): Promise<Blob> {
   const transparent = options.transparent ?? true;
-  const { slots, items, slotCostConfigs, totalTimeMs, targetTimeMs, standaloneComments, stageGimmicks } = state;
+  const { slots, items, slotCostConfigs, totalTimeMs, targetTimeMs, standaloneComments, stageGimmicks, studentDrops, initialCost } = state;
 
   const { heavyArmorCount, redWinterCount } = computeArmorCounts(slots);
   const costMap = calculateItemCosts(
-    slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks
+    slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, studentDrops, initialCost
   );
 
   const filteredItems = items.filter(

@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import type { Character, CharacterSlot, SlotCostConfig, GameMode, StandaloneComment, StageGimmick, SnapMode } from '../../types';
+import type { Character, CharacterSlot, SlotCostConfig, GameMode, StandaloneComment, StageGimmick, StudentDrop, SnapMode } from '../../types';
 import { STRIKER_COUNT, EXTENDED_STRIKER_COUNT, TIME_PRESETS, MAX_TOTAL_TIME_MS, MAX_LAYERS } from '../../constants';
 import { ACTIVE_SLOTS, EXTENDED_ACTIVE_SLOTS } from '../../utils/skillQueueValidator';
 import { useT, useCharName } from '../../i18n';
 import { SlotSelector } from './SlotSelector';
 import { TextMarkerPanel } from '../TextMarkerPanel/TextMarkerPanel';
 import { StageGimmickPanel } from '../StageGimmickPanel/StageGimmickPanel';
+import { StudentDropPanel } from '../StudentDropPanel/StudentDropPanel';
 import { BossPresetPanel } from '../BossPresetPanel/BossPresetPanel';
 import type { BossPresetLoadState } from '../../data/bossPresets';
 import './CharacterPanel.css';
@@ -32,6 +33,11 @@ interface Props {
   stageGimmicks: StageGimmick[];
   onAddStageGimmick: (gimmick: StageGimmick) => void;
   onRemoveStageGimmick: (id: string) => void;
+  studentDrops: StudentDrop[];
+  initialCost: number;
+  onSetInitialCost: (cost: number) => void;
+  onAddStudentDrop: (drop: StudentDrop, commentText: string) => void;
+  onRemoveStudentDrop: (id: string) => void;
   skillQueueOrder?: number[];
   onSetSkillQueueOrder: (order: number[]) => void;
   onSetSkillIndex: (slotIndex: number, skillIndex: number) => void;
@@ -84,6 +90,11 @@ export function CharacterPanel({
   stageGimmicks,
   onAddStageGimmick,
   onRemoveStageGimmick,
+  studentDrops,
+  initialCost,
+  onSetInitialCost,
+  onAddStudentDrop,
+  onRemoveStudentDrop,
   skillQueueOrder,
   onSetSkillQueueOrder,
   onSetSkillIndex,
@@ -510,9 +521,9 @@ export function CharacterPanel({
                 <button
                   className={`game-replay-btn${gameReplayMode ? ' active' : ''}`}
                   onClick={onToggleGameReplayMode}
-                  title="ゲーム再現モード：現在アクティブな3スロットをハイライト表示"
+                  title="ゲーム再現モード（β版）：再生位置（緑の線）時点のアクティブスロットを表示。目盛りクリック/ドラッグで再生位置を移動"
                 >
-                  {t('ゲーム再現')}
+                  {t('ゲーム再現')}{t('（β版）')}
                 </button>
                 <button
                   className={`preset-btn${queueValidation ? ' active' : ''}`}
@@ -534,6 +545,13 @@ export function CharacterPanel({
               slots={slots}
               onAdd={onAddStageGimmick}
               onRemove={onRemoveStageGimmick}
+            />
+            <StudentDropPanel
+              studentDrops={studentDrops}
+              totalTimeMs={totalTimeMs}
+              slots={slots}
+              onAdd={onAddStudentDrop}
+              onRemove={onRemoveStudentDrop}
             />
             <button
               className={`preset-btn${tlSettingsOpen ? ' active' : ''}`}
@@ -661,6 +679,21 @@ export function CharacterPanel({
               </button>
             )}
           </span>
+          <label className="tl-control" title="戦闘開始時の所持コスト（デフォルト0、上限はコスト上限）">
+            {t('開始時コスト')}:
+            <input
+              className="custom-time-input"
+              type="number"
+              min={0}
+              max={20}
+              step={0.1}
+              value={initialCost}
+              onChange={(e) => {
+                const v = parseFloat(e.target.value);
+                onSetInitialCost(isFinite(v) ? Math.max(0, Math.min(20, v)) : 0);
+              }}
+            />
+          </label>
         </div>
       )}
     </div>

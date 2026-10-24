@@ -1,0 +1,198 @@
+.student-drop-wrapper {
+  position: relative;
+}
+
+.student-drop-btn {
+  padding: 4px 10px;
+  font-size: 13px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.student-drop-btn:hover {
+  background: var(--bg-tertiary);
+}
+
+.student-drop-btn.active,
+.student-drop-btn.has-drops {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.student-drop-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 290px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+}
+
+.student-drop-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ef4444;
+  letter-spacing: 0.04em;
+}
+
+.student-drop-note,
+.student-drop-empty {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.student-drop-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.student-drop-students {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.student-drop-student {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+  opacity: 0.55;
+}
+
+.student-drop-student img {
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  display: block;
+}
+
+.student-drop-student:hover {
+  opacity: 0.85;
+}
+
+.student-drop-student.selected {
+  border-color: #ef4444;
+  opacity: 1;
+}
+
+.student-drop-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.student-drop-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.student-drop-input {
+  width: 90px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+.student-drop-input:focus {
+  outline: none;
+  border-color: #ef4444;
+}
+
+.student-drop-add-btn {
+  padding: 3px 10px;
+  font-size: 12px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.student-drop-add-btn:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.student-drop-error {
+  font-size: 11px;
+  color: #ef4444;
+}
+
+.student-drop-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-top: 1px solid var(--border-primary);
+  padding-top: 6px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.student-drop-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  padding: 3px 4px;
+  border-radius: 3px;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.student-drop-item-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.student-drop-item-label {
+  font-weight: 600;
+  color: #ef4444;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.student-drop-item-time {
+  color: var(--text-muted);
+  font-family: monospace;
+  font-size: 10px;
+}
+
+.student-drop-remove-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 13px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.student-drop-remove-btn:hover {
+  color: #ef4444;
+}

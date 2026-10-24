@@ -51,6 +51,17 @@ export default function App() {
   const [gameReplayMode, setGameReplayMode] = useState(false);
   const [editMode, setEditMode] = useState(true); // true=編成中, false=TL作成中
   const [pendingSlotIndex, setPendingSlotIndex] = useState<number | null>(null);
+  // ゲーム再現モードの再生位置（TL上の「今」）。null = 最後に置いたスキルの直後に追従
+  const [playheadMs, setPlayheadMs] = useState<number | null>(null);
+  // TLが空になったら（TLクリア・ロード等）再生位置の手動設定を解除
+  useEffect(() => {
+    if (state.items.length === 0) setPlayheadMs(null);
+  }, [state.items.length]);
+  const effectivePlayheadMs = useMemo(() => {
+    if (playheadMs !== null) return Math.max(0, Math.min(state.totalTimeMs, playheadMs));
+    if (state.items.length === 0) return state.totalTimeMs;
+    return Math.min(...state.items.map((it) => it.timeMs));
+  }, [playheadMs, state.items, state.totalTimeMs]);
   const [locked, setLocked] = useState(false);
   const [queueValidation, setQueueValidation] = useState(false);
   const [costSnap, setCostSnap] = useState(false);
@@ -61,8 +72,11 @@ export default function App() {
   const currentQueueState = useMemo(() => {
     const filledSlotIndices = state.slots.map((s, i) => s.character ? i : -1).filter(i => i >= 0);
     const activeSlots = state.mode === 'extended' ? EXTENDED_ACTIVE_SLOTS : ACTIVE_SLOTS;
-    return computeCurrentQueueState(state.items, state.skillQueueOrder, filledSlotIndices, activeSlots);
-  }, [state.slots, state.items, state.skillQueueOrder, state.mode]);
+    return computeCurrentQueueState(
+      state.items, state.skillQueueOrder, filledSlotIndices, activeSlots,
+      state.studentDrops ?? [], effectivePlayheadMs
+    );
+  }, [state.slots, state.items, state.skillQueueOrder, state.mode, state.studentDrops, effectivePlayheadMs]);
   // ゲーム再現モードのキーボードショートカット（Z/X/C/V/B）
   useEffect(() => {
     if (!gameReplayMode || editMode) { setPendingSlotIndex(null); return; }
@@ -348,6 +362,15 @@ export default function App() {
         onRemoveStageGimmick={(id) =>
           dispatch({ type: 'REMOVE_STAGE_GIMMICK', id })
         }
+        studentDrops={state.studentDrops ?? []}
+        initialCost={state.initialCost ?? 0}
+        onSetInitialCost={(cost) => dispatch({ type: 'SET_INITIAL_COST', cost })}
+        onAddStudentDrop={(drop, commentText) =>
+          dispatch({ type: 'ADD_STUDENT_DROP', drop, commentText })
+        }
+        onRemoveStudentDrop={(id) =>
+          dispatch({ type: 'REMOVE_STUDENT_DROP', id })
+        }
         skillQueueOrder={state.skillQueueOrder}
         onSetSkillQueueOrder={(order) =>
           dispatch({ type: 'SET_SKILL_QUEUE_ORDER', order })
@@ -359,7 +382,7 @@ export default function App() {
           dispatch({ type: 'SWAP_SLOTS', slotA, slotB })
         }
         gameReplayMode={gameReplayMode}
-        onToggleGameReplayMode={() => setGameReplayMode(v => !v)}
+        onToggleGameReplayMode={() => { setGameReplayMode(v => !v); setPlayheadMs(null); }}
         currentQueueState={currentQueueState}
         editMode={editMode}
         onToggleEditMode={() => setEditMode(v => !v)}
@@ -392,6 +415,9 @@ export default function App() {
         queueValidation={queueValidation}
         showNsLayers={showNsLayers}
         costSnap={costSnap}
+        gameReplayMode={gameReplayMode && !editMode}
+        playheadMs={effectivePlayheadMs}
+        onSetPlayhead={setPlayheadMs}
       />
       {showSaveLoad && (
         <SaveLoadModal

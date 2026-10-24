@@ -1,5 +1,6 @@
 import { useReducer, useEffect, useCallback } from 'react';
-import type { TimelineState, TimelineAction, CharacterSlot, SlotCostConfig, GameMode, Character, StageGimmick } from '../types';
+import type { TimelineState, TimelineAction, CharacterSlot, SlotCostConfig, GameMode, Character, StageGimmick, StudentDrop } from '../types';
+import { studentDropCommentId } from '../types';
 import stCharacters from '../../data/characters_st.json';
 import spCharacters from '../../data/characters_sp.json';
 import {
@@ -53,6 +54,8 @@ const initialState: TimelineState = {
   targetTimeMs: undefined,
   standaloneComments: [],
   stageGimmicks: [],
+  studentDrops: [],
+  initialCost: 0,
   skillQueueOrder: undefined,
   nsBarOffsets: {},
   nsConditionalTicks: {},
@@ -64,6 +67,18 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
       const newSlots = state.slots.map((s, i) =>
         i === action.slotIndex ? { ...s, character: action.character } : s
       );
+      // キャラ変更・削除時、そのスロットの落とし設定と連動コメントも削除
+      const removedDropCommentIds = new Set(
+        (state.studentDrops ?? [])
+          .filter((d) => d.slotIndex === action.slotIndex)
+          .map((d) => studentDropCommentId(d.id))
+      );
+      const dropCleanup = removedDropCommentIds.size > 0
+        ? {
+            studentDrops: (state.studentDrops ?? []).filter((d) => d.slotIndex !== action.slotIndex),
+            standaloneComments: state.standaloneComments.filter((c) => !removedDropCommentIds.has(c.id)),
+          }
+        : {};
       // キャラ削除時、そのスロットのアイテムと関連する矢印も削除
       if (action.character === null) {
         const removedItemIds = new Set(
@@ -79,6 +94,7 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
             (a) => !removedItemIds.has(a.fromItemId) && !removedItemIds.has(a.toItemId)
           ),
           nsConditionalTicks: newConditional,
+          ...dropCleanup,
         };
       }
       // キャラ設定時、スキル0番（EX1）のデータから自動設定 + activeSkillIndexをリセット
@@ -93,7 +109,7 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
       const newCostConfigs = state.slotCostConfigs.map((c, i) =>
         i === action.slotIndex ? { ...c, skillCost: autoSkillCost, exDelay: autoExDelay, activeSkillIndex: 0, skillCosts } : c
       );
-      return { ...state, slots: newSlots, slotCostConfigs: newCostConfigs };
+      return { ...state, slots: newSlots, slotCostConfigs: newCostConfigs, ...dropCleanup };
     }
 
     case 'ADD_ITEM':
@@ -331,6 +347,28 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
     case 'SET_STAGE_GIMMICKS':
       return { ...state, stageGimmicks: action.gimmicks };
 
+    case 'ADD_STUDENT_DROP':
+      return {
+        ...state,
+        studentDrops: [...(state.studentDrops ?? []), action.drop],
+        standaloneComments: [
+          ...state.standaloneComments,
+          { id: studentDropCommentId(action.drop.id), timeMs: action.drop.timeMs, text: action.commentText },
+        ],
+      };
+
+    case 'SET_INITIAL_COST':
+      return { ...state, initialCost: Math.max(0, action.cost) };
+
+    case 'REMOVE_STUDENT_DROP': {
+      const commentId = studentDropCommentId(action.id);
+      return {
+        ...state,
+        studentDrops: (state.studentDrops ?? []).filter((d) => d.id !== action.id),
+        standaloneComments: state.standaloneComments.filter((c) => c.id !== commentId),
+      };
+    }
+
     case 'SET_MODE': {
       if (action.mode === state.mode) return state;
       return {
@@ -342,6 +380,7 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         arrows: [],
         standaloneComments: [],
         stageGimmicks: [],
+        studentDrops: [],
         nsConditionalTicks: {},
       };
     }
@@ -373,6 +412,8 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         targetTimeMs: action.state.targetTimeMs,
         standaloneComments: action.state.standaloneComments ?? [],
         stageGimmicks: action.state.stageGimmicks ?? [],
+        studentDrops: action.state.studentDrops ?? [],
+        initialCost: action.state.initialCost ?? 0,
         skillQueueOrder: action.state.skillQueueOrder,
         nsBarOffsets: action.state.nsBarOffsets ?? {},
         nsConditionalTicks: action.state.nsConditionalTicks ?? {},
@@ -435,11 +476,17 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
       const condB = newConditionalSwap[slotB];
       if (condA !== undefined) newConditionalSwap[slotB] = condA; else delete newConditionalSwap[slotB];
       if (condB !== undefined) newConditionalSwap[slotA] = condB; else delete newConditionalSwap[slotA];
+      const newDrops = state.studentDrops?.map((d) => {
+        if (d.slotIndex === slotA) return { ...d, slotIndex: slotB };
+        if (d.slotIndex === slotB) return { ...d, slotIndex: slotA };
+        return d;
+      });
       return {
         ...state,
         slots: newSlots,
         slotCostConfigs: newConfigs,
         items: newItems,
+        studentDrops: newDrops,
         skillQueueOrder: newOrder,
         nsBarOffsets: newOffsets,
         nsConditionalTicks: newConditionalSwap,
@@ -507,6 +554,7 @@ function reducer(state: TimelineState, action: TimelineAction): TimelineState {
         arrows: [],
         standaloneComments: [],
         stageGimmicks: [],
+        studentDrops: [],
         nsBarOffsets: {},
         nsConditionalTicks: {},
       };
@@ -566,6 +614,8 @@ function loadFromStorage(base: TimelineState): TimelineState {
       targetTimeMs: parsed.targetTimeMs,
       standaloneComments: parsed.standaloneComments ?? base.standaloneComments,
       stageGimmicks: (parsed.stageGimmicks as StageGimmick[] | undefined) ?? base.stageGimmicks,
+      studentDrops: (parsed.studentDrops as StudentDrop[] | undefined) ?? base.studentDrops,
+      initialCost: typeof parsed.initialCost === 'number' ? parsed.initialCost : base.initialCost,
       skillQueueOrder: parsed.skillQueueOrder,
       nsBarOffsets: (parsed.nsBarOffsets as Record<number, number[]> | undefined) ?? base.nsBarOffsets,
       nsConditionalTicks: (parsed.nsConditionalTicks as Record<number, number[]> | undefined) ?? base.nsConditionalTicks,

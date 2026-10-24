@@ -23,11 +23,11 @@ function formatEntry(item: TimelineItem, slots: CharacterSlot[]): string {
 }
 
 export function generateTlText(state: TimelineState): string {
-  const { slots, items, slotCostConfigs, totalTimeMs, targetTimeMs, standaloneComments } = state;
+  const { slots, items, slotCostConfigs, totalTimeMs, targetTimeMs, standaloneComments, stageGimmicks, studentDrops, initialCost } = state;
 
   const { heavyArmorCount, redWinterCount } = computeArmorCounts(slots);
   const costMap = calculateItemCosts(
-    slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount
+    slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, studentDrops, initialCost
   );
 
   // キャラなしスロットのアイテムは除外、targetTimeMs設定時は対象時間以降のみ
@@ -82,22 +82,25 @@ export function generateTlText(state: TimelineState): string {
     return 0;
   });
 
-  // ヘッダー行
-  const rows: string[][] = [['時間', 'EX', 'コメント']];
+  // ヘッダー行（時間 / コスト / EX（即は複数列） / コメント）
+  const rows: string[][] = [['時間', 'コスト', 'EX', 'コメント']];
 
   for (const entry of entries) {
     if (entry.kind === 'comment') {
-      rows.push([msToMSS(entry.timeMs), '', entry.text]);
+      rows.push([msToMSS(entry.timeMs), '', '', entry.text]);
     } else {
       const [parent, ...children] = entry.group;
       const exCols = [parent, ...children].map((item) => formatEntry(item, slots));
-      rows.push([msToMSS(parent.timeMs), ...exCols, parent.comment ?? '']);
+      // コストはスキル使用前の所持コスト（TL上の表示と同じ、0.1切り捨て）
+      const usedCost = costMap.get(parent.id)?.usedCost;
+      const costStr = usedCost !== undefined ? costToDisplay(usedCost) : '';
+      rows.push([msToMSS(parent.timeMs), costStr, ...exCols, parent.comment ?? '']);
     }
   }
 
   // 目標時間（撃破）行
   if (targetTimeMs !== undefined) {
-    rows.push([msToMSS(targetTimeMs), '', '撃破']);
+    rows.push([msToMSS(targetTimeMs), '', '', '撃破']);
   }
 
   return rows.map((r) => r.join('\t')).join('\n');

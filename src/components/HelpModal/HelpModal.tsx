@@ -39,6 +39,7 @@ export function HelpModal({ onClose }: Props) {
               <tr><td className="help-key">{t('Shift+クリック')}</td><td>{t('EX対象指定')}</td></tr>
               <tr><td className="help-key">{t('Shift+ホイール')}</td><td>{t('TL横スクロール')}</td></tr>
               <tr><td className="help-key">{t('Ctrl+ホイール')}</td><td>{t('TL横スクロール（TL領域のみ）')}</td></tr>
+              <tr><td className="help-key">{t('中クリック+ドラッグ')}</td><td>{t('TLをつかんで移動')}</td></tr>
             </tbody>
           </table>
         </div>

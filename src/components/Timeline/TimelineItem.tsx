@@ -35,6 +35,7 @@ interface Props {
   costOvercost?: boolean;
   onCostAdjust?: (itemId: string, delta: number) => void;
   isQueueError?: boolean;
+  isFuture?: boolean; // ゲーム再現モードで再生位置より未来側（薄く表示）
   onSetTarget?: (itemId: string, targetSlotIndex: number | undefined) => void;
   onSetTargetEtc?: (itemId: string, targetEtcIcon: string | undefined) => void;
   onToggleTimeDisplay?: (itemId: string) => void;
@@ -79,6 +80,7 @@ export function TimelineItem({
   etcIcons,
   locked,
   isQueueError,
+  isFuture,
   onContextMenu,
   isSelected,
   onSelect,
@@ -248,7 +250,7 @@ export function TimelineItem({
   return (
     <div
       ref={itemRef}
-      className={`timeline-item${item.comment ? ' has-comment' : ''}${isInstant ? ' is-instant' : ''}${arrowMode ? ' arrow-mode' : ''}${arrowClickFrom === item.id ? ' arrow-from' : ''}${isSelected ? ' selected' : ''}`}
+      className={`timeline-item${item.comment ? ' has-comment' : ''}${isInstant ? ' is-instant' : ''}${arrowMode ? ' arrow-mode' : ''}${arrowClickFrom === item.id ? ' arrow-from' : ''}${isSelected ? ' selected' : ''}${isFuture ? ' is-future' : ''}`}
       style={{ left: x }}
       data-item-id={item.id}
       onMouseDown={handleMouseDown}

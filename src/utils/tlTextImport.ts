@@ -120,14 +120,14 @@ function parseRows(
   const rows: ParsedRow[] = [];
   const parseWarnings: string[] = [];
 
-  // 旧4列形式（時間/コスト/EX/コメント）の検出
-  let legacyMode = false;
+  // コスト列（時間/コスト/EX.../コメント）の検出。ヘッダーの2列目が「コスト」ならその列を読み飛ばす
+  let exStartCol = 1;
   for (const line of lines) {
     const firstCols = line.split('\t');
     const first = firstCols[0]?.trim();
     if (first === '時間' || first === 'Time' || first === '시간' || first === '时间') {
       const second = firstCols[1]?.trim();
-      if (second === 'コスト' || second === 'Cost') legacyMode = true;
+      if (second === 'コスト' || second === 'Cost' || second === '코스트' || second === '费用') exStartCol = 2;
       break;
     }
   }
@@ -148,20 +148,9 @@ function parseRows(
     const entries: ParsedEntry[] = [];
     let commentStr = '';
 
-    if (legacyMode) {
-      // 旧4列形式: 3列目がEX（→連結）、4列目がコメント
-      const exStr = cols[2]?.trim() ?? '';
-      commentStr = cols[3]?.trim() ?? '';
-      for (const part of exStr.split('→')) {
-        const trimmed = part.trim();
-        if (trimmed) {
-          const entry = parseExEntry(trimmed, charLookup);
-          if (entry.charName) entries.push(entry);
-        }
-      }
-    } else {
-      // 新形式: 2列目以降を動的走査（キャラ名完全一致でEX判定）
-      for (let col = 1; col < cols.length; col++) {
+    {
+      // EX列以降を動的走査（キャラ名完全一致でEX判定）。旧4列形式（→連結）も下の後方互換で処理
+      for (let col = exStartCol; col < cols.length; col++) {
         const val = cols[col]?.trim() ?? '';
         if (!val) continue; // 空列スキップ
 

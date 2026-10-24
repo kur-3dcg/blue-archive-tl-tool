@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import type { TimelineState, CharacterSlot, Character } from '../../types';
+import { studentDropCommentId } from '../../types';
 import { STRIKER_COUNT, SPECIAL_COUNT, EXTENDED_STRIKER_COUNT, EXTENDED_SPECIAL_COUNT } from '../../constants';
 import stCharacters from '../../../data/characters_st.json';
 import spCharacters from '../../../data/characters_sp.json';
@@ -72,8 +73,17 @@ export function buildLoadState(
       toItemId: items[a.toIndex].id,
     }));
 
+  const studentDrops = data.studentDrops?.map((d, i) => ({
+    id: `imported-drop-${Date.now()}-${i}`,
+    slotIndex: d.slotIndex,
+    timeMs: d.timeMs,
+  }));
+
   const standaloneComments = data.standaloneComments?.map((sc, i) => ({
-    id: `imported-sc-${Date.now()}-${i}`,
+    // 落とし生徒の連動コメントは drop と同じIDで紐付け直す（落とし削除時に一緒に消えるように）
+    id: sc.dropIndex !== undefined && studentDrops?.[sc.dropIndex]
+      ? studentDropCommentId(studentDrops[sc.dropIndex].id)
+      : `imported-sc-${Date.now()}-${i}`,
     timeMs: sc.timeMs,
     text: sc.text,
   }));
@@ -83,6 +93,10 @@ export function buildLoadState(
     timeMs: g.timeMs,
     durationMs: g.durationMs,
     recoveryDelta: g.recoveryDelta,
+    recoveryPercent: g.recoveryPercent,
+    recoveryPerStudent: g.recoveryPerStudent,
+    recoveryPerStriker: g.recoveryPerStriker,
+    costGain: g.costGain,
     label: g.label,
   }));
 
@@ -100,6 +114,8 @@ export function buildLoadState(
     skillQueueOrder: data.skillQueueOrder,
     nsBarOffsets: data.nsBarOffsets,
     nsConditionalTicks: data.nsConditionalTicks,
+    studentDrops,
+    initialCost: data.initialCost,
   };
 }
 
@@ -137,7 +153,8 @@ export function SharePanel({ state, onCoreAction, onImport, onImportText }: Prop
       state.slots, state.items, state.layers, state.totalTimeMs,
       state.arrows, state.slotCostConfigs, state.targetTimeMs,
       state.standaloneComments, state.stageGimmicks, state.skillQueueOrder,
-      state.mode, state.nsBarOffsets, state.nsConditionalTicks,
+      state.mode, state.nsBarOffsets, state.nsConditionalTicks, state.studentDrops,
+      state.initialCost,
     );
   };
 

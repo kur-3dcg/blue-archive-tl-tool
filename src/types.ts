@@ -89,6 +89,8 @@ export interface TimelineState {
   targetTimeMs?: number; // 目標時間（赤い線で表示）
   standaloneComments: StandaloneComment[];
   stageGimmicks: StageGimmick[];
+  initialCost?: number; // 開始時コスト（TL設定、デフォルト0）
+  studentDrops?: StudentDrop[]; // 落とし生徒（指定時刻以降、その生徒の回復力・SSを除外）
   skillQueueOrder?: number[]; // スキル使用順（slotIndexの配列）。undefinedはスロット番号順
   nsBarOffsets?: Record<number, number[]>; // NS発動位置の調整量[slotIndex][barIndex]（ms、累積でbar以降に適用）
   nsConditionalTicks?: Record<number, number[]>; // 条件系NSの手動配置タイムスタンプ[slotIndex]（ms）
@@ -104,8 +106,23 @@ export interface StageGimmick {
   id: string;
   timeMs: number;       // 発動時刻（カウントダウン方向）
   durationMs: number;   // 効果時間
-  recoveryDelta: number; // 回復力増加量
+  recoveryDelta: number; // 回復力増加量（加算。乗算ギミックは0）
+  recoveryPercent?: number; // 回復速度の乗算（%）。指定時は乗算ギミック（加算とは排他）
+  recoveryPerStudent?: number; // 生徒1人あたりの回復力加算。その時点で残っている（編成済み・未落とし）人数を掛けて計算（recoveryDelta=0）
+  recoveryPerStriker?: number; // ストライカー1人あたりの回復力加算。その時点で残っているST数を掛けて計算（recoveryDelta=0）
+  costGain?: number;    // 固定獲得: 発動時刻に所持コストを即時増減（指定時は durationMs=0・recoveryDelta=0、上限/0でクランプ）
   label?: string;       // 表示名
+}
+
+export interface StudentDrop {
+  id: string;
+  slotIndex: number;  // 落とすスロット（ストライカーのみ）
+  timeMs: number;     // 落ちる時刻（カウントダウン方向）
+}
+
+/** 落とし生徒に連動して自動挿入するコメントのID */
+export function studentDropCommentId(dropId: string): string {
+  return `drop-${dropId}`;
 }
 
 export type TimelineAction =
@@ -138,7 +155,10 @@ export type TimelineAction =
   | { type: 'ADD_STAGE_GIMMICK'; gimmick: StageGimmick }
   | { type: 'REMOVE_STAGE_GIMMICK'; id: string }
   | { type: 'SET_STAGE_GIMMICKS'; gimmicks: StageGimmick[] }
-  | { type: 'LOAD_STATE'; state: Pick<TimelineState, 'slots' | 'items' | 'arrows' | 'layers' | 'totalTimeMs'> & { mode?: GameMode; slotCostConfigs?: SlotCostConfig[]; targetTimeMs?: number; heavyArmorCount?: number; redWinterCount?: number; standaloneComments?: StandaloneComment[]; stageGimmicks?: StageGimmick[]; skillQueueOrder?: number[]; nsBarOffsets?: Record<number, number[]>; nsConditionalTicks?: Record<number, number[]> } }
+  | { type: 'ADD_STUDENT_DROP'; drop: StudentDrop; commentText: string }
+  | { type: 'REMOVE_STUDENT_DROP'; id: string }
+  | { type: 'SET_INITIAL_COST'; cost: number }
+  | { type: 'LOAD_STATE'; state: Pick<TimelineState, 'slots' | 'items' | 'arrows' | 'layers' | 'totalTimeMs'> & { mode?: GameMode; slotCostConfigs?: SlotCostConfig[]; targetTimeMs?: number; heavyArmorCount?: number; redWinterCount?: number; standaloneComments?: StandaloneComment[]; stageGimmicks?: StageGimmick[]; studentDrops?: StudentDrop[]; initialCost?: number; skillQueueOrder?: number[]; nsBarOffsets?: Record<number, number[]>; nsConditionalTicks?: Record<number, number[]> } }
   | { type: 'SET_MODE'; mode: GameMode }
   | { type: 'SET_SLOT_SKILL_INDEX'; slotIndex: number; skillIndex: number }
   | { type: 'SET_SKILL_QUEUE_ORDER'; order: number[] | undefined }

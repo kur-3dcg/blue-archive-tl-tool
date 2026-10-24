@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 import type { TimelineItem, CharacterSlot, SlotCostConfig } from '../../types';
 import { TIMELINE_PAD_RIGHT, LAYER_HEIGHT, SLOT_COLORS } from '../../constants';
-
-const BUFF_DURATION_MULTIPLIER = 1.19;
+import { applyBuffDurationMultiplier } from '../../utils/costCalc';
 
 // アイコンと同じ高さ (48px) でレイヤー中央に配置
 const BAR_HEIGHT = 48;
@@ -52,7 +51,7 @@ export function BuffBarLayer({ items, slots, slotCostConfigs, layoutMap, zoomLev
       const config = slotCostConfigs[item.slotIndex];
       const hasUnique2 = (config?.hasUniqueWeapon2 || config?.hasUniqueWeapon4) ?? false;
       const dur = (char.hasDurationBuff && hasUnique2)
-        ? baseDur * BUFF_DURATION_MULTIPLIER
+        ? applyBuffDurationMultiplier(baseDur * 1000) / 1000
         : baseDur;
       const delayS = slotCostConfigs[item.slotIndex]?.exDelay ?? char.exDelay ?? 0;
       const startX = totalWidth - TIMELINE_PAD_RIGHT - ((item.timeMs / 1000) - delayS) * zoomLevel;

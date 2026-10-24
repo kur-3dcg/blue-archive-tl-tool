@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type { StandaloneComment, SnapMode } from '../../types';
-import { TIMELINE_PAD_RIGHT, STANDALONE_COMMENT_HEIGHT } from '../../constants';
+import { TIMELINE_PAD_RIGHT } from '../../constants';
 import { snapTime } from '../../utils/snap';
+import { layoutStandaloneComments, standaloneBubbleWidth, STANDALONE_BUBBLE_HEIGHT } from '../../utils/commentLayout';
 
 interface Props {
   comments: StandaloneComment[];
@@ -17,10 +18,6 @@ interface Props {
   onEdit: (id: string, currentText: string) => void;
 }
 
-const BUBBLE_HEIGHT = 30;
-const MIN_BUBBLE_WIDTH = 60;
-const CHAR_WIDTH = 11;
-const PAD_X = 10;
 
 export function StandaloneCommentLayer({
   comments,
@@ -103,10 +100,16 @@ export function StandaloneCommentLayer({
     document.addEventListener('mouseup', onMouseUp);
   };
 
+  // 重なるバブルは上の行にずらす（ドラッグ中はドラッグ位置で再配置）
+  const layout = layoutStandaloneComments(
+    comments, zoomLevel, totalWidth,
+    dragState ? new Map([[dragState.id, dragState.timeMs]]) : undefined
+  );
+
   return (
     <div
       className={`standalone-comment-layer${dragOver ? ' drag-over' : ''}`}
-      style={{ width: totalWidth, height: STANDALONE_COMMENT_HEIGHT }}
+      style={{ width: totalWidth, height: layout.height }}
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
@@ -116,8 +119,8 @@ export function StandaloneCommentLayer({
         const isDragging = dragState?.id === comment.id;
         const timeMs = isDragging ? dragState!.timeMs : comment.timeMs;
         const x = timeToX(timeMs);
-        const bw = Math.max(MIN_BUBBLE_WIDTH, comment.text.length * CHAR_WIDTH + PAD_X * 2);
-        const bubbleTop = (STANDALONE_COMMENT_HEIGHT - BUBBLE_HEIGHT) / 2;
+        const bw = standaloneBubbleWidth(comment.text);
+        const bubbleTop = layout.tops.get(comment.id) ?? 0;
 
         return (
           <div
@@ -127,7 +130,7 @@ export function StandaloneCommentLayer({
               left: x - bw / 2,
               top: bubbleTop,
               width: bw,
-              height: BUBBLE_HEIGHT,
+              height: STANDALONE_BUBBLE_HEIGHT,
             }}
             onMouseDown={(e) => handleBubbleMouseDown(e, comment)}
             onDoubleClick={(e) => {

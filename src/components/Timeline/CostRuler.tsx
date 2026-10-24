@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
-import type { CharacterSlot, TimelineItem, SlotCostConfig, StageGimmick } from '../../types';
+import type { CharacterSlot, TimelineItem, SlotCostConfig, StageGimmick, StudentDrop } from '../../types';
 import { TIMELINE_PAD_LEFT, TIMELINE_PAD_RIGHT } from '../../constants';
 import { calculateCostTimeline, calculateCostCap, computeArmorCounts } from '../../utils/costCalc';
 
@@ -14,6 +14,8 @@ interface Props {
   zoomLevel: number;
   totalWidth: number;
   stageGimmicks?: StageGimmick[];
+  studentDrops?: StudentDrop[];
+  initialCost?: number;
 }
 
 export function CostRuler({
@@ -24,6 +26,8 @@ export function CostRuler({
   zoomLevel,
   totalWidth,
   stageGimmicks,
+  studentDrops,
+  initialCost,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const totalTimeS = totalTimeMs / 1000;
@@ -32,8 +36,8 @@ export function CostRuler({
 
   const keypoints = useMemo(() => {
     const { heavyArmorCount, redWinterCount } = computeArmorCounts(slots);
-    return calculateCostTimeline(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks);
-  }, [slots, items, slotCostConfigs, totalTimeMs, stageGimmicks]);
+    return calculateCostTimeline(slots, items, slotCostConfigs, totalTimeMs, heavyArmorCount, redWinterCount, stageGimmicks, studentDrops, initialCost);
+  }, [slots, items, slotCostConfigs, totalTimeMs, stageGimmicks, studentDrops, initialCost]);
 
   // Re-render on theme change
   const [theme, setTheme] = useState(document.documentElement.getAttribute('data-theme'));
@@ -80,9 +84,17 @@ export function CostRuler({
       ctx.textBaseline = 'middle';
       for (const g of stageGimmicks) {
         const startX = timeMsToX(g.timeMs);
+        const bandY = 2;
+        // 固定獲得: 発動時刻にマーカー（縦棒）＋右側にラベル
+        if (g.costGain !== undefined) {
+          ctx.fillStyle = 'rgba(251, 146, 60, 0.9)';
+          ctx.fillRect(startX - 1.5, bandY, 3, GIMMICK_BAND_HEIGHT - 2);
+          const gainText = `${g.costGain >= 0 ? '+' : ''}${g.costGain}コスト`;
+          ctx.fillText(g.label ? `${g.label} ${gainText}` : gainText, startX + 4, bandY + (GIMMICK_BAND_HEIGHT - 2) / 2);
+          continue;
+        }
         const endMs = Math.max(0, g.timeMs - g.durationMs);
         const endX = timeMsToX(endMs);
-        const bandY = 2;
         ctx.fillStyle = 'rgba(251, 146, 60, 0.3)';
         ctx.fillRect(endX, bandY, startX - endX, GIMMICK_BAND_HEIGHT - 2);
         // ボーダー
@@ -92,7 +104,14 @@ export function CostRuler({
         // ラベル
         ctx.fillStyle = 'rgba(251, 146, 60, 0.95)';
         const bandWidth = startX - endX;
-        const labelText = g.label ? `${g.label} +${g.recoveryDelta}` : `+${g.recoveryDelta}`;
+        const valueText = g.recoveryPercent !== undefined
+          ? `+${g.recoveryPercent}%`
+          : g.recoveryPerStudent !== undefined
+            ? `+${g.recoveryPerStudent}×人数`
+            : g.recoveryPerStriker !== undefined
+              ? `+${g.recoveryPerStriker}×ST数`
+              : `+${g.recoveryDelta}`;
+        const labelText = g.label ? `${g.label} ${valueText}` : valueText;
         if (bandWidth > 20) {
           ctx.save();
           ctx.beginPath();

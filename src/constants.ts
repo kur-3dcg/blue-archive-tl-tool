@@ -26,12 +26,16 @@ export const EXTENDED_STRIKER_COUNT = 6;
 export const EXTENDED_SPECIAL_COUNT = 4;
 
 export const STAGE_GIMMICK_PRESETS = [
-  // recoveryPerStriker: 発動時のストライカー数 × この値が回復力増加量
-  { label: 'コクマー バリスタ', recoveryPerStriker: 1000, durationMs: 22000 },
-  // recoveryPerStudent: 全生徒数 × この値が回復力増加量, fixedTimes: 一括登録する発動時間(ms)
-  { label: 'グレゴリオ', recoveryPerStudent: 300, durationMs: 60000, fixedTimes: [60000, 50000, 40000, 30000, 20000, 10000] as number[] },
-  // recovery: 固定回復力増加量, fixedTimes: 一括登録する発動時間(ms)
-  { label: 'セトの憤怒グロッキー', recovery: 5000, durationMs: 23000, fixedTimes: [34333] as number[] },
+  // 人数はコスト計算時にその時点で残っている人数（編成済み − 落とし生徒）で自動計算
+  // dynamicPerStriker: ストライカー1人あたり加算, dynamicPerStudent: 生徒（ST+SP）1人あたり加算
+  // fixedTimes: 一括登録する発動時間(ms)（省略時は発動時間を手入力）
+  { label: 'コクマー バリスタ', dynamicPerStriker: 1000, durationMs: 22000 },
+  { label: 'グレゴリオ', dynamicPerStudent: 300, durationMs: 60000, fixedTimes: [60000, 50000, 40000, 30000, 20000, 10000] as number[] },
+  { label: 'セトの憤怒グロッキー', dynamicPerStudent: 500, durationMs: 23000, fixedTimes: [34333] as number[] },
+  // recoveryPercent: 回復速度の乗算（%）, always: 戦闘開始から終了まで常時（発動時間=総時間、効果時間=総時間で登録）
+  { label: 'ゲブラ 知性の根源', recoveryPercent: 25, always: true },
+  // manualDuration: 効果時間を手入力
+  { label: 'ゲブラ ラジエイター過負荷', dynamicPerStudent: 500, manualDuration: true },
 ] as const;
 
 // スロットごとのバフバー色（将来10スロット対応想定）

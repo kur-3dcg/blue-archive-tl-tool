@@ -29,6 +29,10 @@ export interface BossPresetGimmick {
   timeMs: number;
   durationMs: number;
   recoveryDelta: number;
+  recoveryPercent?: number; // 乗算ギミック（%）。指定時は recoveryDelta=0
+  recoveryPerStudent?: number; // 生徒1人あたり加算（残り人数で自動計算）。指定時は recoveryDelta=0
+  recoveryPerStriker?: number; // ストライカー1人あたり加算（残りST数で自動計算）。指定時は recoveryDelta=0
+  costGain?: number; // 固定獲得（発動時刻に所持コストを即時加算）。指定時は durationMs=0・recoveryDelta=0
 }
 
 export interface BossPresetComment {
@@ -66,6 +70,16 @@ export interface BossPresetLoadState {
 
 export const BOSS_PRESETS: BossPresetEntry[] = [
   {
+    name: 'ゲブラ',
+    totalTimeMs: 240_000, // 4:00
+    gimmicks: [
+      // 知性の根源: 常時、回復速度+25%（乗算）
+      { label: 'ゲブラ 知性の根源', timeMs: 240_000, durationMs: 240_000, recoveryDelta: 0, recoveryPercent: 25 },
+      // ラジエイター過負荷: 3:53から35秒、生徒1人あたり+500（残っている人数で自動計算）
+      { label: 'ゲブラ ラジエイター過負荷', timeMs: 233_000, durationMs: 35_000, recoveryDelta: 0, recoveryPerStudent: 500 },
+    ],
+  },
+  {
     name: 'セトの憤怒',
     totalTimeMs: 270_000, // 4:30
     mode: 'extended',
@@ -82,7 +96,8 @@ export const BOSS_PRESETS: BossPresetEntry[] = [
       { name: 'レイサ（マジカル）', type: 'special' },
     ],
     gimmicks: [
-      { label: 'セトの憤怒グロッキー', timeMs: 34333, durationMs: 23000, recoveryDelta: 5000 },
+      // グロッキー: 生徒1人あたり+500（残っている人数で自動計算、10人で+5000）
+      { label: 'セトの憤怒グロッキー', timeMs: 34333, durationMs: 23000, recoveryDelta: 0, recoveryPerStudent: 500 },
     ],
     comments: [
       { timeMs: 256867, text: '蒼雷の咆哮(All230%)' },
@@ -184,6 +199,10 @@ export function applyBossPreset(
     timeMs: g.timeMs,
     durationMs: g.durationMs,
     recoveryDelta: g.recoveryDelta,
+    recoveryPercent: g.recoveryPercent,
+    recoveryPerStudent: g.recoveryPerStudent,
+    recoveryPerStriker: g.recoveryPerStriker,
+    costGain: g.costGain,
     label: g.label,
   }));
 

@@ -1,4 +1,5 @@
-import type { CharacterSlot, TimelineItem, TimelineArrow, SlotCostConfig, StandaloneComment, StageGimmick } from '../types';
+import type { CharacterSlot, TimelineItem, TimelineArrow, SlotCostConfig, StandaloneComment, StageGimmick, StudentDrop } from '../types';
+import { studentDropCommentId } from '../types';
 import stCharacters from '../../data/characters_st.json';
 import spCharacters from '../../data/characters_sp.json';
 
@@ -32,12 +33,14 @@ interface CompactData {
   G?: number;                                              // targetTimeMs
   H?: number;                                              // heavyArmorCount
   W?: number;                                              // redWinterCount
-  N?: { t: number; x: string }[];                         // standaloneComments: timeMs, text
-  K?: { t: number; d: number; r: number; l?: string }[];  // stageGimmicks: timeMs, durationMs, recoveryDelta, label
+  N?: { t: number; x: string; dr?: number }[];           // standaloneComments: timeMs, text, 連動する落とし生徒のDインデックス
+  K?: { t: number; d: number; r: number; p?: number; ps?: number; pt?: number; g?: number; l?: string }[];  // stageGimmicks: timeMs, durationMs, recoveryDelta, recoveryPercent（乗算時のみ）, recoveryPerStudent / recoveryPerStriker（人数比例時のみ）, costGain（固定獲得時のみ）, label
   Q?: number[];                                            // skillQueueOrder
   o?: 1;                                                   // mode: 1=extended, absent=normal
   B?: Record<string, number[]>;                            // nsBarOffsets: slotIndex -> adjustments[]
   X?: Record<string, number[]>;                            // nsConditionalTicks: slotIndex -> timeMs[]
+  D?: { s: number; t: number }[];                          // studentDrops: slotIndex, timeMs
+  I?: number;                                              // initialCost（0は省略）
 }
 
 // Decoded result (unified)
@@ -51,12 +54,14 @@ export interface ShareData {
   targetTimeMs?: number;
   heavyArmorCount?: number;
   redWinterCount?: number;
-  standaloneComments?: { timeMs: number; text: string }[];
-  stageGimmicks?: { timeMs: number; durationMs: number; recoveryDelta: number; label?: string }[];
+  standaloneComments?: { timeMs: number; text: string; dropIndex?: number }[];
+  stageGimmicks?: { timeMs: number; durationMs: number; recoveryDelta: number; recoveryPercent?: number; recoveryPerStudent?: number; recoveryPerStriker?: number; costGain?: number; label?: string }[];
   skillQueueOrder?: number[];
   mode?: string;
   nsBarOffsets?: Record<number, number[]>;
   nsConditionalTicks?: Record<number, number[]>;
+  studentDrops?: { slotIndex: number; timeMs: number }[];
+  initialCost?: number;
 }
 
 // --- Compression helpers using DecompressionStream/CompressionStream ---
@@ -141,8 +146,12 @@ export async function encode(
   mode?: string,
   nsBarOffsets?: Record<number, number[]>,
   nsConditionalTicks?: Record<number, number[]>,
+  studentDrops?: StudentDrop[],
+  initialCost?: number,
 ): Promise<string> {
   const itemIdToIndex = new Map(items.map((item, idx) => [item.id, idx]));
+  // 落とし生徒の連動コメント → D のインデックス
+  const dropCommentToIndex = new Map((studentDrops ?? []).map((d, idx) => [studentDropCommentId(d.id), idx]));
 
   const compact: CompactData = {
     s: slots
@@ -178,10 +187,10 @@ export async function encode(
     ...(slotCostConfigs ? { C: slotCostConfigs.map((c) => ({ k: c.skillCost, u: c.hasUniqueWeapon4, ...(!c.hasUniqueWeapon2 ? { w: false } : {}), ...(c.activeSkillIndex ? { j: c.activeSkillIndex } : {}), ...(c.skillCosts ? { sc: c.skillCosts } : {}) })) } : {}),
     ...(targetTimeMs !== undefined ? { G: targetTimeMs } : {}),
     ...(standaloneComments && standaloneComments.length > 0
-      ? { N: standaloneComments.map((sc) => ({ t: sc.timeMs, x: sc.text })) }
+      ? { N: standaloneComments.map((sc) => ({ t: sc.timeMs, x: sc.text, ...(dropCommentToIndex.has(sc.id) ? { dr: dropCommentToIndex.get(sc.id)! } : {}) })) }
       : {}),
     ...(stageGimmicks && stageGimmicks.length > 0
-      ? { K: stageGimmicks.map((g) => ({ t: g.timeMs, d: g.durationMs, r: g.recoveryDelta, ...(g.label ? { l: g.label } : {}) })) }
+      ? { K: stageGimmicks.map((g) => ({ t: g.timeMs, d: g.durationMs, r: g.recoveryDelta, ...(g.recoveryPercent !== undefined ? { p: g.recoveryPercent } : {}), ...(g.recoveryPerStudent !== undefined ? { ps: g.recoveryPerStudent } : {}), ...(g.recoveryPerStriker !== undefined ? { pt: g.recoveryPerStriker } : {}), ...(g.costGain !== undefined ? { g: g.costGain } : {}), ...(g.label ? { l: g.label } : {}) })) }
       : {}),
     ...(skillQueueOrder && skillQueueOrder.length > 0 ? { Q: skillQueueOrder } : {}),
     ...(mode === 'extended' ? { o: 1 as const } : {}),
@@ -191,6 +200,10 @@ export async function encode(
     ...(nsConditionalTicks && Object.keys(nsConditionalTicks).length > 0
       ? { X: Object.fromEntries(Object.entries(nsConditionalTicks).map(([k, v]) => [k, v])) }
       : {}),
+    ...(studentDrops && studentDrops.length > 0
+      ? { D: studentDrops.map((d) => ({ s: d.slotIndex, t: d.timeMs })) }
+      : {}),
+    ...(initialCost ? { I: initialCost } : {}),
   };
 
   const jsonStr = JSON.stringify(compact);
@@ -253,8 +266,8 @@ function compactToShareData(c: CompactData): ShareData {
     targetTimeMs: c.G,
     heavyArmorCount: c.H,
     redWinterCount: c.W,
-    standaloneComments: c.N?.map((n) => ({ timeMs: n.t, text: n.x })),
-    stageGimmicks: c.K?.map((k) => ({ timeMs: k.t, durationMs: k.d, recoveryDelta: k.r, label: k.l })),
+    standaloneComments: c.N?.map((n) => ({ timeMs: n.t, text: n.x, ...(n.dr !== undefined ? { dropIndex: n.dr } : {}) })),
+    stageGimmicks: c.K?.map((k) => ({ timeMs: k.t, durationMs: k.d, recoveryDelta: k.r, recoveryPercent: k.p, recoveryPerStudent: k.ps, recoveryPerStriker: k.pt, costGain: k.g, label: k.l })),
     skillQueueOrder: c.Q,
     mode: c.o === 1 ? 'extended' : 'normal',
     nsBarOffsets: c.B
@@ -263,5 +276,7 @@ function compactToShareData(c: CompactData): ShareData {
     nsConditionalTicks: c.X
       ? (Object.fromEntries(Object.entries(c.X).map(([k, v]) => [Number(k), v])) as Record<number, number[]>)
       : undefined,
+    studentDrops: c.D?.map((d) => ({ slotIndex: d.s, timeMs: d.t })),
+    initialCost: c.I,
   };
 }

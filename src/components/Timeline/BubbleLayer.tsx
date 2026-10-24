@@ -1,5 +1,6 @@
 import type { TimelineItem as TItem, CharacterSlot } from '../../types';
-import { ITEM_WIDTH, LAYER_HEIGHT, RULER_HEIGHT, TIMELINE_PAD_RIGHT, STANDALONE_COMMENT_HEIGHT } from '../../constants';
+import { LAYER_HEIGHT, RULER_HEIGHT, STANDALONE_COMMENT_HEIGHT } from '../../constants';
+import { layoutItemBubbles, ITEM_BUBBLE_HEIGHT, ITEM_BUBBLE_GAP } from '../../utils/commentLayout';
 import { useCharName } from '../../i18n';
 
 interface Props {
@@ -10,63 +11,19 @@ interface Props {
   onRemoveComment: (itemId: string) => void;
 }
 
-const BUBBLE_HEIGHT = 32;
-const BUBBLE_GAP = 4;
-const BUBBLE_MIN_WIDTH = 60;
-
-interface BubblePos {
-  item: TItem;
-  x: number;
-  anchorY: number;
-  row: number;
-}
+const BUBBLE_HEIGHT = ITEM_BUBBLE_HEIGHT;
+const BUBBLE_GAP = ITEM_BUBBLE_GAP;
 
 export function BubbleLayer({ items, slots, zoomLevel, totalWidth, onRemoveComment }: Props) {
   const charName = useCharName();
-  const commented = items.filter((it) => it.comment);
-  if (commented.length === 0) return null;
+  const layout = layoutItemBubbles(items, zoomLevel, totalWidth);
+  if (layout.bubbles.length === 0) return null;
 
-  // Calculate bubble positions, stacking rows to avoid overlap
-  const bubbles: BubblePos[] = [];
-  // Sort by x position (left to right)
-  const sorted = [...commented].sort((a, b) => {
-    const ax = totalWidth - TIMELINE_PAD_RIGHT - (a.timeMs / 1000) * zoomLevel;
-    const bx = totalWidth - TIMELINE_PAD_RIGHT - (b.timeMs / 1000) * zoomLevel;
-    return ax - bx;
-  });
-
-  // Track occupied ranges per row
-  const rowOccupied: { left: number; right: number }[][] = [[]];
-
-  for (const item of sorted) {
-    const cx = totalWidth - TIMELINE_PAD_RIGHT - (item.timeMs / 1000) * zoomLevel;
-    const textWidth = Math.max(BUBBLE_MIN_WIDTH, (item.comment?.length ?? 0) * 13 + 20);
-    const left = cx - textWidth / 2;
-    const right = cx + textWidth / 2;
-    const anchorY = RULER_HEIGHT + STANDALONE_COMMENT_HEIGHT + item.layerIndex * LAYER_HEIGHT + LAYER_HEIGHT / 2;
-
-    // Find the lowest row where this bubble fits
-    let placed = false;
-    for (let row = 0; row < rowOccupied.length; row++) {
-      const overlaps = rowOccupied[row].some(
-        (r) => left - BUBBLE_GAP < r.right && right + BUBBLE_GAP > r.left
-      );
-      if (!overlaps) {
-        rowOccupied[row].push({ left, right });
-        bubbles.push({ item, x: cx, anchorY, row });
-        placed = true;
-        break;
-      }
-    }
-    if (!placed) {
-      const newRow = rowOccupied.length;
-      rowOccupied.push([{ left, right }]);
-      bubbles.push({ item, x: cx, anchorY, row: newRow });
-    }
-  }
-
-  const totalRows = rowOccupied.length;
-  const bubbleAreaHeight = totalRows * (BUBBLE_HEIGHT + BUBBLE_GAP) + 8;
+  const bubbles = layout.bubbles.map((b) => ({
+    ...b,
+    anchorY: RULER_HEIGHT + STANDALONE_COMMENT_HEIGHT + b.item.layerIndex * LAYER_HEIGHT + LAYER_HEIGHT / 2,
+  }));
+  const bubbleAreaHeight = layout.height;
 
   return (
     <div className="bubble-layer" style={{ height: bubbleAreaHeight, width: totalWidth }}>
