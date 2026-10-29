@@ -44,6 +44,8 @@ const SHUELIN_SWIMSUIT = 'シュエリン（水着）';
 
 // キサキ（水着）EXバフ: EX1=+1625, EX2=+2500（5秒、EX毎回）
 const KISAKI_SWIMSUIT = 'キサキ（水着）';
+// アズサ（レーシング）EXバフ: +519, 25秒（EX毎回、固有2↑で×1.19）。EX効果時間（45秒）とは別
+const AZUSA_RACING = 'アズサ（レーシング）';
 
 // EXバフキャラ
 const HOSHINO_SWIMSUIT = 'ホシノ（水着）';  // +684, 50秒
@@ -253,6 +255,8 @@ function getExBuffParams(charName: string, hasUniqueWeapon2: boolean, hasDuratio
   // レイジョ: 毎回
   if (charName === REIJO) return { recoveryDelta: 1861, durationMs: 5000 };
   // キサキ（水着）: EX1=+1625, EX2=+2500（5秒、毎回、固有2↑で×1.19）
+  // アズサ（レーシング）: 毎回、25秒（EX効果時間45秒とは別。固有2↑で×1.19）
+  if (charName === AZUSA_RACING) return { recoveryDelta: 519, durationMs: applyDuration(25000) };
   if (charName === KISAKI_SWIMSUIT) {
     return skillIndex === 1
       ? { recoveryDelta: 2500, durationMs: applyDuration(5000) }

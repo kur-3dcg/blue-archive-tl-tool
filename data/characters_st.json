@@ -2163,6 +2163,20 @@
     "nameCn": "日富美"
   },
   {
+    "name": "ヒフミ（レーシング）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hifumi_racing.png",
+    "reading": "ひふみ（れーしんぐ）",
+    "school": "トリニティ",
+    "attackType": "爆発",
+    "armorType": "特殊装甲",
+    "cost": 5,
+    "exDuration": null,
+    "nameEn": "Hifumi（Racing）",
+    "nameKr": "히후미 (레이싱)",
+    "nameTw": "日步美（賽車）",
+    "nameCn": "日富美（赛车）"
+  },
+  {
     "name": "ヒヨリ（水着）",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/st/hiyori_swimsuit.png",
     "reading": "ひより（みずぎ）",

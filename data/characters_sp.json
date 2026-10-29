@@ -86,6 +86,21 @@
     "nameCn": "亚子"
   },
   {
+    "name": "アズサ（レーシング）",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/azusa_racing.png",
+    "reading": "あずさ（れーしんぐ）",
+    "school": "トリニティ",
+    "attackType": "爆発",
+    "armorType": "神秘",
+    "cost": 4,
+    "exDuration": 45,
+    "hasDurationBuff": true,
+    "nameEn": "Azusa（Racing）",
+    "nameKr": "아즈사 (레이싱)",
+    "nameTw": "梓（賽車）",
+    "nameCn": "梓（赛车）"
+  },
+  {
     "name": "アツコ（水着）",
     "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/atsuko_swimsuit.png",
     "reading": "あつこ（みずぎ）",
@@ -1350,6 +1365,22 @@
     "nameKr": "요시미",
     "nameTw": "喜美",
     "nameCn": "好美"
+  },
+  {
+    "name": "ラナ",
+    "image": "https://raw.githubusercontent.com/kur-3dcg/blue-archive-faceimage/main/images/sp/rana.png",
+    "reading": "らな",
+    "school": "レッドウィンター",
+    "attackType": "爆発",
+    "armorType": "神秘",
+    "cost": 5,
+    "exDuration": null,
+    "nsInterval": 60,
+    "nsDuration": 50,
+    "nameEn": "Rana",
+    "nameKr": "라나",
+    "nameTw": "拉娜",
+    "nameCn": "拉娜"
   },
   {
     "name": "リオ",
